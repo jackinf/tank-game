@@ -61,38 +61,25 @@ pub fn main() {
 
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn(Camera2dBundle::default());
+
+    spawn_player(PLAYER_1, Vec2::new(-150.0, 0.0), "ball_blue_large.png", &mut commands, &asset_server);
+    spawn_player(PLAYER_2, Vec2::new(150.0, 0.0), "ball_red_large.png", &mut commands, &asset_server);
+
     commands
         .spawn(SpriteBundle {
             transform: Transform::default()
-                .with_translation(Vec3::new(-150.0, 0.0, 1.0))
+                .with_translation(Vec3::new(-150.0, 200.0, 0.0))
                 .with_scale(Vec3::new(0.5, 0.5, 0.5)),
-            texture: asset_server.load("ball_blue_large.png"),
+            texture: asset_server.load("block_corner.png"),
             ..default()
         })
-        // .insert(input_manager_bundle)
-        .insert(InputManagerBundle::<Action> {
-            action_state: ActionState::default(),
-            input_map: InputMap::default()
-                .insert(Action::Move, DualAxis::left_stick())
-                .insert(Action::Move, VirtualDPad::wasd())
-                .insert(Action::Move, VirtualDPad::arrow_keys())
-                .set_gamepad(Gamepad { id: 0 })
-                .build(),
-        })
-        .insert(RigidBody::Dynamic)
-        .insert(Collider::ball(64.0))
-        .insert(ExternalForce {
-            force: Vec2::ZERO,
-            torque: 0.0,
-        })
-        // slow down the movement so it does not go forever
-        .insert(Damping {
-            linear_damping: 0.6,
-            angular_damping: 5.0,
-        })
-        // 0.0 is sudden stop when hit another target, 1.0 is a full bounce
-        .insert(Restitution::coefficient(1.0))
-        .insert(Player);
+        .insert(RigidBody::Fixed)
+        .insert(Collider::triangle(
+            Vec2::new(-64.0, 64.0),
+            Vec2::new(64.0, -64.0),
+            Vec2::new(-64.0, -64.0),
+        ))
+        .insert(Restitution::coefficient(1.0));
 }
 
 const MOVE_FORCE: f32 = 10_000.0;
