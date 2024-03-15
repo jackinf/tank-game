@@ -1,8 +1,8 @@
+use clap::Parser;
+use regex::Regex;
 use std::fs::File;
 use std::io::{Read, Write};
 use std::path::Path;
-use clap::Parser;
-use regex::Regex;
 
 /// Simple program to greet a person
 #[derive(Parser, Debug)]
@@ -16,7 +16,7 @@ struct Args {
     search: String,
 
     #[arg(short, long)]
-    replace: String
+    replace: String,
 }
 
 pub fn main() {
@@ -35,14 +35,14 @@ pub fn main() {
     // Open file
     let mut file = match File::open(&path) {
         Err(why) => panic!("couldn't read {}: {}", display, why),
-        Ok(file) => file
+        Ok(file) => file,
     };
 
     // Read contents
     let mut read_string = String::new();
     match file.read_to_string(&mut read_string) {
         Err(why) => panic!("couldn't get contents {}: {}", display, why),
-        Ok(_) => println!("contains {}: {}", display, &read_string)
+        Ok(_) => println!("contains {}: {}", display, &read_string),
     }
 
     //////////////////

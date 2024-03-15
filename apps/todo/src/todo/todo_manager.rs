@@ -4,7 +4,7 @@ use crate::todo::todo_item::TodoItem;
 // #[derive(Debug, Default)]
 pub struct TodoManager {
     id_counter: i32,
-    items: Vec<TodoItem>
+    items: Vec<TodoItem>,
 }
 
 impl TodoManager {
@@ -22,7 +22,10 @@ impl TodoManager {
 
     pub fn list_items(&self) -> () {
         self.items.iter().for_each(|item| {
-            println!("id: {}, title: {}, is_done: {}", item.id, item.title, item.is_done);
+            println!(
+                "id: {}, title: {}, is_done: {}",
+                item.id, item.title, item.is_done
+            );
         });
     }
 
@@ -48,7 +51,7 @@ impl Default for TodoManager {
         println!("default called");
         Self {
             id_counter: 1,
-            items: Vec::new()
+            items: Vec::new(),
         }
     }
 }

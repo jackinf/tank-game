@@ -4003,6 +4003,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "tank-game"
+version = "0.1.0"
+dependencies = [
+ "bevy",
+ "bevy_rapier2d",
+ "leafwing-input-manager",
+]
+
+[[package]]
 name = "tempfile"
 version = "3.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
