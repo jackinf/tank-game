@@ -1,11 +1,11 @@
-mod binary;
-mod heap;
+mod dijkstra_search;
+mod breadth_first_search;
 mod utils {
     pub mod common;
     pub mod constants;
 }
 
 fn main() {
-    // binary::main();
-    heap::main();
+    breadth_first_search::main();
+    dijkstra_search::main();
 }
