@@ -64,7 +64,7 @@ fn track_cursor(
     if let Some(world_position) = window
         .cursor_position()
         .and_then(|cursor| camera.viewport_to_world(camera_transform, cursor))
-        .map(|ray| ray.origin.truncate())
+        .map(|ray| ray.origin.xy())
     {
         my_world_coords.0 = world_position;
     }
@@ -122,7 +122,7 @@ fn move_towards_target(
         .iter_mut()
         .filter(|(target_position, _)| target_position.moving)
     {
-        let current_pos = Vec2::new(transform.translation.x, transform.translation.y);
+        let current_pos = transform.translation.xy();
         let direction = target_position.position - current_pos;
         let distance_to_move = target_position.speed * time.delta_seconds();
 
