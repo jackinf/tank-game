@@ -5,16 +5,25 @@ use bevy::window::{PrimaryWindow, WindowResolution};
 use bevy_rapier2d::na::Quaternion;
 
 #[derive(Component)]
-struct Tank(Id);
+struct Tank {
+    id: Id,
+    selected: bool
+}
 
 #[derive(Component)]
 struct Id(usize);
+
+#[derive(Component)]
+struct SelectedUnit(bool);
 
 #[derive(Resource, Default)]
 struct MyWorldCoords(Vec2);
 
 #[derive(Resource)]
 struct TankLogTimer(Timer);
+
+#[derive(Resource)]
+struct TankIdCounter(usize);
 
 #[derive(Component)]
 struct TargetPosition {
@@ -26,8 +35,10 @@ struct TargetPosition {
 const MAX_WIDTH: u16 = 2000;
 const MAX_HEIGHT: u16 = 1500;
 const TILE_SIZE: f32 = 128.0;
-const TILE_GRASS: usize = 0;
+// const TILE_EMPTY: usize = 0;
 const TILE_TANK: usize = 1;
+const OFFSET_X: f32 = -800.0;
+const OFFSET_Y: f32 = -200.0;
 // const GRASS_SCALE: f32 = 12.0;
 // const TANK_SCALE: f32 = 1.5;
 
@@ -47,16 +58,18 @@ fn main() {
         .insert_resource(MyWorldCoords(Vec2::new(0.0, 0.0)))
         // .insert_resource(TargetPosition {position: Vec2::new(0.0, 0.0), speed: 0.0})
         .insert_resource(TankLogTimer(Timer::from_seconds(1.0, TimerMode::Repeating)))
+        .insert_resource(TankIdCounter(1))
         .add_systems(PreStartup, (setup))
         .add_systems(Update, (track_cursor, set_target_to_move, inflate_tank))
-        .add_systems(FixedUpdate, (logger, move_towards_target))
+        // .add_systems(FixedUpdate, (logger, move_towards_target))
+        .add_systems(FixedUpdate, (move_towards_target))
         .run()
 }
 
-fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
+fn setup(mut commands: Commands, asset_server: Res<AssetServer>, mut tank_id_counter: ResMut<TankIdCounter>) {
     commands.spawn(Camera2dBundle::default());
 
-    // 0 - grass, 1 - tank
+    // 0 - empty, 1 - tank
     let tilemap = vec![
         vec![0, 0, 1, 0, 0, 0, 0, 1],
         vec![0, 0, 1, 0, 0, 0, 0, 1],
@@ -67,13 +80,13 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         vec![1, 0, 0, 0, 0, 0, 0, 1],
     ];
 
-    draw_tiles(&mut commands, &asset_server, tilemap);
-}
+    let tilemap_small = vec![
+      vec![0, 0, 0],
+      vec![0, 0, 0],
+      vec![0, 1, 0],
+    ];
 
-const OFFSET_X: f32 = -800.0;
-const OFFSET_Y: f32 = -200.0;
-
-fn draw_tiles(commands: &mut Commands, asset_server: &Res<AssetServer>, tilemap: Vec<Vec<usize>>) {
+    // draw_tiles(&mut commands, &asset_server, tilemap);
     tilemap
         .into_iter()
         .enumerate()
@@ -83,11 +96,11 @@ fn draw_tiles(commands: &mut Commands, asset_server: &Res<AssetServer>, tilemap:
                 let y = col_index as f32 * TILE_SIZE + OFFSET_Y;
                 let pos = Vec2::new(x, y);
 
-                if cell == TILE_GRASS {
-                    spawn_grass(commands, &asset_server, pos);
-                } else if cell == TILE_TANK {
-                    spawn_grass(commands, &asset_server, pos);
-                    spawn_tank(commands, &asset_server, pos);
+                spawn_grass(&mut commands, &asset_server, pos);
+
+                if cell == TILE_TANK {
+                    println!("tank pos: {:?}", pos);
+                    spawn_tank(&mut commands, &asset_server, pos, &mut tank_id_counter);
                 }
             });
         });
@@ -105,22 +118,26 @@ fn spawn_grass(commands: &mut Commands, asset_server: &Res<AssetServer>, transla
     ));
 }
 
-fn spawn_tank(commands: &mut Commands, asset_server: &Res<AssetServer>, translation: Vec2) {
+fn spawn_tank(commands: &mut Commands, asset_server: &Res<AssetServer>, translation: Vec2, tank_id_counter: &mut ResMut<TankIdCounter>) {
+    let tank_id = tank_id_counter.0;
+    tank_id_counter.0 += 1;
+
+    let center_position = Vec2::new(translation.x - (TILE_SIZE / 2.0), translation.y - (TILE_SIZE / 2.0));
     let tank_base: Entity = commands
         .spawn((
             SpriteBundle {
                 transform: Transform::default()
-                    .with_translation(translation.extend(0.0)),
+                    .with_translation(translation.extend(1.0)),
                 texture: asset_server.load("tank3base.png"),
                 ..default()
             },
         ))
         .insert(TargetPosition {
-            position: Vec2::new(0.0, 0.0),
+            position: center_position,
             speed: 0.0,
             moving: false,
         })
-        .insert(Tank(Id(1)))
+        .insert(Tank { id: Id(tank_id), selected: false })
         .id();
 
     commands
@@ -156,25 +173,51 @@ fn track_cursor(
 fn logger(tank_query: Query<&Tank>, mut timer: ResMut<TankLogTimer>, time: Res<Time>) {
     if timer.0.tick(time.delta()).just_finished() {
         for tank in &tank_query {
-            let id = tank.0 .0;
+            let id = tank.id .0;
             println!("Tank id: {}", id);
         }
     }
 }
 
 fn set_target_to_move(
-    mut query: Query<&mut TargetPosition, With<Tank>>,
+    mut query: Query<(&mut TargetPosition, &mut Tank), With<Tank>>,
     mut mouse_button_events: EventReader<MouseButtonInput>,
     my_world_coords: Res<MyWorldCoords>,
 ) {
     for mouse_button_event in mouse_button_events.read() {
         match mouse_button_event.state {
             ButtonState::Pressed => {
+                let wx = my_world_coords.0.x;
+                let wy = my_world_coords.0.y;
                 println!("clicked at {}", my_world_coords.0);
-                for mut target_position in &mut query {
-                    target_position.position = my_world_coords.0;
-                    target_position.speed = 500.0;
-                    target_position.moving = true;
+
+                // check if anything was selected at all
+                let any_selected = query.iter().any(|(_, tank)| tank.selected);
+
+                if any_selected {
+                    // initiate the movement
+                    for (mut target_position, _) in &mut query {
+                        target_position.position = my_world_coords.0;
+                        target_position.speed = 500.0;
+                        target_position.moving = true;
+                    }
+                } else {
+                    query.iter_mut()
+                        // check if we clicked on the unit
+                        .filter(|(position, _)| {
+                            let x1 = position.position.x;
+                            let x2 = position.position.x + TILE_SIZE;
+                            let in_x = x1 <= wx && wx <= x2;
+                            // println!("x1 {}, wx {}, x2 {}", x1, wx, x2);
+
+                            let y1 = position.position.y;
+                            let y2 = position.position.y + TILE_SIZE;
+                            let in_y = y1 <= wy && wy <= y2;
+                            // println!("y1 {}, wy {}, y2 {}", y1, wy, y2);
+
+                            return in_x && in_y;
+                        })
+                        .for_each(|(_, mut tank)| tank.selected = true);
                 }
             }
             _ => {}
@@ -184,11 +227,11 @@ fn set_target_to_move(
 
 fn move_towards_target(
     time: Res<Time>,
-    mut query: Query<(&mut TargetPosition, &mut Transform), With<Tank>>,
+    mut query: Query<(&mut TargetPosition, &mut Transform, &Tank), With<Tank>>,
 ) {
-    for (mut target_position, mut transform) in query
+    for (mut target_position, mut transform, tank) in query
         .iter_mut()
-        .filter(|(target_position, _)| target_position.moving)
+        .filter(|(target_position, _, tank)| target_position.moving && tank.selected)
     {
         let current_pos = transform.translation.xy();
         let direction = target_position.position - current_pos;
