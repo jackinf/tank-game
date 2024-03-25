@@ -7,7 +7,7 @@ use bevy_rapier2d::na::Quaternion;
 #[derive(Component)]
 struct Tank {
     id: Id,
-    selected: bool
+    selected: bool,
 }
 
 #[derive(Component)]
@@ -32,15 +32,29 @@ struct TargetPosition {
     moving: bool,
 }
 
+#[derive(Component, Debug)]
+struct TilePosition {
+    center: Vec2,
+    x1: f32,
+    x2: f32,
+    y1: f32,
+    y2: f32,
+}
+
+impl TilePosition {
+    pub fn in_range(&self, x: f32, y: f32) -> bool {
+        let in_x = self.x1 <= x && x <= self.x2;
+        let in_y = self.y1 <= y && y <= self.y2;
+        in_x && in_y
+    }
+}
+
 const MAX_WIDTH: u16 = 2000;
 const MAX_HEIGHT: u16 = 1500;
 const TILE_SIZE: f32 = 128.0;
-// const TILE_EMPTY: usize = 0;
 const TILE_TANK: usize = 1;
 const OFFSET_X: f32 = -800.0;
 const OFFSET_Y: f32 = -200.0;
-// const GRASS_SCALE: f32 = 12.0;
-// const TANK_SCALE: f32 = 1.5;
 
 fn main() {
     App::new()
@@ -66,7 +80,11 @@ fn main() {
         .run()
 }
 
-fn setup(mut commands: Commands, asset_server: Res<AssetServer>, mut tank_id_counter: ResMut<TankIdCounter>) {
+fn setup(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    mut tank_id_counter: ResMut<TankIdCounter>,
+) {
     commands.spawn(Camera2dBundle::default());
 
     // 0 - empty, 1 - tank
@@ -80,77 +98,85 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, mut tank_id_cou
         vec![1, 0, 0, 0, 0, 0, 0, 1],
     ];
 
-    let tilemap_small = vec![
-      vec![0, 0, 0],
-      vec![0, 0, 0],
-      vec![0, 1, 0],
-    ];
+    let tilemap_small = vec![vec![0, 0, 0], vec![0, 0, 0], vec![0, 1, 0]];
 
     // draw_tiles(&mut commands, &asset_server, tilemap);
     tilemap
         .into_iter()
         .enumerate()
         .for_each(|(col_index, row_on_row)| {
-            row_on_row.into_iter().enumerate().for_each(|(row_index, cell)| {
-                let x = row_index as f32 * TILE_SIZE + OFFSET_X;
-                let y = col_index as f32 * TILE_SIZE + OFFSET_Y;
-                let pos = Vec2::new(x, y);
+            row_on_row
+                .into_iter()
+                .enumerate()
+                .for_each(|(row_index, cell)| {
+                    let x = row_index as f32 * TILE_SIZE + OFFSET_X;
+                    let y = col_index as f32 * TILE_SIZE + OFFSET_Y;
+                    let pos = Vec2::new(x, y);
 
-                spawn_grass(&mut commands, &asset_server, pos);
+                    spawn_grass(&mut commands, &asset_server, pos);
 
-                if cell == TILE_TANK {
-                    println!("tank pos: {:?}", pos);
-                    spawn_tank(&mut commands, &asset_server, pos, &mut tank_id_counter);
-                }
-            });
+                    if cell == TILE_TANK {
+                        println!("tank pos: {:?}", pos);
+                        spawn_tank(&mut commands, &asset_server, pos, &mut tank_id_counter);
+                    }
+                });
         });
 }
 
 fn spawn_grass(commands: &mut Commands, asset_server: &Res<AssetServer>, translation: Vec2) {
-    commands.spawn((
-        SpriteBundle {
-            transform: Transform::default()
-                .with_translation(translation.extend(0.0)),
-                // .with_scale(Vec3::new(GRASS_SCALE, GRASS_SCALE, 0.0)),
+    let center_position = Vec2::new(translation.x, translation.y);
+    commands
+        .spawn((SpriteBundle {
+            transform: Transform::default().with_translation(translation.extend(0.0)),
             texture: asset_server.load("grass3.png"),
             ..default()
-        },
-    ));
+        },))
+        .insert(TilePosition {
+            center: center_position,
+            x1: translation.x - TILE_SIZE / 2.0,
+            x2: translation.x + TILE_SIZE / 2.0,
+            y1: translation.y - TILE_SIZE / 2.0,
+            y2: translation.y + TILE_SIZE / 2.0,
+        });
 }
 
-fn spawn_tank(commands: &mut Commands, asset_server: &Res<AssetServer>, translation: Vec2, tank_id_counter: &mut ResMut<TankIdCounter>) {
+fn spawn_tank(
+    commands: &mut Commands,
+    asset_server: &Res<AssetServer>,
+    translation: Vec2,
+    tank_id_counter: &mut ResMut<TankIdCounter>,
+) {
     let tank_id = tank_id_counter.0;
     tank_id_counter.0 += 1;
 
-    let center_position = Vec2::new(translation.x - (TILE_SIZE / 2.0), translation.y - (TILE_SIZE / 2.0));
+    let center_position = Vec2::new(
+        translation.x - (TILE_SIZE / 2.0),
+        translation.y - (TILE_SIZE / 2.0),
+    );
     let tank_base: Entity = commands
-        .spawn((
-            SpriteBundle {
-                transform: Transform::default()
-                    .with_translation(translation.extend(1.0)),
-                texture: asset_server.load("tank3base.png"),
-                ..default()
-            },
-        ))
+        .spawn((SpriteBundle {
+            transform: Transform::default().with_translation(translation.extend(1.0)),
+            texture: asset_server.load("tank3base.png"),
+            ..default()
+        },))
         .insert(TargetPosition {
             position: center_position,
             speed: 0.0,
             moving: false,
         })
-        .insert(Tank { id: Id(tank_id), selected: false })
+        .insert(Tank {
+            id: Id(tank_id),
+            selected: false,
+        })
         .id();
 
     commands
-        .spawn((
-            SpriteBundle {
-                // transform: Transform::default()
-                //     .with_translation(translation.extend(0.0)),
-                transform: Transform::default()
-                    .with_rotation(Quat::from(Quaternion::identity())), // TODO: add rotation
-                texture: asset_server.load("tank3gun.png"),
-                ..default()
-            },
-        )).set_parent(tank_base);
+        .spawn((SpriteBundle {
+            transform: Transform::default().with_rotation(Quat::from(Quaternion::identity())), // TODO: add rotation
+            texture: asset_server.load("tank3gun.png"),
+            ..default()
+        },))
+        .set_parent(tank_base);
 }
 
 fn track_cursor(
@@ -173,14 +199,15 @@ fn track_cursor(
 fn logger(tank_query: Query<&Tank>, mut timer: ResMut<TankLogTimer>, time: Res<Time>) {
     if timer.0.tick(time.delta()).just_finished() {
         for tank in &tank_query {
-            let id = tank.id .0;
+            let id = tank.id.0;
             println!("Tank id: {}", id);
         }
     }
 }
 
 fn set_target_to_move(
-    mut query: Query<(&mut TargetPosition, &mut Tank), With<Tank>>,
+    mut tank_query: Query<(&mut TargetPosition, &mut Tank), With<Tank>>,
+    mut tile_query: Query<&TilePosition>,
     mut mouse_button_events: EventReader<MouseButtonInput>,
     my_world_coords: Res<MyWorldCoords>,
 ) {
@@ -192,17 +219,23 @@ fn set_target_to_move(
                 println!("clicked at {}", my_world_coords.0);
 
                 // check if anything was selected at all
-                let any_selected = query.iter().any(|(_, tank)| tank.selected);
+                let any_selected = tank_query.iter().any(|(_, tank)| tank.selected);
 
                 if any_selected {
-                    // initiate the movement
-                    for (mut target_position, _) in &mut query {
-                        target_position.position = my_world_coords.0;
-                        target_position.speed = 500.0;
-                        target_position.moving = true;
-                    }
+                    tile_query
+                        .iter()
+                        .find(|tile| tile.in_range(wx, wy))
+                        .map(|tile| {
+                            println!("tile clicked: {:?}", tile);
+                            for (mut target_position, _) in &mut tank_query {
+                                target_position.position = tile.center;
+                                target_position.speed = 500.0;
+                                target_position.moving = true;
+                            }
+                        });
                 } else {
-                    query.iter_mut()
+                    tank_query
+                        .iter_mut()
                         // check if we clicked on the unit
                         .filter(|(position, _)| {
                             let x1 = position.position.x;
