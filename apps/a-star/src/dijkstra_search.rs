@@ -1,6 +1,6 @@
-use std::collections::{BinaryHeap, HashSet};
 use crate::utils::common::{find_coord, Vec3};
 use crate::utils::constants::{FINISH, START, WALL};
+use std::collections::{BinaryHeap, HashSet};
 
 /// Finds a value using MinMax Heap
 pub fn main() {
@@ -37,7 +37,7 @@ pub fn main() {
         cache.insert((row, col));
 
         if grid[row][col] == WALL {
-            continue
+            continue;
         }
 
         if grid[row][col] == FINISH {

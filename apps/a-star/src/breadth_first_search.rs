@@ -1,6 +1,6 @@
-use std::collections::{HashSet, VecDeque};
 use crate::utils::common::{find_coord, Vec2};
 use crate::utils::constants::{FINISH, START, WALL};
+use std::collections::{HashSet, VecDeque};
 
 pub fn main() {
     println!("Breadth-first search");
@@ -37,7 +37,7 @@ pub fn main() {
         cache.insert((row, col));
 
         if grid[row][col] == WALL {
-            continue
+            continue;
         }
 
         if grid[row][col] == FINISH {

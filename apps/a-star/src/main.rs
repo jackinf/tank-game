@@ -1,5 +1,5 @@
-mod dijkstra_search;
 mod breadth_first_search;
+mod dijkstra_search;
 mod utils {
     pub mod common;
     pub mod constants;

@@ -2,6 +2,7 @@ use bevy::input::mouse::MouseButtonInput;
 use bevy::input::ButtonState;
 use bevy::prelude::*;
 use bevy::window::{PrimaryWindow, WindowResolution};
+use bevy_rapier2d::na::Quaternion;
 
 #[derive(Component)]
 struct Tank(Id);
@@ -22,8 +23,13 @@ struct TargetPosition {
     moving: bool,
 }
 
-const MAX_WIDTH: u16 = 1000;
-const MAX_HEIGHT: u16 = 600;
+const MAX_WIDTH: u16 = 2000;
+const MAX_HEIGHT: u16 = 1500;
+const TILE_SIZE: f32 = 128.0;
+const TILE_GRASS: usize = 0;
+const TILE_TANK: usize = 1;
+// const GRASS_SCALE: f32 = 12.0;
+// const TANK_SCALE: f32 = 1.5;
 
 fn main() {
     App::new()
@@ -50,7 +56,84 @@ fn main() {
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn(Camera2dBundle::default());
 
-    spawn_tank(&mut commands, &asset_server);
+    // 0 - grass, 1 - tank
+    let tilemap = vec![
+        vec![0, 0, 1, 0, 0, 0, 0, 1],
+        vec![0, 0, 1, 0, 0, 0, 0, 1],
+        vec![0, 0, 1, 0, 0, 0, 0, 1],
+        vec![0, 0, 1, 0, 0, 0, 0, 1],
+        vec![1, 0, 0, 0, 0, 0, 0, 1],
+        vec![1, 0, 0, 0, 0, 0, 0, 1],
+        vec![1, 0, 0, 0, 0, 0, 0, 1],
+    ];
+
+    draw_tiles(&mut commands, &asset_server, tilemap);
+}
+
+const OFFSET_X: f32 = -800.0;
+const OFFSET_Y: f32 = -200.0;
+
+fn draw_tiles(commands: &mut Commands, asset_server: &Res<AssetServer>, tilemap: Vec<Vec<usize>>) {
+    tilemap
+        .into_iter()
+        .enumerate()
+        .for_each(|(col_index, row_on_row)| {
+            row_on_row.into_iter().enumerate().for_each(|(row_index, cell)| {
+                let x = row_index as f32 * TILE_SIZE + OFFSET_X;
+                let y = col_index as f32 * TILE_SIZE + OFFSET_Y;
+                let pos = Vec2::new(x, y);
+
+                if cell == TILE_GRASS {
+                    spawn_grass(commands, &asset_server, pos);
+                } else if cell == TILE_TANK {
+                    spawn_grass(commands, &asset_server, pos);
+                    spawn_tank(commands, &asset_server, pos);
+                }
+            });
+        });
+}
+
+fn spawn_grass(commands: &mut Commands, asset_server: &Res<AssetServer>, translation: Vec2) {
+    commands.spawn((
+        SpriteBundle {
+            transform: Transform::default()
+                .with_translation(translation.extend(0.0)),
+                // .with_scale(Vec3::new(GRASS_SCALE, GRASS_SCALE, 0.0)),
+            texture: asset_server.load("grass3.png"),
+            ..default()
+        },
+    ));
+}
+
+fn spawn_tank(commands: &mut Commands, asset_server: &Res<AssetServer>, translation: Vec2) {
+    let tank_base: Entity = commands
+        .spawn((
+            SpriteBundle {
+                transform: Transform::default()
+                    .with_translation(translation.extend(0.0)),
+                texture: asset_server.load("tank3base.png"),
+                ..default()
+            },
+        ))
+        .insert(TargetPosition {
+            position: Vec2::new(0.0, 0.0),
+            speed: 0.0,
+            moving: false,
+        })
+        .insert(Tank(Id(1)))
+        .id();
+
+    commands
+        .spawn((
+            SpriteBundle {
+                // transform: Transform::default()
+                //     .with_translation(translation.extend(0.0)),
+                transform: Transform::default()
+                    .with_rotation(Quat::from(Quaternion::identity())), // TODO: add rotation
+                texture: asset_server.load("tank3gun.png"),
+                ..default()
+            },
+        )).set_parent(tank_base);
 }
 
 fn track_cursor(
@@ -68,21 +151,6 @@ fn track_cursor(
     {
         my_world_coords.0 = world_position;
     }
-}
-
-fn spawn_tank(commands: &mut Commands, asset_server: &Res<AssetServer>) {
-    commands
-        .spawn(SpriteBundle {
-            transform: Transform::default().with_translation(Vec3::new(10.0, 0.0, 0.0)),
-            texture: asset_server.load("ball_red_large.png"),
-            ..default()
-        })
-        .insert(TargetPosition {
-            position: Vec2::new(0.0, 0.0),
-            speed: 0.0,
-            moving: false,
-        })
-        .insert(Tank(Id(1)));
 }
 
 fn logger(tank_query: Query<&Tank>, mut timer: ResMut<TankLogTimer>, time: Res<Time>) {
