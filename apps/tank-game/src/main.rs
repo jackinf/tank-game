@@ -32,6 +32,11 @@ struct TargetPosition {
     moving: bool,
 }
 
+#[derive(Component)]
+struct TankGun {
+    parent_id: Id,
+}
+
 #[derive(Component, Debug)]
 struct TilePosition {
     center: Vec2,
@@ -176,6 +181,9 @@ fn spawn_tank(
             texture: asset_server.load("tank3gun.png"),
             ..default()
         },))
+        .insert(TankGun {
+            parent_id: Id(tank_id),
+        })
         .set_parent(tank_base);
 }
 
@@ -227,7 +235,9 @@ fn set_target_to_move(
                         .find(|tile| tile.in_range(wx, wy))
                         .map(|tile| {
                             println!("tile clicked: {:?}", tile);
-                            for (mut target_position, _) in &mut tank_query {
+                            for (mut target_position, _) in
+                                &mut tank_query.iter_mut().filter(|(_, tank)| tank.selected)
+                            {
                                 target_position.position = tile.center;
                                 target_position.speed = 500.0;
                                 target_position.moving = true;
@@ -260,9 +270,10 @@ fn set_target_to_move(
 
 fn move_towards_target(
     time: Res<Time>,
-    mut query: Query<(&mut TargetPosition, &mut Transform, &Tank), With<Tank>>,
+    mut tank_query: Query<(&mut TargetPosition, &mut Transform, &Tank), With<Tank>>,
+    mut gun_query: Query<(&mut Transform, &TankGun), (With<TankGun>, Without<Tank>)>,
 ) {
-    for (mut target_position, mut transform, tank) in query
+    for (mut target_position, mut transform, tank) in tank_query
         .iter_mut()
         .filter(|(target_position, _, tank)| target_position.moving && tank.selected)
     {
@@ -270,14 +281,34 @@ fn move_towards_target(
         let direction = target_position.position - current_pos;
         let distance_to_move = target_position.speed * time.delta_seconds();
 
-        if (direction.length() > distance_to_move) {
+        // Smooth movement
+        if direction.length() > distance_to_move {
             let new_pos = current_pos + direction.normalize() * distance_to_move;
-            transform.translation.x = new_pos.x;
-            transform.translation.y = new_pos.y;
+            let target_vec3 = Vec3::new(new_pos.x, new_pos.y, transform.translation.z);
+
+            // TODO: account for a bug if the speed is too high.
+            // if so, use simpler:
+            // transform.translation = Vec3::new(new_pos.x, new_pos.y, transform.translation.z);
+            transform.translation = transform.translation.lerp(
+                target_vec3,
+                target_position.speed / 10.0 * time.delta_seconds(),
+            );
         } else {
             transform.translation.x = target_position.position.x;
             transform.translation.y = target_position.position.y;
             target_position.moving = false;
+        }
+
+        // Rotate tank gun smoothly
+        if let Some((mut gun_transform, _)) = gun_query
+            .iter_mut()
+            .find(|(_, gun)| gun.parent_id.0 == tank.id.0)
+        {
+            let target_angle = direction.y.atan2(direction.x) - std::f32::consts::FRAC_PI_2;
+            gun_transform.rotation = gun_transform.rotation.slerp(
+                Quat::from_rotation_z(target_angle),
+                10.0 * time.delta_seconds(),
+            );
         }
     }
 }
