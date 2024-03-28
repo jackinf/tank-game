@@ -1,5 +1,6 @@
 use bevy::input::mouse::MouseButtonInput;
 use bevy::input::ButtonState;
+use bevy::input::keyboard::KeyboardInput;
 use bevy::prelude::*;
 use bevy::window::{PrimaryWindow, WindowResolution};
 use bevy_rapier2d::na::Quaternion;
@@ -214,58 +215,88 @@ fn logger(tank_query: Query<&Tank>, mut timer: ResMut<TankLogTimer>, time: Res<T
 }
 
 fn set_target_to_move(
-    mut tank_query: Query<(&mut TargetPosition, &mut Tank), With<Tank>>,
+    mut tank_query: Query<(&mut TargetPosition, &mut Tank, &mut Sprite), With<Tank>>,
     mut tile_query: Query<&TilePosition>,
     mut mouse_button_events: EventReader<MouseButtonInput>,
+    mut key_button_events: EventReader<KeyboardInput>,
     my_world_coords: Res<MyWorldCoords>,
 ) {
+    for key_button_event in key_button_events.read() {
+        match key_button_event.state {
+            ButtonState::Pressed => {
+                // selects everything
+                if key_button_event.key_code == KeyCode::Space {
+                    for (_, mut tank, mut sprite) in &mut tank_query.iter_mut() {
+                        select_tank(&mut tank, &mut sprite);
+                    }
+                }
+
+                // unselects everything
+                if key_button_event.key_code == KeyCode::Escape {
+                    for (mut target_position, mut tank, mut sprite) in &mut tank_query.iter_mut() {
+                        unselect_tank(&mut target_position, &mut tank, &mut sprite);
+                    }
+                }
+            }
+            _ => {}
+        }
+    }
+
     for mouse_button_event in mouse_button_events.read() {
         match mouse_button_event.state {
             ButtonState::Pressed => {
                 let wx = my_world_coords.0.x;
                 let wy = my_world_coords.0.y;
-                println!("clicked at {}", my_world_coords.0);
 
-                // check if anything was selected at all
-                let any_selected = tank_query.iter().any(|(_, tank)| tank.selected);
+                let clicked_on_tank = tank_query
+                    .iter_mut()
+                    .find(|(position, _, _)| is_tank_clicked_on(wx, wy, position));
 
-                if any_selected {
+                if let Some((_, mut tank, mut sprite)) = clicked_on_tank {
+                    select_tank(&mut tank, &mut sprite);
+                } else {
                     tile_query
                         .iter()
                         .find(|tile| tile.in_range(wx, wy))
                         .map(|tile| {
-                            println!("tile clicked: {:?}", tile);
-                            for (mut target_position, _) in
-                                &mut tank_query.iter_mut().filter(|(_, tank)| tank.selected)
+                            for (mut target_position, _, _) in
+                                &mut tank_query.iter_mut().filter(|(_, tank, _)| tank.selected)
                             {
                                 target_position.position = tile.center;
                                 target_position.speed = 500.0;
                                 target_position.moving = true;
                             }
                         });
-                } else {
-                    tank_query
-                        .iter_mut()
-                        // check if we clicked on the unit
-                        .filter(|(position, _)| {
-                            let x1 = position.position.x;
-                            let x2 = position.position.x + TILE_SIZE;
-                            let in_x = x1 <= wx && wx <= x2;
-                            // println!("x1 {}, wx {}, x2 {}", x1, wx, x2);
-
-                            let y1 = position.position.y;
-                            let y2 = position.position.y + TILE_SIZE;
-                            let in_y = y1 <= wy && wy <= y2;
-                            // println!("y1 {}, wy {}, y2 {}", y1, wy, y2);
-
-                            return in_x && in_y;
-                        })
-                        .for_each(|(_, mut tank)| tank.selected = true);
                 }
             }
             _ => {}
         }
     }
+}
+
+fn select_tank(tank: &mut Mut<Tank>, sprite: &mut Mut<Sprite>) {
+    tank.selected = true;
+    sprite.color = Color::rgb(1.0, 9.0, 8.0);
+}
+
+fn unselect_tank(target_position: &mut Mut<TargetPosition>, tank: &mut Mut<Tank>, sprite: &mut Mut<Sprite>) {
+    target_position.moving = false;
+    tank.selected = false;
+    sprite.color = Color::WHITE;
+}
+
+fn is_tank_clicked_on(wx: f32, wy: f32, position: &Mut<TargetPosition>) -> bool {
+    let x1 = position.position.x;
+    let x2 = position.position.x + TILE_SIZE;
+    let in_x = x1 <= wx && wx <= x2;
+    // println!("x1 {}, wx {}, x2 {}", x1, wx, x2);
+
+    let y1 = position.position.y;
+    let y2 = position.position.y + TILE_SIZE;
+    let in_y = y1 <= wy && wy <= y2;
+    // println!("y1 {}, wy {}, y2 {}", y1, wy, y2);
+
+    in_x && in_y
 }
 
 fn move_towards_target(
@@ -314,7 +345,7 @@ fn move_towards_target(
 }
 
 fn inflate_tank(mut query: Query<&mut Transform, With<Tank>>, keyboard: Res<ButtonInput<KeyCode>>) {
-    if keyboard.just_pressed(KeyCode::Space) {
+    if keyboard.just_pressed(KeyCode::KeyI) {
         for mut transform in &mut query {
             transform.scale *= 1.25;
         }

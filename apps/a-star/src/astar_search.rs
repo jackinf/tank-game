@@ -1,7 +1,7 @@
-use std::cmp::Ordering;
-use std::collections::{BinaryHeap, HashMap, HashSet};
 use crate::utils::common::{find_coord, Vec3};
 use crate::utils::constants::{FINISH, START, WALL};
+use std::cmp::Ordering;
+use std::collections::{BinaryHeap, HashMap, HashSet};
 
 #[derive(Copy, Clone, Eq, PartialEq)]
 struct State {
@@ -13,7 +13,9 @@ struct State {
 impl Ord for State {
     fn cmp(&self, other: &Self) -> Ordering {
         // Notice that the order is reversed; we want to pop smallest costs first
-        other.cost.cmp(&self.cost)
+        other
+            .cost
+            .cmp(&self.cost)
             .then_with(|| self.position.cmp(&other.position))
     }
 }
@@ -34,16 +36,31 @@ fn heuristic(a: (usize, usize), b: (usize, usize)) -> usize {
 // Generate neighbors considering grid bounds and using usize
 fn neighbors(pos: (usize, usize), bounds: (usize, usize)) -> Vec<(usize, usize)> {
     let mut result = Vec::new();
-    if pos.0 > 0 { result.push((pos.0 - 1, pos.1)); }
-    if pos.1 > 0 { result.push((pos.0, pos.1 - 1)); }
-    if pos.0 < bounds.0 - 1 { result.push((pos.0 + 1, pos.1)); }
-    if pos.1 < bounds.1 - 1 { result.push((pos.0, pos.1 + 1)); }
+    if pos.0 > 0 {
+        result.push((pos.0 - 1, pos.1));
+    }
+    if pos.1 > 0 {
+        result.push((pos.0, pos.1 - 1));
+    }
+    if pos.0 < bounds.0 - 1 {
+        result.push((pos.0 + 1, pos.1));
+    }
+    if pos.1 < bounds.1 - 1 {
+        result.push((pos.0, pos.1 + 1));
+    }
     result
 }
 
-fn a_star(grid: &Vec<Vec<usize>>, start: (usize, usize), goal: (usize, usize)) -> Option<(usize, HashMap<(usize, usize), (usize, usize)>)> {
+fn a_star(
+    grid: &Vec<Vec<usize>>,
+    start: (usize, usize),
+    goal: (usize, usize),
+) -> Option<(usize, HashMap<(usize, usize), (usize, usize)>)> {
     let mut frontier = BinaryHeap::new();
-    frontier.push(State { cost: 0, position: start });
+    frontier.push(State {
+        cost: 0,
+        position: start,
+    });
 
     let mut came_from: HashMap<(usize, usize), (usize, usize)> = HashMap::new();
     let mut cost_so_far: HashMap<(usize, usize), usize> = HashMap::new();
@@ -53,7 +70,11 @@ fn a_star(grid: &Vec<Vec<usize>>, start: (usize, usize), goal: (usize, usize)) -
 
     let bounds = (grid.len(), grid[0].len());
 
-    while let Some(State { cost: _, position: current }) = frontier.pop() {
+    while let Some(State {
+        cost: _,
+        position: current,
+    }) = frontier.pop()
+    {
         if current == goal {
             return Some((*cost_so_far.get(&current).unwrap(), came_from));
         }
@@ -68,7 +89,10 @@ fn a_star(grid: &Vec<Vec<usize>>, start: (usize, usize), goal: (usize, usize)) -
             if !cost_so_far.contains_key(next) || new_cost < *cost_so_far.get(next).unwrap() {
                 cost_so_far.insert(*next, new_cost);
                 let priority = new_cost + heuristic(*next, goal);
-                frontier.push(State { cost: priority, position: *next });
+                frontier.push(State {
+                    cost: priority,
+                    position: *next,
+                });
                 came_from.insert(*next, current);
             }
         }
@@ -117,7 +141,7 @@ pub fn main() {
                 }
                 println!();
             }
-        },
+        }
         None => println!("No path found from {:?} to {:?}", start, goal),
     }
 }

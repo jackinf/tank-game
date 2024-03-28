@@ -1,6 +1,6 @@
+mod astar_search;
 mod breadth_first_search;
 mod dijkstra_search;
-mod astar_search;
 
 mod utils {
     pub mod common;
