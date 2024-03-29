@@ -2,9 +2,9 @@ use crate::common::resources::WorldCoordinates;
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 
-pub struct WorldCoordinatesPlugin;
+pub struct CursorPlugin;
 
-impl Plugin for WorldCoordinatesPlugin {
+impl Plugin for CursorPlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(WorldCoordinates(Vec2::new(0.0, 0.0)))
             .add_systems(Update, track_cursor);
