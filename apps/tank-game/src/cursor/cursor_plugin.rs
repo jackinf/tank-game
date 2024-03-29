@@ -1,4 +1,4 @@
-use crate::common::resources::WorldCoordinates;
+use crate::cursor::cursor_coordinates::WorldCoordinates;
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 

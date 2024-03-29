@@ -1,5 +1,5 @@
-use bevy::prelude::*;
 use crate::common::constants::TILE_GRASS;
+use bevy::prelude::*;
 
 #[derive(Component, Debug)]
 pub struct Tile {

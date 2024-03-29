@@ -3,12 +3,21 @@ use bevy::prelude::*;
 use bevy::prelude::{Camera2dBundle, Commands, Res, ResMut};
 use bevy_rapier2d::na::Quaternion;
 
-use crate::common::constants::{OFFSET_X, OFFSET_Y, TILE_SIZE, TILE_TANK, TILE_WALL, TILE_GRASS};
-use crate::common::resources::TankIdCounter;
+use crate::common::constants::{OFFSET_X, OFFSET_Y, TILE_GRASS, TILE_SIZE, TILE_TANK, TILE_WALL};
 use crate::common::tile::Tile;
+use crate::setup::tank_id_counter::TankIdCounter;
 use crate::tank::tank::Tank;
 use crate::tank::tank_gun::TankGun;
 use crate::tank::tank_id::TankId;
+
+pub struct SetupPlugin;
+
+impl Plugin for SetupPlugin {
+    fn build(&self, app: &mut App) {
+        app.insert_resource(TankIdCounter(1))
+            .add_systems(PreStartup, setup);
+    }
+}
 
 pub fn setup(
     mut commands: Commands,
@@ -44,19 +53,28 @@ pub fn setup(
                     let pos = Vec2::new(x, y);
 
                     match cell {
-                        TILE_WALL => spawn_simple_tile(&mut commands, &asset_server, pos, TILE_WALL),
+                        TILE_WALL => {
+                            spawn_simple_tile(&mut commands, &asset_server, pos, TILE_WALL)
+                        }
                         TILE_TANK => {
                             spawn_simple_tile(&mut commands, &asset_server, pos, TILE_GRASS);
                             spawn_tank(&mut commands, &asset_server, pos, &mut tank_id_counter);
-                        },
-                        TILE_GRASS => spawn_simple_tile(&mut commands, &asset_server, pos, TILE_GRASS),
+                        }
+                        TILE_GRASS => {
+                            spawn_simple_tile(&mut commands, &asset_server, pos, TILE_GRASS)
+                        }
                         _ => spawn_simple_tile(&mut commands, &asset_server, pos, TILE_GRASS),
                     }
                 });
         });
 }
 
-fn spawn_simple_tile(commands: &mut Commands, asset_server: &Res<AssetServer>, translation: Vec2, tile_type: usize) {
+fn spawn_simple_tile(
+    commands: &mut Commands,
+    asset_server: &Res<AssetServer>,
+    translation: Vec2,
+    tile_type: usize,
+) {
     let center_position = Vec2::new(translation.x, translation.y);
     let path: String = if tile_type == TILE_WALL {
         "wall.png".into()

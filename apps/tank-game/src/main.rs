@@ -13,6 +13,7 @@ fn main() {
         )
         .add_plugins((
             // LoggerPlugin,
+            SetupPlugin,
             CursorPlugin,
             TankMovementPlugin,
             TankInflationPlugin,
@@ -22,16 +23,19 @@ fn main() {
 
 mod common {
     pub mod constants;
-    pub mod resources;
     pub mod tile;
 }
-mod game_setup;
+mod setup {
+    pub mod setup_plugin;
+    pub mod tank_id_counter;
+}
 mod cursor {
     pub mod cursor_coordinates;
     pub mod cursor_plugin;
 }
 mod logger {
     pub mod logger_plugin;
+    pub mod tank_log_timer;
 }
 mod tank {
     pub mod tank;
@@ -40,12 +44,15 @@ mod tank {
     pub mod tank_inflation_plugin;
     pub mod tank_movement_plugin;
 }
+mod utils {
+    pub mod astar;
+}
 
 use bevy::prelude::*;
 use bevy::window::WindowResolution;
 
 use crate::common::constants::{MAX_HEIGHT, MAX_WIDTH};
 use crate::cursor::cursor_plugin::CursorPlugin;
-use crate::logger::logger_plugin::LoggerPlugin;
+use crate::setup::setup_plugin::SetupPlugin;
 use crate::tank::tank_inflation_plugin::TankInflationPlugin;
 use crate::tank::tank_movement_plugin::TankMovementPlugin;

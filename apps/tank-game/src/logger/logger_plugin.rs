@@ -1,14 +1,15 @@
 use bevy::app::Plugin;
 use bevy::prelude::*;
 
-use crate::common::resources::TankLogTimer;
+use crate::logger::tank_log_timer::TankLogTimer;
 use crate::tank::tank::Tank;
 
 pub struct LoggerPlugin;
 
 impl Plugin for LoggerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(FixedUpdate, logger);
+        app.insert_resource(TankLogTimer(Timer::from_seconds(1.0, TimerMode::Repeating)))
+            .add_systems(FixedUpdate, logger);
     }
 }
 
