@@ -12,7 +12,7 @@ mod star_wars {
 
 use crate::common::describable::Describable;
 use crate::star_wars::api::get_person;
-use crate::todo::todo_manager::{TodoManager};
+use crate::todo::todo_manager::TodoManager;
 
 fn print_description<T: Describable>(item: T) {
     println!("{}", item.describe())
