@@ -11,6 +11,7 @@ fn main() {
                 ..default()
             }),
         )
+        .insert_resource(GameMap(vec![]))
         .add_plugins((
             // LoggerPlugin,
             SetupPlugin,
@@ -23,6 +24,7 @@ fn main() {
 
 mod common {
     pub mod constants;
+    pub mod game_map;
     pub mod tile;
 }
 mod setup {
@@ -49,9 +51,11 @@ mod utils {
 }
 
 use bevy::prelude::*;
+use bevy::reflect::ReflectKind::Map;
 use bevy::window::WindowResolution;
 
 use crate::common::constants::{MAX_HEIGHT, MAX_WIDTH};
+use crate::common::game_map::GameMap;
 use crate::cursor::cursor_plugin::CursorPlugin;
 use crate::setup::setup_plugin::SetupPlugin;
 use crate::tank::tank_inflation_plugin::TankInflationPlugin;

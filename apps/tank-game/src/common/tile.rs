@@ -1,4 +1,4 @@
-use crate::common::constants::TILE_GRASS;
+use crate::common::constants::{TILE_GRASS, TILE_SIZE};
 use bevy::prelude::*;
 
 #[derive(Component, Debug)]
@@ -9,10 +9,17 @@ pub struct Tile {
     y1: f32,
     y2: f32,
     tile_type: usize,
+    map_coord: (usize, usize),
 }
 
 impl Tile {
-    pub fn new(center: Vec2, width: f32, height: f32, tile_type: usize) -> Self {
+    pub fn new(
+        center: Vec2,
+        width: f32,
+        height: f32,
+        tile_type: usize,
+        map_coord: (usize, usize),
+    ) -> Self {
         let x1 = center.x - width / 2.0;
         let x2 = center.x + width / 2.0;
         let y1 = center.y - height / 2.0;
@@ -24,10 +31,11 @@ impl Tile {
             y1,
             y2,
             tile_type,
+            map_coord,
         }
     }
 
-    pub fn movable(&self) -> bool {
+    pub fn accessible(&self) -> bool {
         self.tile_type == TILE_GRASS
     }
 
@@ -35,6 +43,14 @@ impl Tile {
         let in_x = self.x1 <= x && x <= self.x2;
         let in_y = self.y1 <= y && y <= self.y2;
         in_x && in_y
+    }
+
+    pub fn get_map_coord(&self) -> (usize, usize) {
+        self.map_coord
+        // let goal_x = self.center.x / TILE_SIZE;
+        // let goal_y = self.center.y / TILE_SIZE;
+        //
+        // (goal_x, goal_y)
     }
 
     pub fn get_center(&self) -> Vec2 {

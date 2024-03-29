@@ -100,23 +100,30 @@ pub fn a_star(
     None // If the goal was not reached
 }
 
-pub fn a_star_path(
+pub fn find_path(
     grid: &Vec<Vec<usize>>,
     start: (usize, usize),
     goal: (usize, usize),
 ) -> VecDeque<(usize, usize)> {
-    let (_, came_from) = a_star(grid, start, goal).unwrap();
+    let result = a_star(grid, start, goal);
+    println!("start: {:?}", start);
+    println!("goal: {:?}", goal);
 
-    let mut current = goal;
-    let mut path = VecDeque::new();
-    path.push_front(goal);
+    match result {
+        None => return VecDeque::new(),
+        Some((_, came_from)) => {
+            let mut current = goal;
+            let mut path = VecDeque::new();
+            path.push_front(goal);
 
-    while current != start {
-        current = came_from[&current];
-        path.push_front(current);
+            while current != start {
+                current = came_from[&current];
+                path.push_front(current);
+            }
+
+            path
+        }
     }
-
-    path
 }
 
 #[cfg(test)]
@@ -124,7 +131,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_a_star() {
+    fn test_a_star_case1() {
         let grid: Vec<Vec<usize>> = vec![
             vec![0, 0, 0, 0, 0, 0, 0],
             vec![0, 0, 0, 0, 2, 0, 0],
@@ -137,7 +144,30 @@ mod tests {
         let start = (4, 1);
         let goal = (2, 5);
 
-        let path = a_star_path(&grid, start, goal);
+        let path = find_path(&grid, start, goal);
+        println!("{:?}", path);
+
+        assert_eq!(path.len(), 11);
+        assert_eq!(path[0], start);
+        assert_eq!(path[path.len() - 1], goal);
+    }
+
+    #[test]
+    fn test_a_star_case2() {
+        let grid: Vec<Vec<usize>> = vec![
+            vec![0, 0, 1, 0, 0, 0, 0, 1],
+            vec![0, 0, 1, 0, 2, 0, 0, 1],
+            vec![0, 0, 1, 0, 2, 0, 0, 1],
+            vec![0, 0, 1, 0, 2, 0, 0, 1],
+            vec![1, 0, 0, 0, 2, 0, 0, 1],
+            vec![1, 0, 0, 0, 2, 0, 0, 1],
+            vec![1, 0, 0, 0, 0, 0, 0, 1],
+        ];
+
+        let start = (5, 4);
+        let goal = (2, 5);
+
+        let path = find_path(&grid, start, goal);
         println!("{:?}", path);
 
         assert_eq!(path.len(), 11);

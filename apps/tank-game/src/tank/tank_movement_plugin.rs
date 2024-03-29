@@ -4,10 +4,12 @@ use bevy::input::ButtonState;
 use bevy::prelude::*;
 
 use crate::common::constants::TILE_SIZE;
+use crate::common::game_map::GameMap;
 use crate::common::tile::Tile;
 use crate::cursor::cursor_coordinates::WorldCoordinates;
 use crate::tank::tank::Tank;
 use crate::tank::tank_gun::TankGun;
+use crate::utils::astar;
 
 pub struct TankMovementPlugin;
 
@@ -24,6 +26,7 @@ fn set_tank_target_position_to_move(
     mut mouse_button_events: EventReader<MouseButtonInput>,
     mut key_button_events: EventReader<KeyboardInput>,
     my_world_coords: Res<WorldCoordinates>,
+    game_map: Res<GameMap>,
 ) {
     for key_button_event in key_button_events.read() {
         if let ButtonState::Pressed = key_button_event.state {
@@ -37,7 +40,7 @@ fn set_tank_target_position_to_move(
             // unselects everything
             if key_button_event.key_code == KeyCode::Escape {
                 for (mut tank, mut sprite) in &mut tank_query.iter_mut() {
-                    unselect_tank(&mut tank, &mut sprite);
+                    deselect_tank(&mut tank, &mut sprite);
                 }
             }
         }
@@ -54,17 +57,35 @@ fn set_tank_target_position_to_move(
 
             match clicked_on_tank {
                 Some((mut tank, mut sprite)) => {
-                    select_tank(&mut tank, &mut sprite);
+                    if tank.selected {
+                        deselect_tank(&mut tank, &mut sprite);
+                    } else {
+                        select_tank(&mut tank, &mut sprite);
+                    }
                 }
                 None => {
-                    if let Some(tile) = tile_query
+                    if let Some(tile_goal) = tile_query
                         .iter()
-                        .find(|tile| tile.movable() && tile.in_range(wx, wy))
+                        .find(|tile| tile.accessible() && tile.in_range(wx, wy))
                     {
+                        let goal = tile_goal.get_map_coord();
+
                         for (mut tank, _) in
                             &mut tank_query.iter_mut().filter(|(tank, _)| tank.selected)
                         {
-                            tank.start_moving_to(tile.get_center());
+                            let curr_x = tank.target_position.x;
+                            let curr_y = tank.target_position.y;
+
+                            if let Some(tile_start) = tile_query
+                                .iter()
+                                .find(|tile| tile.accessible() && tile.in_range(curr_x, curr_y))
+                            {
+                                let start = tile_start.get_map_coord();
+                                let path = astar::find_path(&game_map.0, start, goal);
+                                println!("Path: {:?}", path);
+                            }
+
+                            tank.start_moving_to(tile_goal.get_center());
                         }
                     }
                 }
@@ -78,19 +99,21 @@ fn select_tank(tank: &mut Mut<Tank>, sprite: &mut Mut<Sprite>) {
     sprite.color = Color::rgb(1.0, 9.0, 8.0);
 }
 
-fn unselect_tank(tank: &mut Mut<Tank>, sprite: &mut Mut<Sprite>) {
+fn deselect_tank(tank: &mut Mut<Tank>, sprite: &mut Mut<Sprite>) {
     tank.moving = false;
     tank.selected = false;
     sprite.color = Color::WHITE;
 }
 
 fn is_tank_clicked_on(wx: f32, wy: f32, tank: &Mut<Tank>) -> bool {
-    let x1 = tank.target_position.x;
-    let x2 = tank.target_position.x + TILE_SIZE;
+    let offset = TILE_SIZE / 2.0;
+
+    let x1 = tank.target_position.x - offset;
+    let x2 = tank.target_position.x + TILE_SIZE - offset;
     let in_x = x1 <= wx && wx <= x2;
 
-    let y1 = tank.target_position.y;
-    let y2 = tank.target_position.y + TILE_SIZE;
+    let y1 = tank.target_position.y - offset;
+    let y2 = tank.target_position.y + TILE_SIZE - offset;
     let in_y = y1 <= wy && wy <= y2;
 
     in_x && in_y

@@ -27,6 +27,11 @@ impl Tank {
         self.moving = true;
     }
 
+    pub fn set_movement_path(&mut self, path: Vec<(usize, usize)>) {
+        self.moving = true;
+        // self.target_position = path[0];
+    }
+
     pub fn stop(&mut self) {
         self.moving = false;
     }

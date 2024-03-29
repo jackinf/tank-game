@@ -4,6 +4,7 @@ use bevy::prelude::{Camera2dBundle, Commands, Res, ResMut};
 use bevy_rapier2d::na::Quaternion;
 
 use crate::common::constants::{OFFSET_X, OFFSET_Y, TILE_GRASS, TILE_SIZE, TILE_TANK, TILE_WALL};
+use crate::common::game_map::GameMap;
 use crate::common::tile::Tile;
 use crate::setup::tank_id_counter::TankIdCounter;
 use crate::tank::tank::Tank;
@@ -23,19 +24,21 @@ pub fn setup(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut tank_id_counter: ResMut<TankIdCounter>,
+    mut game_map: ResMut<GameMap>,
 ) {
     commands.spawn(Camera2dBundle::default());
 
     // 0 - empty, 1 - tank, 2 - wall
-    let tilemap = vec![
-        vec![0, 0, 1, 0, 2, 0, 0, 1],
-        vec![0, 0, 1, 0, 2, 0, 0, 1],
-        vec![0, 0, 1, 0, 2, 0, 0, 1],
-        vec![0, 0, 1, 0, 2, 0, 0, 1],
-        vec![1, 0, 0, 0, 2, 0, 0, 1],
-        vec![1, 0, 0, 0, 2, 0, 0, 1],
-        vec![1, 0, 0, 0, 0, 0, 0, 1],
+    let tilemap: Vec<Vec<usize>> = vec![
+        vec![0, 0, 1, 0, 0, 0, 0, 0],
+        vec![0, 0, 0, 0, 2, 0, 0, 0],
+        vec![0, 0, 0, 0, 2, 0, 0, 0],
+        vec![0, 0, 1, 0, 0, 0, 0, 0],
+        vec![0, 0, 0, 0, 2, 0, 0, 0],
+        vec![0, 0, 0, 0, 2, 0, 0, 0],
+        vec![1, 0, 0, 0, 0, 0, 0, 0],
     ];
+    game_map.0 = tilemap.clone();
 
     // let tilemap_small = vec![vec![0, 0, 0], vec![0, 0, 0], vec![0, 1, 0]];
 
@@ -51,19 +54,40 @@ pub fn setup(
                     let x = row_index as f32 * TILE_SIZE + OFFSET_X;
                     let y = col_index as f32 * TILE_SIZE + OFFSET_Y;
                     let pos = Vec2::new(x, y);
+                    let map_coord = (row_index, col_index);
 
                     match cell {
-                        TILE_WALL => {
-                            spawn_simple_tile(&mut commands, &asset_server, pos, TILE_WALL)
-                        }
+                        TILE_WALL => spawn_simple_tile(
+                            &mut commands,
+                            &asset_server,
+                            pos,
+                            TILE_WALL,
+                            map_coord,
+                        ),
                         TILE_TANK => {
-                            spawn_simple_tile(&mut commands, &asset_server, pos, TILE_GRASS);
+                            spawn_simple_tile(
+                                &mut commands,
+                                &asset_server,
+                                pos,
+                                TILE_GRASS,
+                                map_coord,
+                            );
                             spawn_tank(&mut commands, &asset_server, pos, &mut tank_id_counter);
                         }
-                        TILE_GRASS => {
-                            spawn_simple_tile(&mut commands, &asset_server, pos, TILE_GRASS)
-                        }
-                        _ => spawn_simple_tile(&mut commands, &asset_server, pos, TILE_GRASS),
+                        TILE_GRASS => spawn_simple_tile(
+                            &mut commands,
+                            &asset_server,
+                            pos,
+                            TILE_GRASS,
+                            map_coord,
+                        ),
+                        _ => spawn_simple_tile(
+                            &mut commands,
+                            &asset_server,
+                            pos,
+                            TILE_GRASS,
+                            map_coord,
+                        ),
                     }
                 });
         });
@@ -74,6 +98,7 @@ fn spawn_simple_tile(
     asset_server: &Res<AssetServer>,
     translation: Vec2,
     tile_type: usize,
+    map_coord: (usize, usize),
 ) {
     let center_position = Vec2::new(translation.x, translation.y);
     let path: String = if tile_type == TILE_WALL {
@@ -89,7 +114,13 @@ fn spawn_simple_tile(
             texture: asset_server.load(path),
             ..default()
         },))
-        .insert(Tile::new(center_position, TILE_SIZE, TILE_SIZE, tile_type));
+        .insert(Tile::new(
+            center_position,
+            TILE_SIZE,
+            TILE_SIZE,
+            tile_type,
+            map_coord,
+        ));
 }
 
 fn spawn_tank(
@@ -111,7 +142,7 @@ fn spawn_tank(
             texture: asset_server.load("tank3base.png"),
             ..default()
         },))
-        .insert(Tank::new(tank_id, center_position))
+        .insert(Tank::new(tank_id, translation))
         .id();
 
     commands
