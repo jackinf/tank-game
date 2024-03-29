@@ -2,6 +2,7 @@ use bevy::asset::AssetServer;
 use bevy::prelude::*;
 use bevy::prelude::{Camera2dBundle, Commands, Res, ResMut};
 use bevy_rapier2d::na::Quaternion;
+use std::collections::HashMap;
 
 use crate::common::constants::{OFFSET_X, OFFSET_Y, TILE_GRASS, TILE_SIZE, TILE_TANK, TILE_WALL};
 use crate::common::game_map::GameMap;
@@ -41,6 +42,7 @@ pub fn setup(
     game_map.0 = tilemap.clone();
 
     // let tilemap_small = vec![vec![0, 0, 0], vec![0, 0, 0], vec![0, 1, 0]];
+    let mut grid_to_tilemap = HashMap::new();
 
     // draw_tiles(&mut commands, &asset_server, tilemap);
     tilemap
@@ -63,6 +65,7 @@ pub fn setup(
                             pos,
                             TILE_WALL,
                             map_coord,
+                            &mut grid_to_tilemap,
                         ),
                         TILE_TANK => {
                             spawn_simple_tile(
@@ -71,6 +74,7 @@ pub fn setup(
                                 pos,
                                 TILE_GRASS,
                                 map_coord,
+                                &mut grid_to_tilemap,
                             );
                             spawn_tank(&mut commands, &asset_server, pos, &mut tank_id_counter);
                         }
@@ -80,6 +84,7 @@ pub fn setup(
                             pos,
                             TILE_GRASS,
                             map_coord,
+                            &mut grid_to_tilemap,
                         ),
                         _ => spawn_simple_tile(
                             &mut commands,
@@ -87,10 +92,13 @@ pub fn setup(
                             pos,
                             TILE_GRASS,
                             map_coord,
+                            &mut grid_to_tilemap,
                         ),
                     }
                 });
         });
+
+    game_map.1 = grid_to_tilemap;
 }
 
 fn spawn_simple_tile(
@@ -99,6 +107,7 @@ fn spawn_simple_tile(
     translation: Vec2,
     tile_type: usize,
     map_coord: (usize, usize),
+    grid_to_tilemap: &mut HashMap<(usize, usize), (f32, f32)>,
 ) {
     let center_position = Vec2::new(translation.x, translation.y);
     let path: String = if tile_type == TILE_WALL {
@@ -108,19 +117,16 @@ fn spawn_simple_tile(
     };
     let layer: f32 = if tile_type == TILE_WALL { 10.0 } else { 0.0 };
 
+    let tile = Tile::new(center_position, TILE_SIZE, TILE_SIZE, tile_type, map_coord);
     commands
         .spawn((SpriteBundle {
             transform: Transform::default().with_translation(translation.extend(layer)),
             texture: asset_server.load(path),
             ..default()
         },))
-        .insert(Tile::new(
-            center_position,
-            TILE_SIZE,
-            TILE_SIZE,
-            tile_type,
-            map_coord,
-        ));
+        .insert(tile);
+
+    grid_to_tilemap.insert(map_coord, (translation.x, translation.y));
 }
 
 fn spawn_tank(

@@ -68,6 +68,11 @@ pub fn a_star(
     cost_so_far.insert(start, 0);
 
     let bounds = (grid.len(), grid[0].len());
+    // check if start or goal is out of bounds
+    if start.0 >= bounds.0 || start.1 >= bounds.1 || goal.0 >= bounds.0 || goal.1 >= bounds.1 {
+        println!("ERROR: Start or goal is out of bounds");
+        return None;
+    }
 
     while let Some(State {
         cost: _,

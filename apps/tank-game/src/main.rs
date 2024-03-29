@@ -11,7 +11,7 @@ fn main() {
                 ..default()
             }),
         )
-        .insert_resource(GameMap(vec![]))
+        .insert_resource(GameMap(vec![], HashMap::new()))
         .add_plugins((
             // LoggerPlugin,
             SetupPlugin,
@@ -53,6 +53,7 @@ mod utils {
 use bevy::prelude::*;
 use bevy::reflect::ReflectKind::Map;
 use bevy::window::WindowResolution;
+use std::collections::HashMap;
 
 use crate::common::constants::{MAX_HEIGHT, MAX_WIDTH};
 use crate::common::game_map::GameMap;

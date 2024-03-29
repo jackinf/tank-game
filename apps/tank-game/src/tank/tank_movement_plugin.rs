@@ -2,6 +2,7 @@ use bevy::input::keyboard::KeyboardInput;
 use bevy::input::mouse::MouseButtonInput;
 use bevy::input::ButtonState;
 use bevy::prelude::*;
+use std::collections::VecDeque;
 
 use crate::common::constants::TILE_SIZE;
 use crate::common::game_map::GameMap;
@@ -83,9 +84,18 @@ fn set_tank_target_position_to_move(
                                 let start = tile_start.get_map_coord();
                                 let path = astar::find_path(&game_map.0, start, goal);
                                 println!("Path: {:?}", path);
+
+                                let path_f32: VecDeque<(f32, f32)> = path
+                                    .iter()
+                                    .filter_map(|&key| game_map.1.get(&key)) // Use `get` to lookup each key in the map, filter_map to ignore None results
+                                    .cloned() // Clone the (f32, f32) values to move them into the Vec
+                                    .collect();
+
+                                println!("path1 {:?}", path_f32);
+                                tank.set_movement_path(path_f32);
                             }
 
-                            tank.start_moving_to(tile_goal.get_center());
+                            // tank.start_moving_to(tile_goal.get_center());
                         }
                     }
                 }
@@ -126,7 +136,7 @@ fn move_tanks_towards_target(
 ) {
     for (mut transform, mut tank) in tank_query
         .iter_mut()
-        .filter(|(_, tank)| tank.moving && tank.selected)
+        .filter(|(_, tank)| tank.is_moving() && tank.selected)
     {
         let current_pos = transform.translation.xy();
         let direction = tank.target_position - current_pos;
@@ -146,7 +156,9 @@ fn move_tanks_towards_target(
         } else {
             transform.translation.x = tank.target_position.x;
             transform.translation.y = tank.target_position.y;
-            tank.stop();
+
+            tank.try_take_next_position_in_path();
+            // tank.stop();
         }
 
         // Rotate tank gun smoothly
