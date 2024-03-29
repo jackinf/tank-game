@@ -62,8 +62,20 @@ pub fn main() {
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn(Camera2dBundle::default());
 
-    spawn_player(PLAYER_1, Vec2::new(-150.0, 0.0), "ball_blue_large.png", &mut commands, &asset_server);
-    spawn_player(PLAYER_2, Vec2::new(150.0, 0.0), "ball_red_large.png", &mut commands, &asset_server);
+    spawn_player(
+        PLAYER_1,
+        Vec2::new(-150.0, 0.0),
+        "ball_blue_large.png",
+        &mut commands,
+        &asset_server,
+    );
+    spawn_player(
+        PLAYER_2,
+        Vec2::new(150.0, 0.0),
+        "ball_red_large.png",
+        &mut commands,
+        &asset_server,
+    );
 
     commands
         .spawn(SpriteBundle {

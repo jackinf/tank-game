@@ -1,4 +1,4 @@
-use crate::utils::common::{find_coord, Vec3};
+use crate::utils::common::find_coord;
 use crate::utils::constants::{FINISH, START, WALL};
 use std::cmp::Ordering;
 use std::collections::{BinaryHeap, HashMap, HashSet};

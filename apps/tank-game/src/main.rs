@@ -1,66 +1,16 @@
+mod components;
+mod constants;
+mod resources;
+
+use crate::components::{Id, Tank, TankGun, TargetPosition, TilePosition};
+use crate::constants::{MAX_HEIGHT, MAX_WIDTH, OFFSET_X, OFFSET_Y, TILE_SIZE, TILE_TANK};
+use crate::resources::{MyWorldCoords, TankIdCounter, TankLogTimer};
+use bevy::input::keyboard::KeyboardInput;
 use bevy::input::mouse::MouseButtonInput;
 use bevy::input::ButtonState;
-use bevy::input::keyboard::KeyboardInput;
 use bevy::prelude::*;
 use bevy::window::{PrimaryWindow, WindowResolution};
 use bevy_rapier2d::na::Quaternion;
-
-#[derive(Component)]
-struct Tank {
-    id: Id,
-    selected: bool,
-}
-
-#[derive(Component)]
-struct Id(usize);
-
-#[derive(Component)]
-struct SelectedUnit(bool);
-
-#[derive(Resource, Default)]
-struct MyWorldCoords(Vec2);
-
-#[derive(Resource)]
-struct TankLogTimer(Timer);
-
-#[derive(Resource)]
-struct TankIdCounter(usize);
-
-#[derive(Component)]
-struct TargetPosition {
-    position: Vec2,
-    speed: f32, // Units per second
-    moving: bool,
-}
-
-#[derive(Component)]
-struct TankGun {
-    parent_id: Id,
-}
-
-#[derive(Component, Debug)]
-struct TilePosition {
-    center: Vec2,
-    x1: f32,
-    x2: f32,
-    y1: f32,
-    y2: f32,
-}
-
-impl TilePosition {
-    pub fn in_range(&self, x: f32, y: f32) -> bool {
-        let in_x = self.x1 <= x && x <= self.x2;
-        let in_y = self.y1 <= y && y <= self.y2;
-        in_x && in_y
-    }
-}
-
-const MAX_WIDTH: u16 = 2000;
-const MAX_HEIGHT: u16 = 1500;
-const TILE_SIZE: f32 = 128.0;
-const TILE_TANK: usize = 1;
-const OFFSET_X: f32 = -800.0;
-const OFFSET_Y: f32 = -200.0;
 
 fn main() {
     App::new()
@@ -137,13 +87,7 @@ fn spawn_grass(commands: &mut Commands, asset_server: &Res<AssetServer>, transla
             texture: asset_server.load("grass3.png"),
             ..default()
         },))
-        .insert(TilePosition {
-            center: center_position,
-            x1: translation.x - TILE_SIZE / 2.0,
-            x2: translation.x + TILE_SIZE / 2.0,
-            y1: translation.y - TILE_SIZE / 2.0,
-            y2: translation.y + TILE_SIZE / 2.0,
-        });
+        .insert(TilePosition::new(center_position, TILE_SIZE, TILE_SIZE));
 }
 
 fn spawn_tank(
@@ -262,7 +206,7 @@ fn set_target_to_move(
                             for (mut target_position, _, _) in
                                 &mut tank_query.iter_mut().filter(|(_, tank, _)| tank.selected)
                             {
-                                target_position.position = tile.center;
+                                target_position.position = tile.get_center();
                                 target_position.speed = 500.0;
                                 target_position.moving = true;
                             }
@@ -279,7 +223,11 @@ fn select_tank(tank: &mut Mut<Tank>, sprite: &mut Mut<Sprite>) {
     sprite.color = Color::rgb(1.0, 9.0, 8.0);
 }
 
-fn unselect_tank(target_position: &mut Mut<TargetPosition>, tank: &mut Mut<Tank>, sprite: &mut Mut<Sprite>) {
+fn unselect_tank(
+    target_position: &mut Mut<TargetPosition>,
+    tank: &mut Mut<Tank>,
+    sprite: &mut Mut<Sprite>,
+) {
     target_position.moving = false;
     tank.selected = false;
     sprite.color = Color::WHITE;
