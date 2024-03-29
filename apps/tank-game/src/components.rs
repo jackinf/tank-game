@@ -1,28 +1,48 @@
+use crate::constants::TILE_SIZE;
 use bevy::math::Vec2;
-use bevy::prelude::Component;
+use bevy::prelude::{Component, Mut};
 
 #[derive(Component)]
 pub struct Tank {
-    pub id: Id,
+    pub id: TankId,
     pub selected: bool,
 }
 
+impl Tank {
+    pub fn new(id: usize) -> Self {
+        Tank {
+            id: TankId(id),
+            selected: false,
+        }
+    }
+}
+
 #[derive(Component)]
-pub struct Id(pub usize);
+pub struct TankId(pub usize);
 
 #[derive(Component)]
 pub struct SelectedUnit(pub bool);
 
 #[derive(Component)]
-pub struct TargetPosition {
-    pub position: Vec2,
+pub struct TankTargetPosition {
+    pub target_position: Vec2,
     pub speed: f32, // Units per second
     pub moving: bool,
 }
 
+impl TankTargetPosition {
+    pub fn new(position: Vec2, speed: f32) -> Self {
+        TankTargetPosition {
+            target_position: position,
+            speed,
+            moving: false,
+        }
+    }
+}
+
 #[derive(Component)]
 pub struct TankGun {
-    pub parent_id: Id,
+    pub parent_id: TankId,
 }
 
 #[derive(Component, Debug)]

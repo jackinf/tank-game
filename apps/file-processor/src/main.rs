@@ -33,7 +33,7 @@ pub fn main() {
     let display = path.display();
 
     // Open file
-    let mut file = match File::open(&path) {
+    let mut file = match File::open(path) {
         Err(why) => panic!("couldn't read {}: {}", display, why),
         Ok(file) => file,
     };
@@ -48,9 +48,8 @@ pub fn main() {
     //////////////////
     // This section tests how cycles work
     println!("Reading letter-by-letter");
-    let mut read_string_chars: Vec<char> = read_string.chars().collect();
-    for i in 0..read_string_chars.len() {
-        let letter: char = read_string_chars[i];
+    let read_string_chars: Vec<char> = read_string.chars().collect();
+    for letter in &read_string_chars {
         print!("{}", letter)
     }
     println!();
@@ -72,7 +71,7 @@ pub fn main() {
     println!("replaced string");
     println!("{}", replaced_string);
 
-    let parts: Vec<&str> = file_path.split(".").collect();
+    let parts: Vec<&str> = file_path.split('.').collect();
     let name_without_extension: String = if parts.len() > 1 {
         parts[..parts.len() - 1].join(".")
     } else {
