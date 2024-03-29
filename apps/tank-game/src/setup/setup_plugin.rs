@@ -31,14 +31,17 @@ pub fn setup(
 
     // 0 - empty, 1 - tank, 2 - wall
     let tilemap: Vec<Vec<usize>> = vec![
-        vec![0, 0, 1, 0, 0, 0, 0, 0],
-        vec![0, 0, 0, 0, 2, 0, 0, 0],
-        vec![0, 0, 0, 0, 2, 0, 0, 0],
-        vec![0, 0, 1, 0, 0, 0, 0, 0],
-        vec![0, 0, 0, 0, 2, 0, 0, 0],
-        vec![0, 0, 0, 0, 2, 0, 0, 0],
-        vec![1, 0, 0, 0, 0, 0, 0, 0],
+        vec![0, 0, 1, 0, 0, 0],
+        vec![0, 0, 0, 0, 2, 0],
+        vec![0, 0, 0, 0, 2, 0],
+        vec![0, 0, 1, 2, 0, 0],
+        vec![0, 0, 0, 2, 2, 0],
+        vec![0, 0, 0, 0, 2, 0],
+        vec![1, 0, 0, 0, 2, 2],
     ];
+    // let tilemap: Vec<Vec<usize>> = tilemap.iter().rev().cloned().collect();
+    // game draws the tiles upside down, so we need to reverse the tilemap
+    // game_map.0 = tilemap.iter().rev().cloned().collect::<Vec<Vec<usize>>>().clone();
     game_map.0 = tilemap.clone();
 
     // let tilemap_small = vec![vec![0, 0, 0], vec![0, 0, 0], vec![0, 1, 0]];
@@ -48,13 +51,13 @@ pub fn setup(
     tilemap
         .into_iter()
         .enumerate()
-        .for_each(|(col_index, row_on_row)| {
+        .for_each(|(row_index, row_on_row)| {
             row_on_row
                 .into_iter()
                 .enumerate()
-                .for_each(|(row_index, cell)| {
-                    let x = row_index as f32 * TILE_SIZE + OFFSET_X;
-                    let y = col_index as f32 * TILE_SIZE + OFFSET_Y;
+                .for_each(|(col_index, cell)| {
+                    let x = (row_index) as f32 * TILE_SIZE + OFFSET_X;
+                    let y = (col_index) as f32 * TILE_SIZE + OFFSET_Y;
                     let pos = Vec2::new(x, y);
                     let map_coord = (row_index, col_index);
 

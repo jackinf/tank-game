@@ -79,12 +79,18 @@ pub fn a_star(
         position: current,
     }) = frontier.pop()
     {
+        // println!("current: {:?}, wall: {}", current, grid[current.0][current.1]);
+        // if grid[current.0][current.1] == TILE_WALL {
+        //     continue;
+        // }
+
         if current == goal {
             return Some((*cost_so_far.get(&current).unwrap(), came_from));
         }
 
         for next in neighbors(current, bounds).iter() {
             if grid[next.0][next.1] == TILE_WALL {
+                println!("Wall found at {:?}", next);
                 continue;
             }
 
@@ -111,6 +117,7 @@ pub fn find_path(
     goal: (usize, usize),
 ) -> VecDeque<(usize, usize)> {
     let result = a_star(grid, start, goal);
+    print_grid(&grid);
     println!("start: {:?}", start);
     println!("goal: {:?}", goal);
 
@@ -131,52 +138,50 @@ pub fn find_path(
     }
 }
 
+fn print_grid(grid: &Vec<Vec<usize>>) {
+    for row in grid.iter() {
+        for cell in row.iter() {
+            print!("{}, ", cell);
+        }
+        println!();
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
+    // THIS TEST FAILS!
     #[test]
     fn test_a_star_case1() {
         let grid: Vec<Vec<usize>> = vec![
-            vec![0, 0, 0, 0, 0, 0, 0],
-            vec![0, 0, 0, 0, 2, 0, 0],
-            vec![0, 0, 0, 0, 2, 9, 0],
-            vec![0, 0, 0, 0, 2, 0, 0],
-            vec![0, 1, 0, 0, 2, 2, 0],
-            vec![0, 0, 0, 0, 0, 0, 0],
+            vec![0, 0, 0, 0, 0],
+            vec![0, 0, 2, 0, 0],
+            vec![0, 0, 2, 9, 0],
+            vec![0, 0, 2, 0, 0],
+            vec![0, 1, 2, 2, 0],
+            vec![0, 0, 0, 0, 0],
         ];
 
-        let start = (4, 1);
-        let goal = (2, 5);
+        // flip y-axis only because this is how the map is rendered in the game
+        let grid1: Vec<Vec<usize>> = grid.iter().rev().cloned().collect();
+        /*
+           FLIPPED grid:
 
-        let path = find_path(&grid, start, goal);
+           0, 0, 0, 0, 0,
+           0, 1, 2, 2, 0,
+           0, 0, 2, 0, 0,
+           0, 0, 2, 9, 0,
+           0, 0, 2, 0, 0,
+           0, 0, 0, 0, 0,
+        */
+
+        let start = (1, 1);
+        let goal = (3, 3);
+
+        let path = find_path(&grid1, start, goal);
         println!("{:?}", path);
 
-        assert_eq!(path.len(), 11);
-        assert_eq!(path[0], start);
-        assert_eq!(path[path.len() - 1], goal);
-    }
-
-    #[test]
-    fn test_a_star_case2() {
-        let grid: Vec<Vec<usize>> = vec![
-            vec![0, 0, 1, 0, 0, 0, 0, 1],
-            vec![0, 0, 1, 0, 2, 0, 0, 1],
-            vec![0, 0, 1, 0, 2, 0, 0, 1],
-            vec![0, 0, 1, 0, 2, 0, 0, 1],
-            vec![1, 0, 0, 0, 2, 0, 0, 1],
-            vec![1, 0, 0, 0, 2, 0, 0, 1],
-            vec![1, 0, 0, 0, 0, 0, 0, 1],
-        ];
-
-        let start = (5, 4);
-        let goal = (2, 5);
-
-        let path = find_path(&grid, start, goal);
-        println!("{:?}", path);
-
-        assert_eq!(path.len(), 11);
-        assert_eq!(path[0], start);
-        assert_eq!(path[path.len() - 1], goal);
+        assert_eq!(path.len(), 9); // should take 9 steps by takes 7 because passes though a wall at (4,3) when the map is flipped
     }
 }

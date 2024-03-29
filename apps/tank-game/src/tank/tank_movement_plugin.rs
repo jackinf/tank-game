@@ -81,6 +81,8 @@ fn set_tank_target_position_to_move(
                                 .iter()
                                 .find(|tile| tile.accessible() && tile.in_range(curr_x, curr_y))
                             {
+                                // game_map.draw_map();
+
                                 let start = tile_start.get_map_coord();
                                 let path = astar::find_path(&game_map.0, start, goal);
                                 println!("Path: {:?}", path);
