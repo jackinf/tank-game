@@ -1,6 +1,6 @@
-use crate::components::{Tank, TankGun, TankId, TankTargetPosition, TilePosition};
-use crate::constants::{OFFSET_X, OFFSET_Y, TILE_SIZE, TILE_TANK};
-use crate::resources::TankIdCounter;
+use crate::common::constants::{OFFSET_X, OFFSET_Y, TILE_SIZE, TILE_TANK};
+use crate::common::resources::TankIdCounter;
+use crate::components::{Tank, TankGun, TankId, TilePosition};
 use bevy::asset::AssetServer;
 use bevy::prelude::*;
 use bevy::prelude::{Camera2dBundle, Commands, Res, ResMut};
@@ -79,8 +79,7 @@ fn spawn_tank(
             texture: asset_server.load("tank3base.png"),
             ..default()
         },))
-        .insert(TankTargetPosition::new(center_position, 0.0))
-        .insert(Tank::new(tank_id))
+        .insert(Tank::new(tank_id, center_position))
         .id();
 
     commands

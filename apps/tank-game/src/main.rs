@@ -15,15 +15,17 @@ fn main() {
         .insert_resource(TankLogTimer(Timer::from_seconds(1.0, TimerMode::Repeating)))
         .insert_resource(TankIdCounter(1))
         .add_systems(PreStartup, setup)
-        .add_systems(Update, (set_target_to_move, inflate_tank))
+        .add_systems(Update, (set_tank_target_position_to_move, inflate_tank))
         .add_systems(FixedUpdate, move_tanks_towards_target)
         .run()
 }
 
 mod components;
-mod constants;
+mod common {
+    pub mod constants;
+    pub mod resources;
+}
 mod game_setup;
-mod resources;
 mod plugins {
     pub mod logger_plugin;
     pub mod world_coordinates_plugin;
@@ -33,15 +35,15 @@ use bevy::input::{keyboard::KeyboardInput, mouse::MouseButtonInput, ButtonState}
 use bevy::prelude::*;
 use bevy::window::WindowResolution;
 
-use crate::components::{Tank, TankGun, TankTargetPosition, TilePosition};
-use crate::constants::{MAX_HEIGHT, MAX_WIDTH, TILE_SIZE};
+use crate::common::constants::{MAX_HEIGHT, MAX_WIDTH, TILE_SIZE};
+use crate::common::resources::{TankIdCounter, TankLogTimer, WorldCoordinates};
+use crate::components::{Tank, TankGun, TilePosition};
 use crate::game_setup::setup;
 use crate::plugins::logger_plugin::LoggerPlugin;
 use crate::plugins::world_coordinates_plugin::WorldCoordinatesPlugin;
-use crate::resources::{TankIdCounter, TankLogTimer, WorldCoordinates};
 
-fn set_target_to_move(
-    mut tank_query: Query<(&mut TankTargetPosition, &mut Tank, &mut Sprite), With<Tank>>,
+fn set_tank_target_position_to_move(
+    mut tank_query: Query<(&mut Tank, &mut Sprite), With<Tank>>,
     tile_query: Query<&TilePosition>,
     mut mouse_button_events: EventReader<MouseButtonInput>,
     mut key_button_events: EventReader<KeyboardInput>,
@@ -51,15 +53,15 @@ fn set_target_to_move(
         if let ButtonState::Pressed = key_button_event.state {
             // selects everything
             if key_button_event.key_code == KeyCode::Space {
-                for (_, mut tank, mut sprite) in &mut tank_query.iter_mut() {
+                for (mut tank, mut sprite) in &mut tank_query.iter_mut() {
                     select_tank(&mut tank, &mut sprite);
                 }
             }
 
             // unselects everything
             if key_button_event.key_code == KeyCode::Escape {
-                for (mut target_position, mut tank, mut sprite) in &mut tank_query.iter_mut() {
-                    unselect_tank(&mut target_position, &mut tank, &mut sprite);
+                for (mut tank, mut sprite) in &mut tank_query.iter_mut() {
+                    unselect_tank(&mut tank, &mut sprite);
                 }
             }
         }
@@ -72,18 +74,16 @@ fn set_target_to_move(
 
             let clicked_on_tank = tank_query
                 .iter_mut()
-                .find(|(position, _, _)| is_tank_clicked_on(wx, wy, position));
+                .find(|(tank, _)| is_tank_clicked_on(wx, wy, tank));
 
-            if let Some((_, mut tank, mut sprite)) = clicked_on_tank {
+            if let Some((mut tank, mut sprite)) = clicked_on_tank {
                 select_tank(&mut tank, &mut sprite);
             } else {
                 if let Some(tile) = tile_query.iter().find(|tile| tile.in_range(wx, wy)) {
-                    for (mut target_position, _, _) in
-                        &mut tank_query.iter_mut().filter(|(_, tank, _)| tank.selected)
+                    for (mut tank, _) in
+                        &mut tank_query.iter_mut().filter(|(tank, _)| tank.selected)
                     {
-                        target_position.target_position = tile.get_center();
-                        target_position.speed = 500.0;
-                        target_position.moving = true;
+                        tank.start_moving_to(tile.get_center());
                     }
                 }
             }
@@ -96,23 +96,19 @@ fn select_tank(tank: &mut Mut<Tank>, sprite: &mut Mut<Sprite>) {
     sprite.color = Color::rgb(1.0, 9.0, 8.0);
 }
 
-fn unselect_tank(
-    target_position: &mut Mut<TankTargetPosition>,
-    tank: &mut Mut<Tank>,
-    sprite: &mut Mut<Sprite>,
-) {
-    target_position.moving = false;
+fn unselect_tank(tank: &mut Mut<Tank>, sprite: &mut Mut<Sprite>) {
+    tank.moving = false;
     tank.selected = false;
     sprite.color = Color::WHITE;
 }
 
-fn is_tank_clicked_on(wx: f32, wy: f32, position: &Mut<TankTargetPosition>) -> bool {
-    let x1 = position.target_position.x;
-    let x2 = position.target_position.x + TILE_SIZE;
+fn is_tank_clicked_on(wx: f32, wy: f32, tank: &Mut<Tank>) -> bool {
+    let x1 = tank.target_position.x;
+    let x2 = tank.target_position.x + TILE_SIZE;
     let in_x = x1 <= wx && wx <= x2;
 
-    let y1 = position.target_position.y;
-    let y2 = position.target_position.y + TILE_SIZE;
+    let y1 = tank.target_position.y;
+    let y2 = tank.target_position.y + TILE_SIZE;
     let in_y = y1 <= wy && wy <= y2;
 
     in_x && in_y
@@ -120,16 +116,16 @@ fn is_tank_clicked_on(wx: f32, wy: f32, position: &Mut<TankTargetPosition>) -> b
 
 fn move_tanks_towards_target(
     time: Res<Time>,
-    mut tank_query: Query<(&mut TankTargetPosition, &mut Transform, &Tank), With<Tank>>,
+    mut tank_query: Query<(&mut Transform, &mut Tank), (With<Tank>, Without<TankGun>)>,
     mut gun_query: Query<(&mut Transform, &TankGun), (With<TankGun>, Without<Tank>)>,
 ) {
-    for (mut target_position, mut transform, tank) in tank_query
+    for (mut transform, mut tank) in tank_query
         .iter_mut()
-        .filter(|(target_position, _, tank)| target_position.moving && tank.selected)
+        .filter(|(_, tank)| tank.moving && tank.selected)
     {
         let current_pos = transform.translation.xy();
-        let direction = target_position.target_position - current_pos;
-        let distance_to_move = target_position.speed * time.delta_seconds();
+        let direction = tank.target_position - current_pos;
+        let distance_to_move = tank.speed * time.delta_seconds();
 
         // Smooth movement
         if direction.length() > distance_to_move {
@@ -139,14 +135,13 @@ fn move_tanks_towards_target(
             // TODO: account for a bug if the speed is too high.
             // if so, use simpler:
             // transform.translation = Vec3::new(new_pos.x, new_pos.y, transform.translation.z);
-            transform.translation = transform.translation.lerp(
-                target_vec3,
-                target_position.speed / 10.0 * time.delta_seconds(),
-            );
+            transform.translation = transform
+                .translation
+                .lerp(target_vec3, tank.speed / 10.0 * time.delta_seconds());
         } else {
-            transform.translation.x = target_position.target_position.x;
-            transform.translation.y = target_position.target_position.y;
-            target_position.moving = false;
+            transform.translation.x = tank.target_position.x;
+            transform.translation.y = tank.target_position.y;
+            tank.stop();
         }
 
         // Rotate tank gun smoothly

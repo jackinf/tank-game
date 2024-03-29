@@ -1,8 +1,8 @@
 use bevy::app::Plugin;
 use bevy::prelude::*;
 
+use crate::common::resources::TankLogTimer;
 use crate::components::Tank;
-use crate::resources::TankLogTimer;
 
 pub struct LoggerPlugin;
 
