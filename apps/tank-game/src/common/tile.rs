@@ -1,27 +1,34 @@
 use bevy::prelude::*;
+use crate::common::constants::TILE_GRASS;
 
 #[derive(Component, Debug)]
-pub struct TilePosition {
+pub struct Tile {
     center: Vec2,
     x1: f32,
     x2: f32,
     y1: f32,
     y2: f32,
+    tile_type: usize,
 }
 
-impl TilePosition {
-    pub fn new(center: Vec2, width: f32, height: f32) -> Self {
+impl Tile {
+    pub fn new(center: Vec2, width: f32, height: f32, tile_type: usize) -> Self {
         let x1 = center.x - width / 2.0;
         let x2 = center.x + width / 2.0;
         let y1 = center.y - height / 2.0;
         let y2 = center.y + height / 2.0;
-        TilePosition {
+        Tile {
             center,
             x1,
             x2,
             y1,
             y2,
+            tile_type,
         }
+    }
+
+    pub fn movable(&self) -> bool {
+        self.tile_type == TILE_GRASS
     }
 
     pub fn in_range(&self, x: f32, y: f32) -> bool {

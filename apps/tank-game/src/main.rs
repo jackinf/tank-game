@@ -12,7 +12,7 @@ fn main() {
             }),
         )
         .add_plugins((
-            LoggerPlugin,
+            // LoggerPlugin,
             CursorPlugin,
             TankMovementPlugin,
             TankInflationPlugin,

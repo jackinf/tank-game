@@ -5,7 +5,7 @@ use bevy::prelude::*;
 
 use crate::common::constants::TILE_SIZE;
 use crate::common::resources::{TankIdCounter, TankLogTimer, WorldCoordinates};
-use crate::common::tile::TilePosition;
+use crate::common::tile::Tile;
 use crate::game_setup::setup;
 use crate::tank::tank::Tank;
 use crate::tank::tank_gun::TankGun;
@@ -24,7 +24,7 @@ impl Plugin for TankMovementPlugin {
 
 fn set_tank_target_position_to_move(
     mut tank_query: Query<(&mut Tank, &mut Sprite), With<Tank>>,
-    tile_query: Query<&TilePosition>,
+    tile_query: Query<&Tile>,
     mut mouse_button_events: EventReader<MouseButtonInput>,
     mut key_button_events: EventReader<KeyboardInput>,
     my_world_coords: Res<WorldCoordinates>,
@@ -56,14 +56,17 @@ fn set_tank_target_position_to_move(
                 .iter_mut()
                 .find(|(tank, _)| is_tank_clicked_on(wx, wy, tank));
 
-            if let Some((mut tank, mut sprite)) = clicked_on_tank {
-                select_tank(&mut tank, &mut sprite);
-            } else {
-                if let Some(tile) = tile_query.iter().find(|tile| tile.in_range(wx, wy)) {
-                    for (mut tank, _) in
+            match clicked_on_tank {
+                Some((mut tank, mut sprite)) => {
+                    select_tank(&mut tank, &mut sprite);
+                }
+                None => {
+                    if let Some(tile) = tile_query.iter().find(|tile| tile.movable() && tile.in_range(wx, wy)) {
+                        for (mut tank, _) in
                         &mut tank_query.iter_mut().filter(|(tank, _)| tank.selected)
-                    {
-                        tank.start_moving_to(tile.get_center());
+                        {
+                            tank.start_moving_to(tile.get_center());
+                        }
                     }
                 }
             }

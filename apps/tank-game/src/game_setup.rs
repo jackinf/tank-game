@@ -3,9 +3,9 @@ use bevy::prelude::*;
 use bevy::prelude::{Camera2dBundle, Commands, Res, ResMut};
 use bevy_rapier2d::na::Quaternion;
 
-use crate::common::constants::{OFFSET_X, OFFSET_Y, TILE_SIZE, TILE_TANK};
+use crate::common::constants::{OFFSET_X, OFFSET_Y, TILE_SIZE, TILE_TANK, TILE_WALL, TILE_GRASS};
 use crate::common::resources::TankIdCounter;
-use crate::common::tile::TilePosition;
+use crate::common::tile::Tile;
 use crate::tank::tank::Tank;
 use crate::tank::tank_gun::TankGun;
 use crate::tank::tank_id::TankId;
@@ -17,14 +17,14 @@ pub fn setup(
 ) {
     commands.spawn(Camera2dBundle::default());
 
-    // 0 - empty, 1 - tank
+    // 0 - empty, 1 - tank, 2 - wall
     let tilemap = vec![
-        vec![0, 0, 1, 0, 0, 0, 0, 1],
-        vec![0, 0, 1, 0, 0, 0, 0, 1],
-        vec![0, 0, 1, 0, 0, 0, 0, 1],
-        vec![0, 0, 1, 0, 0, 0, 0, 1],
-        vec![1, 0, 0, 0, 0, 0, 0, 1],
-        vec![1, 0, 0, 0, 0, 0, 0, 1],
+        vec![0, 0, 1, 0, 2, 0, 0, 1],
+        vec![0, 0, 1, 0, 2, 0, 0, 1],
+        vec![0, 0, 1, 0, 2, 0, 0, 1],
+        vec![0, 0, 1, 0, 2, 0, 0, 1],
+        vec![1, 0, 0, 0, 2, 0, 0, 1],
+        vec![1, 0, 0, 0, 2, 0, 0, 1],
         vec![1, 0, 0, 0, 0, 0, 0, 1],
     ];
 
@@ -43,25 +43,35 @@ pub fn setup(
                     let y = col_index as f32 * TILE_SIZE + OFFSET_Y;
                     let pos = Vec2::new(x, y);
 
-                    spawn_grass(&mut commands, &asset_server, pos);
-
-                    if cell == TILE_TANK {
-                        println!("tank pos: {:?}", pos);
-                        spawn_tank(&mut commands, &asset_server, pos, &mut tank_id_counter);
+                    match cell {
+                        TILE_WALL => spawn_simple_tile(&mut commands, &asset_server, pos, TILE_WALL),
+                        TILE_TANK => {
+                            spawn_simple_tile(&mut commands, &asset_server, pos, TILE_GRASS);
+                            spawn_tank(&mut commands, &asset_server, pos, &mut tank_id_counter);
+                        },
+                        TILE_GRASS => spawn_simple_tile(&mut commands, &asset_server, pos, TILE_GRASS),
+                        _ => spawn_simple_tile(&mut commands, &asset_server, pos, TILE_GRASS),
                     }
                 });
         });
 }
 
-fn spawn_grass(commands: &mut Commands, asset_server: &Res<AssetServer>, translation: Vec2) {
+fn spawn_simple_tile(commands: &mut Commands, asset_server: &Res<AssetServer>, translation: Vec2, tile_type: usize) {
     let center_position = Vec2::new(translation.x, translation.y);
+    let path: String = if tile_type == TILE_WALL {
+        "wall.png".into()
+    } else {
+        "grass3.png".into()
+    };
+    let layer: f32 = if tile_type == TILE_WALL { 10.0 } else { 0.0 };
+
     commands
         .spawn((SpriteBundle {
-            transform: Transform::default().with_translation(translation.extend(0.0)),
-            texture: asset_server.load("grass3.png"),
+            transform: Transform::default().with_translation(translation.extend(layer)),
+            texture: asset_server.load(path),
             ..default()
         },))
-        .insert(TilePosition::new(center_position, TILE_SIZE, TILE_SIZE));
+        .insert(Tile::new(center_position, TILE_SIZE, TILE_SIZE, tile_type));
 }
 
 fn spawn_tank(
@@ -79,7 +89,7 @@ fn spawn_tank(
     );
     let tank_base: Entity = commands
         .spawn((SpriteBundle {
-            transform: Transform::default().with_translation(translation.extend(1.0)),
+            transform: Transform::default().with_translation(translation.extend(5.0)),
             texture: asset_server.load("tank3base.png"),
             ..default()
         },))
