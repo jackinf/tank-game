@@ -5,8 +5,10 @@ use bevy::prelude::*;
 
 use crate::common::constants::TILE_SIZE;
 use crate::common::resources::{TankIdCounter, TankLogTimer, WorldCoordinates};
-use crate::components::{Tank, TankGun, TilePosition};
+use crate::common::tile::TilePosition;
 use crate::game_setup::setup;
+use crate::tank::tank::Tank;
+use crate::tank::tank_gun::TankGun;
 
 pub struct TankMovementPlugin;
 

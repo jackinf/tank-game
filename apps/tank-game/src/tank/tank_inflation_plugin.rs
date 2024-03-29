@@ -2,7 +2,7 @@ use bevy::app::Update;
 use bevy::input::ButtonInput;
 use bevy::prelude::*;
 
-use crate::components::Tank;
+use crate::tank::tank::Tank;
 
 pub struct TankInflationPlugin;
 

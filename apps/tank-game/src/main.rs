@@ -20,15 +20,23 @@ fn main() {
         .run()
 }
 
-mod components;
 mod common {
     pub mod constants;
     pub mod resources;
+    pub mod tile;
 }
 mod game_setup;
-mod plugins {
+mod cursor {
+    pub mod cursor_coordinates;
     pub mod cursor_plugin;
+}
+mod logger {
     pub mod logger_plugin;
+}
+mod tank {
+    pub mod tank;
+    pub mod tank_gun;
+    pub mod tank_id;
     pub mod tank_inflation_plugin;
     pub mod tank_movement_plugin;
 }
@@ -37,7 +45,7 @@ use bevy::prelude::*;
 use bevy::window::WindowResolution;
 
 use crate::common::constants::{MAX_HEIGHT, MAX_WIDTH};
-use crate::plugins::cursor_plugin::CursorPlugin;
-use crate::plugins::logger_plugin::LoggerPlugin;
-use crate::plugins::tank_inflation_plugin::TankInflationPlugin;
-use crate::plugins::tank_movement_plugin::TankMovementPlugin;
+use crate::cursor::cursor_plugin::CursorPlugin;
+use crate::logger::logger_plugin::LoggerPlugin;
+use crate::tank::tank_inflation_plugin::TankInflationPlugin;
+use crate::tank::tank_movement_plugin::TankMovementPlugin;

@@ -1,10 +1,14 @@
-use crate::common::constants::{OFFSET_X, OFFSET_Y, TILE_SIZE, TILE_TANK};
-use crate::common::resources::TankIdCounter;
-use crate::components::{Tank, TankGun, TankId, TilePosition};
 use bevy::asset::AssetServer;
 use bevy::prelude::*;
 use bevy::prelude::{Camera2dBundle, Commands, Res, ResMut};
 use bevy_rapier2d::na::Quaternion;
+
+use crate::common::constants::{OFFSET_X, OFFSET_Y, TILE_SIZE, TILE_TANK};
+use crate::common::resources::TankIdCounter;
+use crate::common::tile::TilePosition;
+use crate::tank::tank::Tank;
+use crate::tank::tank_gun::TankGun;
+use crate::tank::tank_id::TankId;
 
 pub fn setup(
     mut commands: Commands,
@@ -88,8 +92,6 @@ fn spawn_tank(
             texture: asset_server.load("tank3gun.png"),
             ..default()
         },))
-        .insert(TankGun {
-            parent_id: TankId(tank_id),
-        })
+        .insert(TankGun::new(TankId(tank_id)))
         .set_parent(tank_base);
 }
