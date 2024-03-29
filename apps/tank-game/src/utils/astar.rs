@@ -1,6 +1,6 @@
 use crate::common::constants::TILE_WALL;
 use std::cmp::Ordering;
-use std::collections::{BinaryHeap, HashMap};
+use std::collections::{BinaryHeap, HashMap, VecDeque};
 
 #[derive(Copy, Clone, Eq, PartialEq)]
 struct State {
@@ -98,4 +98,50 @@ pub fn a_star(
     }
 
     None // If the goal was not reached
+}
+
+pub fn a_star_path(
+    grid: &Vec<Vec<usize>>,
+    start: (usize, usize),
+    goal: (usize, usize),
+) -> VecDeque<(usize, usize)> {
+    let (_, came_from) = a_star(grid, start, goal).unwrap();
+
+    let mut current = goal;
+    let mut path = VecDeque::new();
+    path.push_front(goal);
+
+    while current != start {
+        current = came_from[&current];
+        path.push_front(current);
+    }
+
+    path
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_a_star() {
+        let grid: Vec<Vec<usize>> = vec![
+            vec![0, 0, 0, 0, 0, 0, 0],
+            vec![0, 0, 0, 0, 2, 0, 0],
+            vec![0, 0, 0, 0, 2, 9, 0],
+            vec![0, 0, 0, 0, 2, 0, 0],
+            vec![0, 1, 0, 0, 2, 2, 0],
+            vec![0, 0, 0, 0, 0, 0, 0],
+        ];
+
+        let start = (4, 1);
+        let goal = (2, 5);
+
+        let path = a_star_path(&grid, start, goal);
+        println!("{:?}", path);
+
+        assert_eq!(path.len(), 11);
+        assert_eq!(path[0], start);
+        assert_eq!(path[path.len() - 1], goal);
+    }
 }

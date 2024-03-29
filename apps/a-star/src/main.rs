@@ -8,7 +8,7 @@ mod utils {
 }
 
 fn main() {
-    breadth_first_search::main();
-    dijkstra_search::main();
+    // breadth_first_search::main();
+    // dijkstra_search::main();
     astar_search::main();
 }

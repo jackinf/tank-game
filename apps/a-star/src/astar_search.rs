@@ -1,7 +1,7 @@
 use crate::utils::common::find_coord;
 use crate::utils::constants::{FINISH, START, WALL};
 use std::cmp::Ordering;
-use std::collections::{BinaryHeap, HashMap, HashSet};
+use std::collections::{BinaryHeap, HashMap, HashSet, VecDeque};
 
 #[derive(Copy, Clone, Eq, PartialEq)]
 struct State {
@@ -121,14 +121,18 @@ pub fn main() {
             println!("Cost to reach {:?} from {:?}: {}", goal, start, cost);
             println!("Path: {:?}", came_from);
 
+            let mut queue1: VecDeque<(usize, usize)> = VecDeque::new();
+
             // draw a path from goal to start
             let mut current = goal;
             let mut path = HashSet::new();
             while current != start {
                 path.insert(current);
                 current = came_from[&current];
+                queue1.push_front(current);
             }
             path.insert(start);
+            println!("Queue: {:?}", queue1);
 
             // print it
             for (i, row) in grid.iter().enumerate() {
