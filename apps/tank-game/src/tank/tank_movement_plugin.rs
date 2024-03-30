@@ -108,11 +108,10 @@ fn set_tank_target_position_to_move(
 
 fn select_tank(tank: &mut Mut<Tank>, sprite: &mut Mut<Sprite>) {
     tank.selected = true;
-    sprite.color = Color::rgb(1.0, 9.0, 8.0);
+    sprite.color = Color::rgb(2.0, 2.0, 2.0);
 }
 
 fn deselect_tank(tank: &mut Mut<Tank>, sprite: &mut Mut<Sprite>) {
-    tank.moving = false;
     tank.selected = false;
     sprite.color = Color::WHITE;
 }
@@ -138,7 +137,7 @@ fn move_tanks_towards_target(
 ) {
     for (mut transform, mut tank) in tank_query
         .iter_mut()
-        .filter(|(_, tank)| tank.is_moving() && tank.selected)
+        .filter(|(_, tank)| tank.is_moving())
     {
         let current_pos = transform.translation.xy();
         let direction = tank.target_position - current_pos;

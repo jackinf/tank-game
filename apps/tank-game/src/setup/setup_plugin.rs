@@ -6,7 +6,7 @@ use std::collections::HashMap;
 use std::fs::File;
 use std::io::{prelude::*, BufReader};
 
-use crate::common::constants::{OFFSET_X, OFFSET_Y, TILE_GRASS, TILE_SIZE, TILE_TANK, TILE_WALL, TILE_WATER};
+use crate::common::constants::{OFFSET_X, OFFSET_Y, SPRITE_SCALE, TILE_GRASS, TILE_SIZE, TILE_TANK, TILE_WALL, TILE_WATER};
 use crate::common::game_map::GameMap;
 use crate::common::tile::Tile;
 use crate::setup::tank_id_counter::TankIdCounter;
@@ -157,7 +157,7 @@ fn spawn_simple_tile(
     let tile = Tile::new(center_position, TILE_SIZE, TILE_SIZE, tile_type, map_coord);
     commands
         .spawn((SpriteBundle {
-            transform: Transform::default().with_translation(translation.extend(layer)),
+            transform: Transform::default().with_translation(translation.extend(layer)).with_scale(Vec3::splat(SPRITE_SCALE)),
             texture: asset_server.load(path),
             ..default()
         },))
@@ -181,7 +181,7 @@ fn spawn_tank(
     );
     let tank_base: Entity = commands
         .spawn((SpriteBundle {
-            transform: Transform::default().with_translation(translation.extend(5.0)),
+            transform: Transform::default().with_translation(translation.extend(5.0)).with_scale(Vec3::splat(SPRITE_SCALE)),
             texture: asset_server.load("tank3base.png"),
             ..default()
         },))
@@ -190,7 +190,7 @@ fn spawn_tank(
 
     commands
         .spawn((SpriteBundle {
-            transform: Transform::default().with_rotation(Quat::from(Quaternion::identity())), // TODO: add rotation
+            transform: Transform::default().with_rotation(Quat::from(Quaternion::identity())).with_scale(Vec3::splat(SPRITE_SCALE)),
             texture: asset_server.load("tank3gun.png"),
             ..default()
         },))
