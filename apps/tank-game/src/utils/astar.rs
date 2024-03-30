@@ -1,4 +1,4 @@
-use crate::common::constants::TILE_WALL;
+use crate::common::constants::{TILE_WALL, TILE_WATER};
 use std::cmp::Ordering;
 use std::collections::{BinaryHeap, HashMap, VecDeque};
 
@@ -89,8 +89,8 @@ pub fn a_star(
         }
 
         for next in neighbors(current, bounds).iter() {
-            if grid[next.0][next.1] == TILE_WALL {
-                println!("Wall found at {:?}", next);
+            if grid[next.0][next.1] == TILE_WALL || grid[next.0][next.1] == TILE_WATER {
+                // println!("Wall or water found at {:?}", next);
                 continue;
             }
 
@@ -117,9 +117,9 @@ pub fn find_path(
     goal: (usize, usize),
 ) -> VecDeque<(usize, usize)> {
     let result = a_star(grid, start, goal);
-    print_grid(&grid);
-    println!("start: {:?}", start);
-    println!("goal: {:?}", goal);
+    // print_grid(&grid);
+    // println!("start: {:?}", start);
+    // println!("goal: {:?}", goal);
 
     match result {
         None => return VecDeque::new(),
@@ -165,6 +165,7 @@ mod tests {
 
         // flip y-axis only because this is how the map is rendered in the game
         let grid1: Vec<Vec<usize>> = grid.iter().rev().cloned().collect();
+        print_grid(&grid1);
         /*
            FLIPPED grid:
 

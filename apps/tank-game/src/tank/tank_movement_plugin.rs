@@ -85,7 +85,7 @@ fn set_tank_target_position_to_move(
 
                                 let start = tile_start.get_map_coord();
                                 let path = astar::find_path(&game_map.0, start, goal);
-                                println!("Path: {:?}", path);
+                                // println!("Path: {:?}", path);
 
                                 let path_f32: VecDeque<(f32, f32)> = path
                                     .iter()
@@ -93,7 +93,7 @@ fn set_tank_target_position_to_move(
                                     .cloned() // Clone the (f32, f32) values to move them into the Vec
                                     .collect();
 
-                                println!("path1 {:?}", path_f32);
+                                // println!("path1 {:?}", path_f32);
                                 tank.set_movement_path(path_f32);
                             }
 
