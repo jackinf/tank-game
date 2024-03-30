@@ -33,12 +33,10 @@ impl Tank {
     pub fn set_movement_path(&mut self, path: VecDeque<(f32, f32)>) {
         self.moving = true;
         self.movement_path = path;
-        // self.target_position = path[0];
     }
 
     pub fn is_moving(&self) -> bool {
         self.moving
-        // self.movement_path.len() > 0
     }
 
     pub fn try_take_next_position_in_path(&mut self) {

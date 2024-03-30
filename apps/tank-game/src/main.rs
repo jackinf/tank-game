@@ -14,6 +14,7 @@ fn main() {
         .insert_resource(GameMap(vec![], HashMap::new()))
         .add_plugins((
             // LoggerPlugin,
+            // CameraPlugin,
             SetupPlugin,
             CursorPlugin,
             TankMovementPlugin,
@@ -51,7 +52,6 @@ mod utils {
 }
 
 use bevy::prelude::*;
-use bevy::reflect::ReflectKind::Map;
 use bevy::window::WindowResolution;
 use std::collections::HashMap;
 

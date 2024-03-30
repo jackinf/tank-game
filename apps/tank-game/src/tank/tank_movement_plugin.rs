@@ -81,11 +81,8 @@ fn set_tank_target_position_to_move(
                                 .iter()
                                 .find(|tile| tile.accessible() && tile.in_range(curr_x, curr_y))
                             {
-                                // game_map.draw_map();
-
                                 let start = tile_start.get_map_coord();
                                 let path = astar::find_path(&game_map.0, start, goal);
-                                // println!("Path: {:?}", path);
 
                                 let path_f32: VecDeque<(f32, f32)> = path
                                     .iter()
@@ -93,11 +90,8 @@ fn set_tank_target_position_to_move(
                                     .cloned() // Clone the (f32, f32) values to move them into the Vec
                                     .collect();
 
-                                // println!("path1 {:?}", path_f32);
                                 tank.set_movement_path(path_f32);
                             }
-
-                            // tank.start_moving_to(tile_goal.get_center());
                         }
                     }
                 }
@@ -135,10 +129,7 @@ fn move_tanks_towards_target(
     mut tank_query: Query<(&mut Transform, &mut Tank), (With<Tank>, Without<TankGun>)>,
     mut gun_query: Query<(&mut Transform, &TankGun), (With<TankGun>, Without<Tank>)>,
 ) {
-    for (mut transform, mut tank) in tank_query
-        .iter_mut()
-        .filter(|(_, tank)| tank.is_moving())
-    {
+    for (mut transform, mut tank) in tank_query.iter_mut().filter(|(_, tank)| tank.is_moving()) {
         let current_pos = transform.translation.xy();
         let direction = tank.target_position - current_pos;
         let distance_to_move = tank.speed * time.delta_seconds();

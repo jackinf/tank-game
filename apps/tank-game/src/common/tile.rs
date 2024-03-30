@@ -47,10 +47,6 @@ impl Tile {
 
     pub fn get_map_coord(&self) -> (usize, usize) {
         self.map_coord
-        // let goal_x = self.center.x / TILE_SIZE;
-        // let goal_y = self.center.y / TILE_SIZE;
-        //
-        // (goal_x, goal_y)
     }
 
     pub fn get_center(&self) -> Vec2 {

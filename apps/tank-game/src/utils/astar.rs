@@ -68,6 +68,7 @@ pub fn a_star(
     cost_so_far.insert(start, 0);
 
     let bounds = (grid.len(), grid[0].len());
+
     // check if start or goal is out of bounds
     if start.0 >= bounds.0 || start.1 >= bounds.1 || goal.0 >= bounds.0 || goal.1 >= bounds.1 {
         println!("ERROR: Start or goal is out of bounds");
@@ -79,18 +80,12 @@ pub fn a_star(
         position: current,
     }) = frontier.pop()
     {
-        // println!("current: {:?}, wall: {}", current, grid[current.0][current.1]);
-        // if grid[current.0][current.1] == TILE_WALL {
-        //     continue;
-        // }
-
         if current == goal {
             return Some((*cost_so_far.get(&current).unwrap(), came_from));
         }
 
         for next in neighbors(current, bounds).iter() {
             if grid[next.0][next.1] == TILE_WALL || grid[next.0][next.1] == TILE_WATER {
-                // println!("Wall or water found at {:?}", next);
                 continue;
             }
 
@@ -117,9 +112,6 @@ pub fn find_path(
     goal: (usize, usize),
 ) -> VecDeque<(usize, usize)> {
     let result = a_star(grid, start, goal);
-    // print_grid(&grid);
-    // println!("start: {:?}", start);
-    // println!("goal: {:?}", goal);
 
     match result {
         None => return VecDeque::new(),
@@ -151,13 +143,12 @@ fn print_grid(grid: &Vec<Vec<usize>>) {
 mod tests {
     use super::*;
 
-    // THIS TEST FAILS!
     #[test]
     fn test_a_star_case1() {
         let grid: Vec<Vec<usize>> = vec![
             vec![0, 0, 0, 0, 0],
             vec![0, 0, 2, 0, 0],
-            vec![0, 0, 2, 9, 0],
+            vec![0, 0, 3, 9, 0],
             vec![0, 0, 2, 0, 0],
             vec![0, 1, 2, 2, 0],
             vec![0, 0, 0, 0, 0],
@@ -166,6 +157,7 @@ mod tests {
         // flip y-axis only because this is how the map is rendered in the game
         let grid1: Vec<Vec<usize>> = grid.iter().rev().cloned().collect();
         print_grid(&grid1);
+
         /*
            FLIPPED grid:
 

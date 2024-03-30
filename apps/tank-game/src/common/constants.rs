@@ -6,5 +6,5 @@ pub const TILE_TANK: usize = 1;
 pub const TILE_GRASS: usize = 0;
 pub const TILE_WALL: usize = 2;
 pub const TILE_WATER: usize = 3;
-pub const OFFSET_X: f32 = -800.0;
-pub const OFFSET_Y: f32 = -200.0;
+pub const OFFSET_X: f32 = -0.0;
+pub const OFFSET_Y: f32 = -0.0;

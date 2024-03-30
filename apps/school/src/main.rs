@@ -48,7 +48,9 @@ struct Counter {
 
 impl Counter {
     fn new() -> Self {
-        Self { count: RefCell::new(0) }
+        Self {
+            count: RefCell::new(0),
+        }
     }
 }
 
@@ -83,7 +85,10 @@ struct WrapperService {
 
 impl WrapperService {
     fn new(person_manager: Box<dyn PersonManager>) -> Self {
-        Self { person_manager, id_counter: 1 }
+        Self {
+            person_manager,
+            id_counter: 1,
+        }
     }
 
     fn add_person(&mut self, name: String, age: u8) -> Result<usize, String> {
@@ -148,7 +153,8 @@ struct PersonManagerImpl {
 
 impl PersonManager for PersonManagerImpl {
     fn find_person(&self, id: usize) -> Result<Option<&Person>, String> {
-        self.persons.iter()
+        self.persons
+            .iter()
             .find(|person| person.id == id)
             .map(|person| Some(person))
             .ok_or("Person not found".to_string())
