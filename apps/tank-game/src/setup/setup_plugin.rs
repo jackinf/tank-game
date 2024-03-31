@@ -33,7 +33,7 @@ pub fn setup(
 ) {
     // read file "map1.txt" into a 2d array
     // 0 - empty, 1 - tank, 2 - wall, 3 - water
-    let map_file = File::open("apps/tank-game/assets/map2.txt").unwrap();
+    let map_file = File::open("apps/tank-game/assets/map1.txt").unwrap();
     let reader = BufReader::new(map_file);
 
     let mut tilemap: Vec<Vec<usize>> = vec![];

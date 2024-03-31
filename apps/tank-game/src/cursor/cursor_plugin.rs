@@ -36,7 +36,7 @@ fn spawn_camera(mut commands: Commands) {
 }
 
 const CAMERA_SPEED: f32 = 10.0;
-const SIDE_MARGIN: f32 = 300.0;
+const SIDE_MARGIN_PERCENTAGE: f32 = 0.2;
 
 fn move_camera_with_cursor_p1(
     q_window: Query<&Window, With<PrimaryWindow>>,
@@ -50,22 +50,26 @@ fn move_camera_with_cursor_p1(
         let cursor_y = cursor.y;
         let max_width = window.width();
         let max_height = window.height();
+        let side_margin_x = max_width * SIDE_MARGIN_PERCENTAGE;
+        let side_margin_y = max_height * SIDE_MARGIN_PERCENTAGE;
 
-        if cursor_x < SIDE_MARGIN {
+        if cursor_x < side_margin_x {
             movement.direction.x = -1.0;
-        } else if cursor_x > max_width - SIDE_MARGIN {
+        } else if cursor_x > max_width - side_margin_x {
             movement.direction.x = 1.0;
         } else {
             movement.direction.x = 0.0;
         }
 
-        if cursor_y < SIDE_MARGIN {
+        if cursor_y < side_margin_y {
             movement.direction.y = 1.0;
-        } else if cursor_y > max_height - SIDE_MARGIN {
+        } else if cursor_y > max_height - side_margin_y {
             movement.direction.y = -1.0;
         } else {
             movement.direction.y = 0.0;
         }
+    } else {
+        movement.direction = Vec2::ZERO;
     }
 }
 
