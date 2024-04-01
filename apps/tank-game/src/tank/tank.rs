@@ -8,6 +8,7 @@ use std::collections::VecDeque;
 pub struct Tank {
     pub id: TankId,
     pub selected: bool,
+    pub health: u32,
     pub target_position: Vec2,
     pub speed: f32, // Units per second
     pub moving: bool,
@@ -19,6 +20,7 @@ impl Tank {
         Tank {
             id: TankId(id),
             selected: false,
+            health: 100,
             target_position,
             speed: 500.0,
             moving: false,
@@ -83,5 +85,21 @@ impl Tank {
     pub fn deselect_tank(&mut self, sprite: &mut Mut<Sprite>) {
         self.selected = false;
         sprite.color = Color::WHITE;
+    }
+
+    pub fn take_damage(&mut self, damage: u32) {
+        if self.health <= damage {
+            self.health = 0;
+        } else {
+            self.health -= damage;
+        }
+
+        if self.health == 0 {
+            self.moving = false;
+        }
+    }
+
+    pub fn is_dead(&self) -> bool {
+        self.health == 0
     }
 }

@@ -1,4 +1,6 @@
+use crate::common::game_map::GameMap;
 use crate::cursor::cursor_coordinates::WorldCoordinates;
+use crate::ui_menu::menu_info::MenuInfo;
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 
@@ -41,8 +43,19 @@ const SIDE_MARGIN_PERCENTAGE: f32 = 0.2;
 fn move_camera_with_cursor_p1(
     q_window: Query<&Window, With<PrimaryWindow>>,
     mut q_camera: Query<&mut CameraMovement, With<Camera>>,
+    menu_info: Res<MenuInfo>,
+    game_map: Res<GameMap>,
 ) {
     let (mut movement) = q_camera.single_mut();
+    if menu_info.is_hovered() {
+        // Don't move the camera if the cursor is over the UI
+        movement.direction = Vec2::ZERO;
+        return;
+    }
+
+    // TODO: stop moving when on the edge of the map
+    let (min_x, max_x, min_y, max_y) = game_map.get_min_max();
+
     let window = q_window.single();
 
     if let Some(cursor) = window.cursor_position() {

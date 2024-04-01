@@ -33,8 +33,12 @@ impl Plugin for TankSelectionPlugin {
 fn setup(mut commands: Commands, mut asset_server: ResMut<AssetServer>) {
     commands
         .spawn((SpriteBundle {
-            texture: asset_server.load("selection.png"),
+            texture: asset_server.load("pixels/white.png"),
             transform: Transform::from_xyz(0., 0., 100.),
+            sprite: Sprite {
+                color: Color::BLUE,
+                ..default()
+            },
             ..default()
         },))
         .insert(TankSelectionRect::new());

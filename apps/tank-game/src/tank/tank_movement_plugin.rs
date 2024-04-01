@@ -1,23 +1,60 @@
+use crate::common::constants::{
+    TANK_FULL_HEALTH_BAR_WIDTH, TANK_HEALTH_BAR_HEIGHT, TANK_HEALTH_BAR_SIZE, TANK_MAX_HEALTH,
+};
 use bevy::input::keyboard::KeyboardInput;
 use bevy::input::mouse::MouseButtonInput;
 use bevy::input::ButtonState;
 use bevy::prelude::*;
 use std::collections::VecDeque;
 
-use crate::common::constants::TILE_SIZE;
 use crate::common::game_map::GameMap;
 use crate::common::tile::Tile;
 use crate::cursor::cursor_coordinates::WorldCoordinates;
 use crate::tank::tank::Tank;
 use crate::tank::tank_gun::TankGun;
+use crate::tank::tank_health::{HealthBar};
 use crate::utils::astar;
 
+// TODO: rename to more general: TanksPlugin
 pub struct TankMovementPlugin;
 
 impl Plugin for TankMovementPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(Update, set_tank_target_position_to_move)
+            .add_systems(Update, update_health_bar)
+            .add_systems(Update, despawn_tanks_with_zero_health)
             .add_systems(FixedUpdate, move_tanks_towards_target);
+    }
+}
+
+fn update_health_bar(
+    mut query: Query<(&Tank, &Children)>,
+    mut health_bar_query: Query<(&mut Sprite, &HealthBar)>,
+) {
+    for (tank, children) in query.iter() {
+        for &child in children.iter() {
+            if let Ok((mut sprite, _)) = health_bar_query.get_mut(child) {
+                // Calculate the current health percentage based on the Tank component
+                let health_percentage = tank.health as f32 / TANK_MAX_HEALTH as f32;
+                let full_health_bar_width = TANK_FULL_HEALTH_BAR_WIDTH;
+                let current_health_bar_width = full_health_bar_width * health_percentage;
+
+                let rect = Rect {
+                    min: Vec2::new(0.0, 0.0),
+                    max: Vec2::new(current_health_bar_width, TANK_HEALTH_BAR_HEIGHT),
+                };
+                sprite.rect = Some(rect);
+            }
+        }
+    }
+}
+
+fn despawn_tanks_with_zero_health(mut commands: Commands, query: Query<(Entity, &Tank)>) {
+    for (entity, tank) in query.iter() {
+        if tank.is_dead() {
+            // Despawn the tank entity
+            commands.entity(entity).despawn();
+        }
     }
 }
 

@@ -17,6 +17,30 @@ impl GameMap {
                 println!()
             });
     }
+
+    pub fn get_min_max(&self) -> (f32, f32, f32, f32) {
+        let mut min_x = f32::MAX;
+        let mut min_y = f32::MAX;
+        let mut max_x = f32::MIN;
+        let mut max_y = f32::MIN;
+
+        for (_, value) in &self.1 {
+            if value.0 < min_x {
+                min_x = value.0;
+            }
+            if value.0 > max_x {
+                max_x = value.0;
+            }
+            if value.1 < min_y {
+                min_y = value.1;
+            }
+            if value.1 > max_y {
+                max_y = value.1;
+            }
+        }
+
+        (min_x, max_x, min_y, max_y)
+    }
 }
 
 #[cfg(test)]

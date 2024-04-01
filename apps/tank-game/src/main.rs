@@ -11,12 +11,11 @@ fn main() {
         }))
         .insert_resource(GameMap(vec![], HashMap::new()))
         .add_plugins((
-            // LoggerPlugin,
+            DebugPlugin,
             // CameraPlugin,
             SetupPlugin,
             CursorPlugin,
             TankMovementPlugin,
-            TankInflationPlugin,
             TankSelectionPlugin,
             UiMenuPlugin,
         ))
@@ -36,20 +35,22 @@ mod cursor {
     pub mod cursor_coordinates;
     pub mod cursor_plugin;
 }
-mod logger {
-    pub mod logger_plugin;
+mod debug {
+    pub mod debug_plugin;
     pub mod tank_log_timer;
 }
+
 mod tank {
     pub mod tank;
     pub mod tank_gun;
+    pub mod tank_health;
     pub mod tank_id;
-    pub mod tank_inflation_plugin;
     pub mod tank_movement_plugin;
     pub mod tank_selection_plugin;
 }
 
 mod ui_menu {
+    pub mod menu_info;
     pub mod ui_menu_plugin;
 }
 mod utils {
@@ -63,8 +64,8 @@ use std::collections::HashMap;
 use crate::common::constants::{MAX_HEIGHT, MAX_WIDTH};
 use crate::common::game_map::GameMap;
 use crate::cursor::cursor_plugin::CursorPlugin;
+use crate::debug::debug_plugin::DebugPlugin;
 use crate::setup::setup_plugin::SetupPlugin;
-use crate::tank::tank_inflation_plugin::TankInflationPlugin;
 use crate::tank::tank_movement_plugin::TankMovementPlugin;
 use crate::tank::tank_selection_plugin::TankSelectionPlugin;
 use crate::ui_menu::ui_menu_plugin::UiMenuPlugin;

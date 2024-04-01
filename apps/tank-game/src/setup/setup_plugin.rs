@@ -1,19 +1,22 @@
 use bevy::asset::AssetServer;
 use bevy::prelude::*;
 use bevy::prelude::{Commands, Res, ResMut};
+use bevy::sprite::Anchor;
 use bevy_rapier2d::na::Quaternion;
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::{prelude::*, BufReader};
 
 use crate::common::constants::{
-    OFFSET_X, OFFSET_Y, SPRITE_SCALE, TILE_GRASS, TILE_SIZE, TILE_TANK, TILE_WALL, TILE_WATER,
+    OFFSET_X, OFFSET_Y, SPRITE_SCALE, TANK_FULL_HEALTH_BAR_WIDTH, TANK_HEALTH_BAR_HEIGHT,
+    TANK_HEALTH_BAR_SIZE, TANK_MAX_HEALTH, TILE_GRASS, TILE_SIZE, TILE_TANK, TILE_WALL, TILE_WATER,
 };
 use crate::common::game_map::GameMap;
 use crate::common::tile::Tile;
 use crate::setup::tank_id_counter::TankIdCounter;
 use crate::tank::tank::Tank;
 use crate::tank::tank_gun::TankGun;
+use crate::tank::tank_health::{HealthBar, TankHealth};
 use crate::tank::tank_id::TankId;
 
 pub struct SetupPlugin;
@@ -161,29 +164,49 @@ fn spawn_tank(
     let tank_id = tank_id_counter.0;
     tank_id_counter.0 += 1;
 
-    let center_position = Vec2::new(
-        translation.x - (TILE_SIZE / 2.0),
-        translation.y - (TILE_SIZE / 2.0),
-    );
+    let tank_texture = asset_server.load("tank3base.png");
+    let gun_texture = asset_server.load("tank3gun.png");
+    // let health_bar_texture = asset_server.load("pixels/white.png");
+
     let tank_base: Entity = commands
         .spawn((SpriteBundle {
             transform: Transform::default()
                 .with_translation(translation.extend(5.0))
                 .with_scale(Vec3::splat(SPRITE_SCALE)),
-            texture: asset_server.load("tank3base.png"),
+            texture: tank_texture,
             ..default()
         },))
         .insert(Tank::new(tank_id, translation))
+        .insert(TankHealth::new(TANK_MAX_HEALTH as f32))
         .id();
 
-    commands
-        .spawn((SpriteBundle {
-            transform: Transform::default()
-                .with_rotation(Quat::from(Quaternion::identity()))
-                .with_scale(Vec3::splat(SPRITE_SCALE)),
-            texture: asset_server.load("tank3gun.png"),
-            ..default()
-        },))
-        .insert(TankGun::new(TankId(tank_id)))
-        .set_parent(tank_base);
+    // Spawn the tank gun as a child of the tank base
+    commands.entity(tank_base).with_children(|parent| {
+        // Spawn the turret as a child of the tank
+        parent
+            .spawn(SpriteBundle {
+                transform: Transform::from_xyz(0.0, 0.0, 0.1).with_scale(Vec3::splat(SPRITE_SCALE)), // Ensure it's positioned correctly relative to the base
+                texture: gun_texture,
+                ..default()
+            })
+            .insert(TankGun::new(TankId(tank_id)));
+
+        // Spawn the health bar as a child of the tank
+        parent
+            .spawn(SpriteBundle {
+                // Position the health bar above the tank
+                transform: Transform::from_xyz(-50.0, 40.0, 0.2),
+                sprite: Sprite {
+                    color: Color::PURPLE, // Health bar color
+                    rect: Some(Rect {
+                        min: Vec2::new(0.0, 0.0),
+                        max: TANK_HEALTH_BAR_SIZE,
+                    }),
+                    anchor: Anchor::CenterLeft, // Anchor the health bar to the left of the tank
+                    ..default()
+                },
+                ..default()
+            })
+            .insert(HealthBar);
+    });
 }
