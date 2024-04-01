@@ -12,7 +12,7 @@ use crate::common::tile::Tile;
 use crate::cursor::cursor_coordinates::WorldCoordinates;
 use crate::tank::tank::Tank;
 use crate::tank::tank_gun::TankGun;
-use crate::tank::tank_health::{HealthBar};
+use crate::tank::tank_health::HealthBar;
 use crate::utils::astar;
 
 // TODO: rename to more general: TanksPlugin

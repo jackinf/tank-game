@@ -11,6 +11,7 @@ edition = "2021"
 bevy = "0.13.0"
 bevy_rapier2d = "0.25.0"
 leafwing-input-manager = "0.13.3"
+rand = "0.8.5"
 
 ## Enable a small amount of optimization in debug mode
 #[profile.dev]

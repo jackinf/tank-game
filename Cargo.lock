@@ -4053,6 +4053,7 @@ dependencies = [
  "bevy",
  "bevy_rapier2d",
  "leafwing-input-manager",
+ "rand",
 ]
 
 [[package]]

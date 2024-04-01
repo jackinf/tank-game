@@ -36,7 +36,7 @@ pub fn setup(
 ) {
     // read file "map1.txt" into a 2d array
     // 0 - empty, 1 - tank, 2 - wall, 3 - water
-    let map_file = File::open("apps/tank-game/assets/map1.txt").unwrap();
+    let map_file = File::open("apps/tank-game/assets/map2.txt").unwrap();
     let reader = BufReader::new(map_file);
 
     let mut tilemap: Vec<Vec<usize>> = vec![];
@@ -168,10 +168,13 @@ fn spawn_tank(
     let gun_texture = asset_server.load("tank3gun.png");
     // let health_bar_texture = asset_server.load("pixels/white.png");
 
+    // generate a random number between 5.0 and 6.0 with 4 decimal places
+    let layer = (5.0 + (rand::random::<f32>() * 1.0)).round() * 10000.0 / 10000.0;
+
     let tank_base: Entity = commands
         .spawn((SpriteBundle {
             transform: Transform::default()
-                .with_translation(translation.extend(5.0))
+                .with_translation(translation.extend(layer))
                 .with_scale(Vec3::splat(SPRITE_SCALE)),
             texture: tank_texture,
             ..default()

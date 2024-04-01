@@ -1,3 +1,4 @@
+use crate::common::constants::{CAMERA_SPEED, SIDE_MARGIN_PERCENTAGE};
 use crate::common::game_map::GameMap;
 use crate::cursor::cursor_coordinates::WorldCoordinates;
 use crate::ui_menu::menu_info::MenuInfo;
@@ -36,9 +37,6 @@ fn spawn_camera(mut commands: Commands) {
             direction: Vec2::ZERO,
         });
 }
-
-const CAMERA_SPEED: f32 = 10.0;
-const SIDE_MARGIN_PERCENTAGE: f32 = 0.2;
 
 fn move_camera_with_cursor_p1(
     q_window: Query<&Window, With<PrimaryWindow>>,

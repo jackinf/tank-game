@@ -68,6 +68,10 @@ fn calculate_selection_rect_coordinates(
                 tank.toggle(&mut sprite);
             }
             (MouseButton::Left, ButtonState::Pressed, None) => {
+                tank_query.iter_mut().for_each(|(mut tank, mut sprite)| {
+                    tank.deselect_tank(&mut sprite);
+                });
+
                 let mut tank_selection_rect = q_tank_selection_rect.single_mut();
                 tank_selection_rect.start = Some(Vec2::new(wx, wy));
             }
