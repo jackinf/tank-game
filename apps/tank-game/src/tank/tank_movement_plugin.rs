@@ -34,94 +34,69 @@ fn set_tank_target_position_to_move(
             // selects everything
             if key_button_event.key_code == KeyCode::Space {
                 for (mut tank, mut sprite) in &mut tank_query.iter_mut() {
-                    select_tank(&mut tank, &mut sprite);
+                    tank.select_tank(&mut sprite);
                 }
             }
 
             // unselects everything
             if key_button_event.key_code == KeyCode::Escape {
                 for (mut tank, mut sprite) in &mut tank_query.iter_mut() {
-                    deselect_tank(&mut tank, &mut sprite);
+                    tank.deselect_tank(&mut sprite);
                 }
             }
         }
     }
 
     for mouse_button_event in mouse_button_events.read() {
-        if let ButtonState::Pressed = mouse_button_event.state {
+        if let MouseButton::Right = mouse_button_event.button {
             let wx = my_world_coords.0.x;
             let wy = my_world_coords.0.y;
 
             let clicked_on_tank = tank_query
                 .iter_mut()
-                .find(|(tank, _)| is_tank_clicked_on(wx, wy, tank));
+                .find(|(tank, _)| tank.is_tank_clicked_on(wx, wy));
 
             match clicked_on_tank {
                 Some((mut tank, mut sprite)) => {
-                    if tank.selected {
-                        deselect_tank(&mut tank, &mut sprite);
-                    } else {
-                        select_tank(&mut tank, &mut sprite);
-                    }
+                    // TODO: attack enemy tank
                 }
                 None => {
-                    if let Some(tile_goal) = tile_query
+                    let tile_result = tile_query
                         .iter()
-                        .find(|tile| tile.accessible() && tile.in_range(wx, wy))
+                        .find(|tile| tile.accessible() && tile.in_range(wx, wy));
+                    if tile_result.is_none() {
+                        continue;
+                    }
+                    let tile_goal = tile_result.unwrap();
+                    let goal = tile_goal.get_map_coord();
+
+                    for (mut tank, _) in
+                        &mut tank_query.iter_mut().filter(|(tank, _)| tank.selected)
                     {
-                        let goal = tile_goal.get_map_coord();
+                        let curr_x = tank.target_position.x;
+                        let curr_y = tank.target_position.y;
 
-                        for (mut tank, _) in
-                            &mut tank_query.iter_mut().filter(|(tank, _)| tank.selected)
+                        // TODO: optimize this
+                        if let Some(tile_start) = tile_query
+                            .iter()
+                            .find(|tile| tile.accessible() && tile.in_range(curr_x, curr_y))
                         {
-                            let curr_x = tank.target_position.x;
-                            let curr_y = tank.target_position.y;
+                            let start = tile_start.get_map_coord();
+                            let path = astar::find_path(&game_map.0, start, goal);
 
-                            if let Some(tile_start) = tile_query
+                            let path_f32: VecDeque<(f32, f32)> = path
                                 .iter()
-                                .find(|tile| tile.accessible() && tile.in_range(curr_x, curr_y))
-                            {
-                                let start = tile_start.get_map_coord();
-                                let path = astar::find_path(&game_map.0, start, goal);
+                                .filter_map(|&key| game_map.1.get(&key)) // Use `get` to lookup each key in the map, filter_map to ignore None results
+                                .cloned() // Clone the (f32, f32) values to move them into the Vec
+                                .collect();
 
-                                let path_f32: VecDeque<(f32, f32)> = path
-                                    .iter()
-                                    .filter_map(|&key| game_map.1.get(&key)) // Use `get` to lookup each key in the map, filter_map to ignore None results
-                                    .cloned() // Clone the (f32, f32) values to move them into the Vec
-                                    .collect();
-
-                                tank.set_movement_path(path_f32);
-                            }
+                            tank.set_movement_path(path_f32);
                         }
                     }
                 }
             }
         }
     }
-}
-
-fn select_tank(tank: &mut Mut<Tank>, sprite: &mut Mut<Sprite>) {
-    tank.selected = true;
-    sprite.color = Color::rgb(2.0, 2.0, 2.0);
-}
-
-fn deselect_tank(tank: &mut Mut<Tank>, sprite: &mut Mut<Sprite>) {
-    tank.selected = false;
-    sprite.color = Color::WHITE;
-}
-
-fn is_tank_clicked_on(wx: f32, wy: f32, tank: &Mut<Tank>) -> bool {
-    let offset = TILE_SIZE / 2.0;
-
-    let x1 = tank.target_position.x - offset;
-    let x2 = tank.target_position.x + TILE_SIZE - offset;
-    let in_x = x1 <= wx && wx <= x2;
-
-    let y1 = tank.target_position.y - offset;
-    let y2 = tank.target_position.y + TILE_SIZE - offset;
-    let in_y = y1 <= wy && wy <= y2;
-
-    in_x && in_y
 }
 
 fn move_tanks_towards_target(
@@ -150,7 +125,6 @@ fn move_tanks_towards_target(
             transform.translation.y = tank.target_position.y;
 
             tank.try_take_next_position_in_path();
-            // tank.stop();
         }
 
         // Rotate tank gun smoothly

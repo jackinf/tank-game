@@ -1,4 +1,5 @@
 use crate::cursor::cursor_coordinates::WorldCoordinates;
+use crate::tank::tank::Tank;
 use bevy::input::mouse::MouseButtonInput;
 use bevy::input::ButtonState;
 use bevy::prelude::*;
@@ -29,12 +30,7 @@ impl Plugin for TankSelectionPlugin {
     }
 }
 
-fn setup(
-    mut commands: Commands,
-    mut asset_server: ResMut<AssetServer>,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<ColorMaterial>>,
-) {
+fn setup(mut commands: Commands, mut asset_server: ResMut<AssetServer>) {
     commands
         .spawn((SpriteBundle {
             texture: asset_server.load("selection.png"),
@@ -49,22 +45,60 @@ fn calculate_selection_rect_coordinates(
     mut q_tank_selection_rect: Query<&mut TankSelectionRect, With<TankSelectionRect>>,
     mut my_world_coords: ResMut<WorldCoordinates>,
     mut mouse_button_input_events: EventReader<MouseButtonInput>,
+    mut tank_query: Query<(&mut Tank, &mut Sprite), With<Tank>>,
 ) {
     for mouse_button_input_event in mouse_button_input_events.read() {
-        if let MouseButton::Left = mouse_button_input_event.button {
-            let wx = my_world_coords.0.x;
-            let wy = my_world_coords.0.y;
+        let wx = my_world_coords.0.x;
+        let wy = my_world_coords.0.y;
 
-            if let ButtonState::Pressed = mouse_button_input_event.state {
+        let clicked_on_tank = tank_query
+            .iter_mut()
+            .find(|(tank, _)| tank.is_tank_clicked_on(wx, wy));
+
+        match (
+            mouse_button_input_event.button,
+            mouse_button_input_event.state,
+            clicked_on_tank,
+        ) {
+            (MouseButton::Left, ButtonState::Pressed, Some((mut tank, mut sprite))) => {
+                tank.toggle(&mut sprite);
+            }
+            (MouseButton::Left, ButtonState::Pressed, None) => {
                 let mut tank_selection_rect = q_tank_selection_rect.single_mut();
                 tank_selection_rect.start = Some(Vec2::new(wx, wy));
-                println!("start: {:?}", tank_selection_rect.start);
             }
-
-            if let ButtonState::Released = mouse_button_input_event.state {
+            (MouseButton::Left, ButtonState::Released, _) => {
                 let mut tank_selection_rect = q_tank_selection_rect.single_mut();
+                if tank_selection_rect.start.is_none() {
+                    continue;
+                }
+
+                let sx = tank_selection_rect.start.unwrap().x;
+                let sy = tank_selection_rect.start.unwrap().y;
                 tank_selection_rect.start = None;
+
+                // finds and selects tanks within the selection rectangle
+                for (mut tank, mut sprite) in &mut tank_query.iter_mut() {
+                    let x1 = sx.min(wx);
+                    let x2 = sx.max(wx);
+                    let y1 = sy.min(wy);
+                    let y2 = sy.max(wy);
+
+                    let in_x = x1 <= tank.target_position.x && tank.target_position.x <= x2;
+                    let in_y = y1 <= tank.target_position.y && tank.target_position.y <= y2;
+
+                    if in_x && in_y {
+                        tank.select_tank(&mut sprite);
+                    } else {
+                        tank.deselect_tank(&mut sprite);
+                    }
+                }
             }
+            _ => {}
+        }
+
+        if mouse_button_input_event.button != MouseButton::Left {
+            continue;
         }
     }
 }

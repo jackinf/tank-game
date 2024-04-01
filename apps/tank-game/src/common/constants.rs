@@ -1,4 +1,4 @@
-pub const MAX_WIDTH: u16 = 1200;
+pub const MAX_WIDTH: u16 = 1600;
 pub const MAX_HEIGHT: u16 = 1000;
 pub const TILE_SIZE: f32 = 64.0;
 pub const SPRITE_SCALE: f32 = 0.5;

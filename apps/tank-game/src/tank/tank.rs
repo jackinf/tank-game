@@ -1,6 +1,7 @@
+use crate::common::constants::TILE_SIZE;
 use crate::tank::tank_id::TankId;
 use bevy::math::Vec2;
-use bevy::prelude::Component;
+use bevy::prelude::{Color, Component, Mut, Sprite};
 use std::collections::VecDeque;
 
 #[derive(Component)]
@@ -50,5 +51,37 @@ impl Tank {
 
     pub fn stop(&mut self) {
         self.moving = false;
+    }
+
+    pub fn is_tank_clicked_on(&self, wx: f32, wy: f32) -> bool {
+        let offset = TILE_SIZE / 2.0;
+
+        let x1 = self.target_position.x - offset;
+        let x2 = self.target_position.x + TILE_SIZE - offset;
+        let in_x = x1 <= wx && wx <= x2;
+
+        let y1 = self.target_position.y - offset;
+        let y2 = self.target_position.y + TILE_SIZE - offset;
+        let in_y = y1 <= wy && wy <= y2;
+
+        in_x && in_y
+    }
+
+    pub fn toggle(&mut self, sprite: &mut Mut<Sprite>) {
+        if self.selected {
+            self.deselect_tank(sprite);
+        } else {
+            self.select_tank(sprite);
+        }
+    }
+
+    pub fn select_tank(&mut self, sprite: &mut Mut<Sprite>) {
+        self.selected = true;
+        sprite.color = Color::rgb(2.0, 2.0, 2.0);
+    }
+
+    pub fn deselect_tank(&mut self, sprite: &mut Mut<Sprite>) {
+        self.selected = false;
+        sprite.color = Color::WHITE;
     }
 }
