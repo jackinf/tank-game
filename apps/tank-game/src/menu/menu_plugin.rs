@@ -1,15 +1,16 @@
-use crate::ui_menu::menu_info::MenuInfo;
+use crate::menu::menu_info::MenuInfo;
+use crate::menu::money_text::MoneyText;
 use bevy::prelude::Val::Px;
 use bevy::prelude::*;
 
-pub struct UiMenuPlugin;
+pub struct MenuPlugin;
 
-impl Plugin for UiMenuPlugin {
+impl Plugin for MenuPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(PreStartup, setup)
             .insert_resource(MenuInfo::new())
             .add_systems(Update, detect_mouse_over_container)
-            .add_systems(Update, update_money_text);
+            .add_systems(Update, MoneyText::update);
     }
 }
 
@@ -49,7 +50,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, menu_info: Res<
                 })
                 .with_children(|row_parent| {
                     // Add money text
-                    add_money_text(&asset_server, row_parent, menu_info);
+                    MoneyText::spawn(&asset_server, row_parent, menu_info);
                 });
 
             for row in 0..rows {
@@ -117,43 +118,6 @@ fn detect_mouse_over_container(
             Interaction::Hovered => menu_info.set_hovered(true),
             Interaction::None => menu_info.set_hovered(false),
             _ => {} // Handle other states as needed
-        }
-    }
-}
-
-#[derive(Component)]
-struct MoneyText;
-
-fn add_money_text(
-    asset_server: &Res<AssetServer>,
-    parent: &mut ChildBuilder,
-    menu_info: Res<MenuInfo>,
-) {
-    parent
-        .spawn((
-            TextBundle::from_section(
-                format!("Credits: {}", menu_info.get_money()),
-                TextStyle {
-                    font: asset_server.load("fonts/AmericanCaptain.ttf"),
-                    font_size: 30.0,
-                    ..default()
-                },
-            )
-            .with_style(Style {
-                margin: UiRect::all(Val::Px(5.)),
-                ..default()
-            }),
-            Label,
-        ))
-        .insert(MoneyText);
-}
-
-fn update_money_text(menu_info: Res<MenuInfo>, mut query: Query<&mut Text, With<MoneyText>>) {
-    // Check if the MenuInfo resource has been updated
-    if menu_info.is_changed() {
-        for mut text in query.iter_mut() {
-            // Update the text component
-            text.sections[0].value = format!("Money: {}", menu_info.get_money());
         }
     }
 }

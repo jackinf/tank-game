@@ -1,7 +1,7 @@
 use crate::common::constants::{CAMERA_SPEED, SIDE_MARGIN_PERCENTAGE};
 use crate::common::game_map::GameMap;
 use crate::cursor::cursor_coordinates::CursorCoordinates;
-use crate::ui_menu::menu_info::MenuInfo;
+use crate::menu::menu_info::MenuInfo;
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 

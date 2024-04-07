@@ -1,4 +1,4 @@
-use crate::common::constants::{Grid, TileCoordinates, WorldCoordinates};
+use crate::common::constants::{Grid, TileCoord, WorldCoord};
 use crate::common::tile::Tile;
 use bevy::prelude::Resource;
 use std::collections::HashMap;
@@ -28,14 +28,14 @@ impl GameMap {
             .collect()
     }
 
-    pub fn get_tile_to_world_coordinates(&self) -> &HashMap<TileCoordinates, WorldCoordinates> {
+    pub fn get_tile_to_world_coordinates(&self) -> &HashMap<TileCoord, WorldCoord> {
         &self.tile_to_world_coordinates
     }
 
     pub fn set_map(
         &mut self,
         grid: Grid,
-        tile_to_world_coordinates: HashMap<TileCoordinates, WorldCoordinates>,
+        tile_to_world_coordinates: HashMap<TileCoord, WorldCoord>,
     ) {
         self.grid = grid;
         self.tile_to_world_coordinates = tile_to_world_coordinates;

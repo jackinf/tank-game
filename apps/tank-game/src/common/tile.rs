@@ -1,4 +1,4 @@
-use crate::common::constants::{TileCoordinates, TILE_GRASS, TILE_SIZE};
+use crate::common::constants::TILE_GRASS;
 use bevy::prelude::*;
 use std::fmt::Formatter;
 
@@ -62,16 +62,5 @@ impl Tile {
 
     pub fn get_center(&self) -> Vec2 {
         self.center
-    }
-}
-
-pub struct TileQueries;
-
-impl TileQueries {
-    pub fn find_accessible(q_tiles: &Query<&Tile>, pos: &Vec2) -> Option<TileCoordinates> {
-        q_tiles
-            .iter()
-            .find(|tile| tile.in_range(pos.x, pos.y) && tile.accessible())
-            .map(|tile| tile.get_tile_coord())
     }
 }

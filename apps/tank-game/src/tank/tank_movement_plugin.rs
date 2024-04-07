@@ -1,5 +1,5 @@
 use crate::common::constants::{
-    TANK_FULL_HEALTH_BAR_WIDTH, TANK_HEALTH_BAR_HEIGHT, TANK_HEALTH_BAR_SIZE, TANK_MAX_HEALTH,
+    TANK_FULL_HEALTH_BAR_WIDTH, TANK_HEALTH_BAR_HEIGHT, TANK_MAX_HEALTH,
 };
 use bevy::input::keyboard::KeyboardInput;
 use bevy::input::mouse::MouseButtonInput;
@@ -8,9 +8,10 @@ use bevy::prelude::*;
 use std::collections::VecDeque;
 
 use crate::common::game_map::GameMap;
-use crate::common::tile::{Tile, TileQueries};
+use crate::common::tile::Tile;
+use crate::common::tile_queries::TileQueries;
 use crate::cursor::cursor_coordinates::CursorCoordinates;
-use crate::tank::tank::{Tank, TankQueries};
+use crate::tank::tank::Tank;
 use crate::tank::tank_gun::TankGun;
 use crate::tank::tank_health::HealthBar;
 use crate::utils::astar;

@@ -71,7 +71,7 @@ pub fn setup(
 }
 
 fn read_map_from_file() -> Vec<Vec<usize>> {
-    let map_file = File::open("apps/tank-game/assets/map0.txt").unwrap();
+    let map_file = File::open("apps/tank-game/assets/map1.txt").unwrap();
     let reader = BufReader::new(map_file);
 
     // 0 - empty, 1 - tank, 2 - wall, 3 - water
@@ -144,7 +144,6 @@ fn spawn_tank(
 
     let tank_texture = asset_server.load("sprites/tank3base.png");
     let gun_texture = asset_server.load("sprites/tank3gun.png");
-    // let health_bar_texture = asset_server.load("pixels/white.png");
 
     // generate a random number between 5.0 and 6.0 with 4 decimal places
     let layer = (5.0 + (rand::random::<f32>() * 1.0)).round() * 10000.0 / 10000.0;
