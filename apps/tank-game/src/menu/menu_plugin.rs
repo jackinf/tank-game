@@ -1,5 +1,11 @@
+use crate::common::constants::{SPRITE_SCALE, TILE_SIZE};
+use crate::common::tile::Tile;
+use crate::common::tile_queries::TileQueries;
+use crate::cursor::cursor_coordinates::CursorCoordinates;
 use crate::menu::menu_info::MenuInfo;
 use crate::menu::money_text::MoneyText;
+use bevy::input::mouse::MouseButtonInput;
+use bevy::input::ButtonState;
 use bevy::prelude::Val::Px;
 use bevy::prelude::*;
 
@@ -9,8 +15,113 @@ impl Plugin for MenuPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(PreStartup, setup)
             .insert_resource(MenuInfo::new())
+            .insert_resource(ConstructionInfo::new())
             .add_systems(Update, detect_mouse_over_container)
+            .add_systems(FixedUpdate, draw_construction_tiles)
             .add_systems(Update, MoneyText::update);
+    }
+}
+
+#[derive(Resource)]
+pub struct ConstructionInfo {
+    ready: bool,
+}
+
+impl ConstructionInfo {
+    pub fn set_ready(&mut self, ready: bool) {
+        self.ready = ready;
+    }
+
+    pub fn is_ready(&self) -> bool {
+        self.ready
+    }
+}
+
+impl ConstructionInfo {
+    pub fn new() -> Self {
+        Self { ready: false }
+    }
+}
+
+#[derive(Component)]
+pub struct PlacementBuilding {
+    layout: (usize, usize),
+}
+
+impl PlacementBuilding {
+    pub fn new() -> Self {
+        Self { layout: (2, 2) }
+    }
+
+    pub fn get_layout(&self) -> (usize, usize) {
+        self.layout
+    }
+}
+
+fn draw_construction_tiles(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    q_tiles: Query<&Tile>,
+    mut q_placement: Query<
+        (&mut Transform, &mut Sprite, &PlacementBuilding),
+        With<PlacementBuilding>,
+    >,
+    cursor: Res<CursorCoordinates>,
+    mut construction_info: ResMut<ConstructionInfo>,
+    mut mouse_button_events: EventReader<MouseButtonInput>,
+) {
+    if !construction_info.ready {
+        return;
+    }
+
+    match (
+        q_placement.single_mut(),
+        TileQueries::find_accessible_tile(&q_tiles, &cursor.0),
+    ) {
+        ((mut transform, mut sprite, placement), Some(tile)) => {
+            sprite.color.set_a(0.5); // show tile
+            let (x, y) = tile.get_world_coord();
+            transform.translation = Vec3::new(x, y, transform.translation.z);
+
+            for mouse_button_event in mouse_button_events.read() {
+                if mouse_button_event.button == MouseButton::Left
+                    && mouse_button_event.state == ButtonState::Pressed
+                {
+                    // validate if all tiles in layout.x * layout.y are accessible
+                    let (layout_x, layout_y) = placement.get_layout();
+                    let mut all_accessible = true;
+                    for i in 0..layout_x {
+                        for j in 0..layout_y {
+                            let (x, y) = tile.get_tile_coord();
+                            let tile = TileQueries::find_tile(&q_tiles, (x + i, y + j));
+                            if tile.is_none() || !tile.unwrap().accessible() {
+                                all_accessible = false;
+                                break;
+                            }
+                        }
+                    }
+
+                    if !all_accessible {
+                        continue;
+                    }
+
+                    sprite.color.set_a(0.0);
+                    construction_info.set_ready(false);
+
+                    // spawn a building
+                    commands.spawn(SpriteBundle {
+                        texture: asset_server.load("sprites/building_a.png"),
+                        transform: Transform::default()
+                            .with_translation(Vec2::new(x, y).extend(100.))
+                            .with_scale(Vec3::splat(SPRITE_SCALE)),
+                        ..default()
+                    });
+                }
+            }
+        }
+        ((_, mut sprite, _), None) => {
+            sprite.color.set_a(0.0); // hide tile
+        }
     }
 }
 
@@ -107,6 +218,21 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, menu_info: Res<
                     });
             }
         });
+
+    // selector entity for placing buildings
+    commands
+        .spawn((SpriteBundle {
+            texture: asset_server.load("pixels/white.png"),
+            transform: Transform::default()
+                .with_translation(Vec3::new(0., 0., 100.))
+                .with_scale(Vec2::new(2.0 * TILE_SIZE, 2.0 * TILE_SIZE).extend(1.0)),
+            sprite: Sprite {
+                color: Color::PINK.with_a(0.0), // hide by default
+                ..default()
+            },
+            ..default()
+        },))
+        .insert(PlacementBuilding::new());
 }
 
 fn detect_mouse_over_container(

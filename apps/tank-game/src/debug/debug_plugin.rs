@@ -6,6 +6,7 @@ use bevy::prelude::*;
 
 use crate::debug::tank_log_timer::TankLogTimer;
 use crate::menu::menu_info::MenuInfo;
+use crate::menu::menu_plugin::{ConstructionInfo};
 use crate::tank::tank::Tank;
 
 pub struct DebugPlugin;
@@ -16,7 +17,9 @@ impl Plugin for DebugPlugin {
             .add_systems(Update, inflate_all_tanks)
             .add_systems(Update, buying_stuff)
             .add_systems(Update, damage_selected_tanks)
-            .add_systems(FixedUpdate, logger);
+            .add_systems(Update, construction_complete)
+            .add_systems(Update, log_construction_info)
+            .add_systems(Update, logger);
     }
 }
 
@@ -33,6 +36,31 @@ fn logger(
             "Cursor coordinates: {:?}. Tile coordinates: {:?}",
             q_coords.0, tile_coordinates
         );
+    }
+}
+
+fn construction_complete(
+    mut construction_info: ResMut<ConstructionInfo>,
+    keyboard: Res<ButtonInput<KeyCode>>,
+) {
+    if !keyboard.just_pressed(KeyCode::KeyM) {
+        return;
+    }
+
+    construction_info.set_ready(true);
+}
+
+fn log_construction_info(
+    mut timer: ResMut<TankLogTimer>,
+    time: Res<Time>,
+    construction_info: Res<ConstructionInfo>,
+) {
+    if !timer.0.tick(time.delta()).just_finished() {
+        return;
+    }
+
+    if construction_info.is_ready() {
+        println!("Construction is ready!");
     }
 }
 
