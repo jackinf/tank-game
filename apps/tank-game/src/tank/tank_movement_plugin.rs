@@ -8,9 +8,9 @@ use bevy::prelude::*;
 use std::collections::VecDeque;
 
 use crate::common::game_map::GameMap;
-use crate::common::tile::Tile;
-use crate::cursor::cursor_coordinates::WorldCoordinates;
-use crate::tank::tank::Tank;
+use crate::common::tile::{Tile, TileQueries};
+use crate::cursor::cursor_coordinates::CursorCoordinates;
+use crate::tank::tank::{Tank, TankQueries};
 use crate::tank::tank_gun::TankGun;
 use crate::tank::tank_health::HealthBar;
 use crate::utils::astar;
@@ -63,7 +63,7 @@ fn set_tank_target_position_to_move(
     tile_query: Query<&Tile>,
     mut mouse_button_events: EventReader<MouseButtonInput>,
     mut key_button_events: EventReader<KeyboardInput>,
-    my_world_coords: Res<WorldCoordinates>,
+    my_world_coords: Res<CursorCoordinates>,
     game_map: Res<GameMap>,
 ) {
     for key_button_event in key_button_events.read() {
@@ -85,7 +85,9 @@ fn set_tank_target_position_to_move(
     }
 
     for mouse_button_event in mouse_button_events.read() {
-        if let MouseButton::Right = mouse_button_event.button {
+        if MouseButton::Right == mouse_button_event.button
+            && mouse_button_event.state == ButtonState::Pressed
+        {
             let wx = my_world_coords.0.x;
             let wy = my_world_coords.0.y;
 
@@ -98,36 +100,30 @@ fn set_tank_target_position_to_move(
                     // TODO: attack enemy tank
                 }
                 None => {
-                    let tile_result = tile_query
-                        .iter()
-                        .find(|tile| tile.accessible() && tile.in_range(wx, wy));
-                    if tile_result.is_none() {
-                        continue;
-                    }
-                    let tile_goal = tile_result.unwrap();
-                    let goal = tile_goal.get_map_coord();
-
-                    for (mut tank, _) in
-                        &mut tank_query.iter_mut().filter(|(tank, _)| tank.selected)
+                    if let Some(goal) =
+                        TileQueries::find_accessible(&tile_query, &my_world_coords.0)
                     {
-                        let curr_x = tank.target_position.x;
-                        let curr_y = tank.target_position.y;
+                        let selected_tanks = &mut tank_query
+                            .iter_mut()
+                            .filter(|(tank, _)| tank.selected)
+                            .map(|(tank, _)| tank);
 
-                        // TODO: optimize this
-                        if let Some(tile_start) = tile_query
-                            .iter()
-                            .find(|tile| tile.accessible() && tile.in_range(curr_x, curr_y))
-                        {
-                            let start = tile_start.get_map_coord();
-                            let path = astar::find_path(&game_map.0, start, goal);
+                        for mut tank in selected_tanks {
+                            if let Some(start) =
+                                TileQueries::find_accessible(&tile_query, &tank.target_position)
+                            {
+                                // TODO: expensive! optimize this
+                                let path_f32: VecDeque<(f32, f32)> =
+                                    astar::find_path(&game_map.get_tile_type_grid(), start, goal)
+                                        .iter()
+                                        .filter_map(|&key| {
+                                            game_map.get_tile_to_world_coordinates().get(&key)
+                                        }) // Use `get` to lookup each key in the map, filter_map to ignore None results
+                                        .cloned() // Clone the (f32, f32) values to move them into the Vec
+                                        .collect();
 
-                            let path_f32: VecDeque<(f32, f32)> = path
-                                .iter()
-                                .filter_map(|&key| game_map.1.get(&key)) // Use `get` to lookup each key in the map, filter_map to ignore None results
-                                .cloned() // Clone the (f32, f32) values to move them into the Vec
-                                .collect();
-
-                            tank.set_movement_path(path_f32);
+                                tank.set_movement_path(path_f32);
+                            }
                         }
                     }
                 }

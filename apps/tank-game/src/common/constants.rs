@@ -1,4 +1,9 @@
+use crate::common::tile::Tile;
 use bevy::math::Vec2;
+
+pub type Grid = Vec<Vec<Tile>>;
+pub type WorldCoordinates = (f32, f32);
+pub type TileCoordinates = (usize, usize);
 
 pub const MAX_WIDTH: u16 = 1600;
 pub const MAX_HEIGHT: u16 = 1000;

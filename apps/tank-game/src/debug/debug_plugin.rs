@@ -1,3 +1,5 @@
+use crate::common::tile::{Tile, TileQueries};
+use crate::cursor::cursor_coordinates::CursorCoordinates;
 use bevy::app::Plugin;
 use bevy::prelude::*;
 
@@ -17,12 +19,19 @@ impl Plugin for DebugPlugin {
     }
 }
 
-fn logger(tank_query: Query<&Tank>, mut timer: ResMut<TankLogTimer>, time: Res<Time>) {
+fn logger(
+    mut timer: ResMut<TankLogTimer>,
+    time: Res<Time>,
+    q_coords: Res<CursorCoordinates>,
+    q_tiles: Query<&Tile>,
+) {
     if timer.0.tick(time.delta()).just_finished() {
-        for tank in &tank_query {
-            let id = tank.id.0;
-            // println!("Tank id: {}", id);
-        }
+        let tile_coordinates =
+            TileQueries::find_accessible(&q_tiles, &q_coords.0).unwrap_or((999, 999));
+        println!(
+            "Cursor coordinates: {:?}. Tile coordinates: {:?}",
+            q_coords.0, tile_coordinates
+        );
     }
 }
 

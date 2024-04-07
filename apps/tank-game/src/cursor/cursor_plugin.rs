@@ -1,6 +1,6 @@
 use crate::common::constants::{CAMERA_SPEED, SIDE_MARGIN_PERCENTAGE};
 use crate::common::game_map::GameMap;
-use crate::cursor::cursor_coordinates::WorldCoordinates;
+use crate::cursor::cursor_coordinates::CursorCoordinates;
 use crate::ui_menu::menu_info::MenuInfo;
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
@@ -9,7 +9,7 @@ pub struct CursorPlugin;
 
 impl Plugin for CursorPlugin {
     fn build(&self, app: &mut App) {
-        app.insert_resource(WorldCoordinates(Vec2::new(0.0, 0.0)))
+        app.insert_resource(CursorCoordinates(Vec2::new(0.0, 0.0)))
             .add_systems(PreStartup, spawn_camera)
             .add_systems(
                 Update,
@@ -93,7 +93,7 @@ fn move_camera_with_cursor_p2(
 }
 
 fn convert_cursor_to_world_position(
-    mut my_world_coords: ResMut<WorldCoordinates>,
+    mut my_world_coords: ResMut<CursorCoordinates>,
     q_window: Query<&Window, With<PrimaryWindow>>,
     mut q_camera: Query<(&Camera, &GlobalTransform, &mut CameraMovement), With<Camera>>,
 ) {

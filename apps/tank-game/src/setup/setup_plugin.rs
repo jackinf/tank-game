@@ -35,10 +35,46 @@ pub fn setup(
     mut game_map: ResMut<GameMap>,
 ) {
     // read file "map1.txt" into a 2d array
-    // 0 - empty, 1 - tank, 2 - wall, 3 - water
-    let map_file = File::open("apps/tank-game/assets/map2.txt").unwrap();
+    let tilemap = read_map_from_file();
+
+    let mut grid = vec![];
+    let mut grid_to_tilemap = HashMap::new();
+
+    tilemap
+        .into_iter()
+        .enumerate()
+        .for_each(|(row_index, row_on_row)| {
+            let mut row = vec![];
+            row_on_row
+                .into_iter()
+                .enumerate()
+                .for_each(|(col_index, cell)| {
+                    let x = row_index as f32 * TILE_SIZE + OFFSET_X;
+                    let y = col_index as f32 * TILE_SIZE + OFFSET_Y;
+                    let pos = Vec2::new(x, y);
+                    let map_coord = (row_index, col_index);
+                    grid_to_tilemap.insert(map_coord, (x, y));
+
+                    // let tank stand on a grass by default
+                    let cell2 = if cell == TILE_TANK { TILE_GRASS } else { cell };
+                    let tile = spawn_tile(&mut commands, &asset_server, pos, cell2, map_coord);
+                    row.push(tile);
+
+                    if TILE_TANK == cell {
+                        spawn_tank(&mut commands, &asset_server, pos, &mut tank_id_counter);
+                    }
+                });
+            grid.push(row);
+        });
+
+    game_map.set_map(grid, grid_to_tilemap);
+}
+
+fn read_map_from_file() -> Vec<Vec<usize>> {
+    let map_file = File::open("apps/tank-game/assets/map0.txt").unwrap();
     let reader = BufReader::new(map_file);
 
+    // 0 - empty, 1 - tank, 2 - wall, 3 - water
     let mut tilemap: Vec<Vec<usize>> = vec![];
     for line_result in reader.lines() {
         if let Err(_) = line_result {
@@ -55,90 +91,32 @@ pub fn setup(
             .collect();
         tilemap.push(cells.clone());
     }
-    game_map.0 = tilemap.clone();
-
-    let mut grid_to_tilemap = HashMap::new();
-
     tilemap
-        .into_iter()
-        .enumerate()
-        .for_each(|(row_index, row_on_row)| {
-            row_on_row
-                .into_iter()
-                .enumerate()
-                .for_each(|(col_index, cell)| {
-                    let x = (row_index) as f32 * TILE_SIZE + OFFSET_X;
-                    let y = (col_index) as f32 * TILE_SIZE + OFFSET_Y;
-                    let pos = Vec2::new(x, y);
-                    let map_coord = (row_index, col_index);
-
-                    match cell {
-                        TILE_WALL => spawn_simple_tile(
-                            &mut commands,
-                            &asset_server,
-                            pos,
-                            TILE_WALL,
-                            map_coord,
-                            &mut grid_to_tilemap,
-                        ),
-                        TILE_TANK => {
-                            spawn_simple_tile(
-                                &mut commands,
-                                &asset_server,
-                                pos,
-                                TILE_GRASS,
-                                map_coord,
-                                &mut grid_to_tilemap,
-                            );
-                            spawn_tank(&mut commands, &asset_server, pos, &mut tank_id_counter);
-                        }
-                        TILE_GRASS => spawn_simple_tile(
-                            &mut commands,
-                            &asset_server,
-                            pos,
-                            TILE_GRASS,
-                            map_coord,
-                            &mut grid_to_tilemap,
-                        ),
-                        TILE_WATER => spawn_simple_tile(
-                            &mut commands,
-                            &asset_server,
-                            pos,
-                            TILE_WATER,
-                            map_coord,
-                            &mut grid_to_tilemap,
-                        ),
-                        _ => spawn_simple_tile(
-                            &mut commands,
-                            &asset_server,
-                            pos,
-                            TILE_GRASS,
-                            map_coord,
-                            &mut grid_to_tilemap,
-                        ),
-                    }
-                });
-        });
-
-    game_map.1 = grid_to_tilemap;
 }
 
-fn spawn_simple_tile(
+fn spawn_tile(
     commands: &mut Commands,
     asset_server: &Res<AssetServer>,
     translation: Vec2,
     tile_type: usize,
     map_coord: (usize, usize),
-    grid_to_tilemap: &mut HashMap<(usize, usize), (f32, f32)>,
-) {
+) -> Tile {
+    assert_eq!(
+        tile_type == TILE_WALL || tile_type == TILE_WATER || tile_type == TILE_GRASS,
+        true
+    );
+
     let center_position = Vec2::new(translation.x, translation.y);
     let path: String = if tile_type == TILE_WALL {
-        "wall.png".into()
+        "sprites/tiles/wall.png".into()
     } else if tile_type == TILE_WATER {
-        "water.png".into()
+        "sprites/tiles/water.png".into()
+    } else if tile_type == TILE_GRASS {
+        "sprites/tiles/grass3.png".into()
     } else {
-        "grass3.png".into()
+        panic!("Invalid tile type: {}", tile_type)
     };
+
     let layer: f32 = if tile_type == TILE_WALL { 10.0 } else { 0.0 };
 
     let tile = Tile::new(center_position, TILE_SIZE, TILE_SIZE, tile_type, map_coord);
@@ -150,9 +128,9 @@ fn spawn_simple_tile(
             texture: asset_server.load(path),
             ..default()
         },))
-        .insert(tile);
+        .insert(tile.clone());
 
-    grid_to_tilemap.insert(map_coord, (translation.x, translation.y));
+    tile
 }
 
 fn spawn_tank(
@@ -164,8 +142,8 @@ fn spawn_tank(
     let tank_id = tank_id_counter.0;
     tank_id_counter.0 += 1;
 
-    let tank_texture = asset_server.load("tank3base.png");
-    let gun_texture = asset_server.load("tank3gun.png");
+    let tank_texture = asset_server.load("sprites/tank3base.png");
+    let gun_texture = asset_server.load("sprites/tank3gun.png");
     // let health_bar_texture = asset_server.load("pixels/white.png");
 
     // generate a random number between 5.0 and 6.0 with 4 decimal places

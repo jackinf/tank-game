@@ -1,7 +1,7 @@
 use crate::common::constants::TILE_SIZE;
 use crate::tank::tank_id::TankId;
 use bevy::math::Vec2;
-use bevy::prelude::{Color, Component, Mut, Sprite};
+use bevy::prelude::{Color, Component, Mut, Query, Sprite, With};
 use std::collections::VecDeque;
 
 #[derive(Component)]
@@ -101,5 +101,19 @@ impl Tank {
 
     pub fn is_dead(&self) -> bool {
         self.health == 0
+    }
+}
+
+pub struct TankQueries;
+
+impl TankQueries {
+    pub fn find_selected<'a>(
+        mut query: &'a mut Query<'a, 'a, (&'a mut Tank, &'a mut Sprite), With<Tank>>,
+    ) -> Vec<Mut<'a, Tank>> {
+        query
+            .iter_mut()
+            .filter(|(tank, _)| tank.selected)
+            .map(|tank| tank.0)
+            .collect()
     }
 }

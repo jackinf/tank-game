@@ -1,7 +1,8 @@
-use crate::common::constants::{TILE_GRASS, TILE_SIZE};
+use crate::common::constants::{TileCoordinates, TILE_GRASS, TILE_SIZE};
 use bevy::prelude::*;
+use std::fmt::Formatter;
 
-#[derive(Component, Debug)]
+#[derive(Component, Debug, Clone)]
 pub struct Tile {
     center: Vec2,
     x1: f32,
@@ -9,7 +10,13 @@ pub struct Tile {
     y1: f32,
     y2: f32,
     tile_type: usize,
-    map_coord: (usize, usize),
+    tile_coord: (usize, usize),
+}
+
+impl std::fmt::Display for Tile {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Tile: {:?}, {:?}", self.tile_coord, self.tile_type)
+    }
 }
 
 impl Tile {
@@ -31,7 +38,7 @@ impl Tile {
             y1,
             y2,
             tile_type,
-            map_coord,
+            tile_coord: map_coord,
         }
     }
 
@@ -45,11 +52,26 @@ impl Tile {
         in_x && in_y
     }
 
-    pub fn get_map_coord(&self) -> (usize, usize) {
-        self.map_coord
+    pub fn get_tile_type(&self) -> usize {
+        self.tile_type
+    }
+
+    pub fn get_tile_coord(&self) -> (usize, usize) {
+        self.tile_coord
     }
 
     pub fn get_center(&self) -> Vec2 {
         self.center
+    }
+}
+
+pub struct TileQueries;
+
+impl TileQueries {
+    pub fn find_accessible(q_tiles: &Query<&Tile>, pos: &Vec2) -> Option<TileCoordinates> {
+        q_tiles
+            .iter()
+            .find(|tile| tile.in_range(pos.x, pos.y) && tile.accessible())
+            .map(|tile| tile.get_tile_coord())
     }
 }

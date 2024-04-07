@@ -3,16 +3,14 @@ fn main() {
         .add_plugins(DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {
                 resolution: WindowResolution::new(MAX_WIDTH as f32, MAX_HEIGHT as f32),
-                // .with_scale_factor_override(1.0),
                 title: "Tank Game".into(),
                 ..default()
             }),
             ..default()
         }))
-        .insert_resource(GameMap(vec![], HashMap::new()))
+        .insert_resource(GameMap::default())
         .add_plugins((
             DebugPlugin,
-            // CameraPlugin,
             SetupPlugin,
             CursorPlugin,
             TankMovementPlugin,

@@ -1,4 +1,4 @@
-use crate::cursor::cursor_coordinates::WorldCoordinates;
+use crate::cursor::cursor_coordinates::CursorCoordinates;
 use crate::tank::tank::Tank;
 use bevy::input::mouse::MouseButtonInput;
 use bevy::input::ButtonState;
@@ -47,7 +47,7 @@ fn setup(mut commands: Commands, mut asset_server: ResMut<AssetServer>) {
 // while holding down left mouse button, set the start and end positions of the selection rectangle
 fn calculate_selection_rect_coordinates(
     mut q_tank_selection_rect: Query<&mut TankSelectionRect, With<TankSelectionRect>>,
-    mut my_world_coords: ResMut<WorldCoordinates>,
+    mut my_world_coords: ResMut<CursorCoordinates>,
     mut mouse_button_input_events: EventReader<MouseButtonInput>,
     mut tank_query: Query<(&mut Tank, &mut Sprite), With<Tank>>,
 ) {
@@ -116,7 +116,7 @@ fn display_selection_rect(
         (&mut TankSelectionRect, &mut Transform, &mut Sprite),
         With<TankSelectionRect>,
     >,
-    my_world_coords: ResMut<WorldCoordinates>,
+    my_world_coords: ResMut<CursorCoordinates>,
 ) {
     let (mut tank_selection_rect, mut transform, mut sprite) = q_tank_selection_rect.single_mut();
 
