@@ -1,9 +1,9 @@
 use crate::common::constants::{
     TANK_FULL_HEALTH_BAR_WIDTH, TANK_HEALTH_BAR_HEIGHT, TANK_MAX_HEALTH,
 };
-use crate::tank::tank::Tank;
-use crate::tank::tank_health::HealthBar;
 use bevy::prelude::{Children, Query, Rect, Sprite, Vec2};
+use crate::tank::components::tank::Tank;
+use crate::tank::components::tank_health::HealthBar;
 
 pub struct TankHealthManager;
 

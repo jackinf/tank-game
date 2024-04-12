@@ -1,8 +1,8 @@
 use crate::common::constants::TILE_SIZE;
-use crate::common::unit_id::UnitId;
 use bevy::math::Vec2;
 use bevy::prelude::{Color, Component, Mut, Sprite};
 use std::collections::VecDeque;
+use crate::common::components::unit_id::UnitId;
 
 #[derive(Component)]
 pub struct Tank {

@@ -3,15 +3,13 @@ use bevy::input::mouse::MouseButtonInput;
 use bevy::input::ButtonState;
 use bevy::prelude::*;
 use std::collections::VecDeque;
+use crate::common::components::tile::Tile;
+use crate::common::resources::game_map::GameMap;
 
-use crate::common::game_map::GameMap;
-use crate::common::tile::Tile;
 use crate::common::tile_queries::TileQueries;
-use crate::cursor::cursor_coordinates::CursorCoordinates;
-use crate::tank::tank::Tank;
-use crate::tank::tank_gun::TankGun;
-use crate::tank::tank_health_manager::TankHealthManager;
-use crate::tank::tank_spawn_manager::TankSpawnManager;
+use crate::cursor::resources::cursor_coordinates::CursorCoordinates;
+use crate::tank::components::tank::Tank;
+use crate::tank::components::tank_gun::TankGun;
 use crate::utils::astar;
 
 pub struct TankMovementManager;

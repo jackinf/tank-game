@@ -1,8 +1,8 @@
 use bevy::prelude::*;
+use crate::tank::managers::tank_health_manager::TankHealthManager;
+use crate::tank::managers::tank_movement_manager::TankMovementManager;
+use crate::tank::managers::tank_spawn_manager::TankSpawnManager;
 
-use crate::tank::tank_health_manager::TankHealthManager;
-use crate::tank::tank_movement_manager::TankMovementManager;
-use crate::tank::tank_spawn_manager::TankSpawnManager;
 
 pub struct TankPlugin;
 

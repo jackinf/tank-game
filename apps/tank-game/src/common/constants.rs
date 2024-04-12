@@ -1,5 +1,5 @@
-use crate::common::tile::Tile;
 use bevy::math::Vec2;
+use crate::common::components::tile::Tile;
 
 pub type Grid = Vec<Vec<Tile>>;
 pub type WorldCoord = (f32, f32);

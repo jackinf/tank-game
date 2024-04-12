@@ -1,5 +1,5 @@
-use crate::tank::tank::Tank;
 use bevy::prelude::{Mut, Query, Sprite, With};
+use crate::tank::components::tank::Tank;
 
 pub struct TankQueries;
 

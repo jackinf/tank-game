@@ -1,9 +1,9 @@
-use crate::cursor::cursor_coordinates::CursorCoordinates;
-use crate::tank::tank::Tank;
 use bevy::input::mouse::MouseButtonInput;
 use bevy::input::ButtonState;
 use bevy::prelude::*;
 use bevy::sprite::*;
+use crate::cursor::resources::cursor_coordinates::CursorCoordinates;
+use crate::tank::components::tank::Tank;
 
 #[derive(Component)]
 struct UnitSelectionRect {

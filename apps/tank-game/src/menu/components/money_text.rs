@@ -1,10 +1,10 @@
-use crate::menu::menu_info::MenuInfo;
 use bevy::asset::AssetServer;
 use bevy::hierarchy::ChildBuilder;
 use bevy::prelude::{
     default, Component, DetectChanges, Label, Query, Res, Style, Text, TextBundle, TextStyle,
     UiRect, Val, With,
 };
+use crate::menu::resources::menu_info::MenuInfo;
 
 #[derive(Component)]
 pub struct MoneyText;

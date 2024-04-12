@@ -6,18 +6,18 @@ use bevy_rapier2d::na::Quaternion;
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::{prelude::*, BufReader};
+use crate::common::components::tile::Tile;
+use crate::common::components::unit_id::UnitId;
 
 use crate::common::constants::{
     OFFSET_X, OFFSET_Y, SPRITE_SCALE, TANK_FULL_HEALTH_BAR_WIDTH, TANK_HEALTH_BAR_HEIGHT,
     TANK_HEALTH_BAR_SIZE, TANK_MAX_HEALTH, TILE_GRASS, TILE_SIZE, TILE_TANK, TILE_WALL, TILE_WATER,
 };
-use crate::common::game_map::GameMap;
-use crate::common::tile::Tile;
-use crate::common::unit_id::UnitId;
-use crate::common::unit_id_counter::UnitIdCounter;
-use crate::tank::tank::Tank;
-use crate::tank::tank_gun::TankGun;
-use crate::tank::tank_health::{HealthBar, TankHealth};
+use crate::common::resources::game_map::GameMap;
+use crate::common::resources::unit_id_counter::UnitIdCounter;
+use crate::tank::components::tank::Tank;
+use crate::tank::components::tank_gun::TankGun;
+use crate::tank::components::tank_health::{HealthBar, TankHealth};
 
 pub fn setup(
     mut commands: Commands,
@@ -62,7 +62,7 @@ pub fn setup(
 }
 
 fn read_map_from_file() -> Vec<Vec<usize>> {
-    let map_file = File::open("apps/tank-game/assets/map0.txt").unwrap();
+    let map_file = File::open("apps/tank-game/assets/map1.txt").unwrap();
     let reader = BufReader::new(map_file);
 
     // 0 - empty, 1 - tank, 2 - wall, 3 - water

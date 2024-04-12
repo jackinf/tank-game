@@ -1,9 +1,9 @@
 use crate::common::constants::{CAMERA_SPEED, SIDE_MARGIN_PERCENTAGE};
-use crate::common::game_map::GameMap;
-use crate::cursor::cursor_coordinates::CursorCoordinates;
-use crate::menu::menu_info::MenuInfo;
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
+use crate::common::resources::game_map::GameMap;
+use crate::cursor::resources::cursor_coordinates::CursorCoordinates;
+use crate::menu::resources::menu_info::MenuInfo;
 
 pub struct CursorPlugin;
 

@@ -1,6 +1,5 @@
 use bevy::prelude::*;
-
-use crate::tank::tank::Tank;
+use crate::tank::components::tank::Tank;
 
 pub struct TankSpawnManager;
 
