@@ -4,10 +4,13 @@ pub struct CommonHelpers;
 
 impl CommonHelpers {
     pub fn get_timestamp() -> f32 {
+        // SystemTime::now()
+        //     .duration_since(UNIX_EPOCH)
+        //     .expect("Time went backwards")
+        //     .as_secs_f32()
+
         SystemTime::now()
             .duration_since(UNIX_EPOCH)
-            .or::<f32>(Ok(Duration::new(0, 0))) // i don't want to crash the game if time goes backwards
-            .ok()
             .unwrap()
             .as_secs_f32()
     }

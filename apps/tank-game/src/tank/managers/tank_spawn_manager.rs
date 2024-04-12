@@ -87,14 +87,15 @@ impl TankSpawnManager {
     pub fn spawn_tank_bullet(
         commands: &mut Commands,
         asset_server: &Res<AssetServer>,
+        from: Vec2,
         destination: Vec2,
     ) {
         commands
             .spawn(SpriteBundle {
                 texture: asset_server.load("pixels/white.png"),
                 transform: Transform::default()
-                    .with_translation(Vec3::new(0., 0., 100.))
-                    .with_scale(Vec3::splat(5.)),
+                    .with_translation(from.extend(100.))
+                    .with_scale(Vec3::splat(10.)),
                 sprite: Sprite {
                     color: Color::YELLOW,
                     ..default()

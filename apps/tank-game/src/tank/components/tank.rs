@@ -1,4 +1,5 @@
 use std::collections::VecDeque;
+use std::time::{SystemTime, UNIX_EPOCH};
 
 use bevy::math::Vec2;
 use bevy::prelude::{Color, Component, Mut, Sprite};
@@ -7,6 +8,8 @@ use crate::common::components::unit_id::UnitId;
 use crate::common::constants::{Player, TILE_SIZE};
 use crate::common::resources::me::Me;
 use crate::common::utils::common_helpers::CommonHelpers;
+use crate::tank::components::tank_bullet::TankBullet;
+use crate::tank::managers::tank_spawn_manager::TankSpawnManager;
 
 #[derive(Component)]
 pub struct Tank {
@@ -20,8 +23,8 @@ pub struct Tank {
     pub movement_path: VecDeque<(f32, f32)>,
     pub player: Player,
     target: Option<UnitId>,
-    cooldown_seconds: f32,
-    last_shot_timestamp: f32,
+    cooldown_seconds: f64,
+    last_shot_timestamp: f64,
 }
 
 impl Tank {
@@ -36,8 +39,8 @@ impl Tank {
             movement_path: VecDeque::new(),
             player,
             target: None,
-            cooldown_seconds: 10.0,
-            last_shot_timestamp: CommonHelpers::get_timestamp(),
+            cooldown_seconds: 1.0,
+            last_shot_timestamp: 0.0,
         }
     }
 
@@ -99,6 +102,23 @@ impl Tank {
 
     pub fn set_target(&mut self, target: UnitId) {
         self.target = Some(target);
+    }
+
+    pub fn has_target(&self) -> bool {
+        self.target.is_some()
+    }
+
+    pub fn get_target(&self) -> Option<UnitId> {
+        self.target.clone()
+    }
+
+    pub fn is_cooling_down(&self, elapsed_seconds: f64) -> bool {
+        let time_since_last_shot = elapsed_seconds - self.last_shot_timestamp;
+        time_since_last_shot < self.cooldown_seconds
+    }
+
+    pub fn start_cooling_down(&mut self, elapsed_seconds: f64) {
+        self.last_shot_timestamp = elapsed_seconds;
     }
 
     pub fn toggle(&mut self, sprite: &mut Mut<Sprite>) {

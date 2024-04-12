@@ -13,6 +13,7 @@ use crate::cursor::resources::cursor_coordinates::CursorCoordinates;
 use crate::tank::components::tank::Tank;
 use crate::tank::components::tank_gun::TankGun;
 
+// TODO: rename to: TankActionManager
 pub struct TankMovementManager;
 
 impl TankMovementManager {
@@ -57,12 +58,14 @@ impl TankMovementManager {
                 match clicked_on_tank {
                     Some((tank, _)) => {
                         if !tank.is_mine(&me) {
+                            dbg!("not mine tank was clicked");
                             let enemy_tank_id = tank.get_id().clone(); // clicked on enemy tank, try to attack it
                             tank_query
                                 .iter_mut()
                                 .filter(|(tank, _)| tank.is_mine(&me) && tank.selected)
                                 .map(|(tank, _)| tank)
                                 .for_each(|mut my_selected_tank| {
+                                    dbg!("attacking enemy tank");
                                     my_selected_tank.set_target(enemy_tank_id.clone());
                                     // refer to tank_shooting_manager.rs
                                 });

@@ -11,7 +11,7 @@ pub struct TankBullet {
 impl TankBullet {
     pub fn new(destination: Vec2) -> Self {
         TankBullet {
-            speed: 1000.0,
+            speed: 750.0,
             damage: 10,
             destination,
         }

@@ -15,6 +15,7 @@ impl Plugin for TankPlugin {
                 TankMovementManager::set_tank_target_position_to_move,
             )
             .add_systems(FixedUpdate, TankMovementManager::move_tanks_towards_target)
-            .add_systems(FixedUpdate, TankShootingManager::move_bullets);
+            .add_systems(FixedUpdate, TankShootingManager::move_bullets)
+            .add_systems(Update, TankShootingManager::periodic_shooting);
     }
 }
