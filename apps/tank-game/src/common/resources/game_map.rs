@@ -40,14 +40,18 @@ impl GameMap {
         self.tile_to_world_coordinates = tile_to_world_coordinates;
     }
 
+    #[cfg(test)]
     pub fn draw_map(&self) {
         self.grid
             .iter()
             .enumerate()
-            .for_each(|(col_index, row_on_row)| {
-                row_on_row.iter().enumerate().for_each(|(row_index, cell)| {
-                    print!("{}, ", cell);
-                });
+            .for_each(|(_col_index, row_on_row)| {
+                row_on_row
+                    .iter()
+                    .enumerate()
+                    .for_each(|(_row_index, cell)| {
+                        print!("{}, ", cell);
+                    });
                 println!()
             });
     }

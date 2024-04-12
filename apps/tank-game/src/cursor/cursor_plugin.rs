@@ -1,5 +1,4 @@
 use crate::common::constants::{CAMERA_SPEED, SIDE_MARGIN_PERCENTAGE};
-use crate::common::resources::game_map::GameMap;
 use crate::cursor::resources::cursor_coordinates::CursorCoordinates;
 use crate::menu::resources::menu_info::MenuInfo;
 use bevy::prelude::*;
@@ -42,9 +41,9 @@ fn move_camera_with_cursor_p1(
     q_window: Query<&Window, With<PrimaryWindow>>,
     mut q_camera: Query<&mut CameraMovement, With<Camera>>,
     menu_info: Res<MenuInfo>,
-    game_map: Res<GameMap>,
+    // game_map: Res<GameMap>,
 ) {
-    let (mut movement) = q_camera.single_mut();
+    let mut movement = q_camera.single_mut();
     if menu_info.is_hovered() {
         // Don't move the camera if the cursor is over the UI
         movement.direction = Vec2::ZERO;
@@ -52,7 +51,7 @@ fn move_camera_with_cursor_p1(
     }
 
     // TODO: stop moving when on the edge of the map
-    let (min_x, max_x, min_y, max_y) = game_map.get_min_max();
+    // let (min_x, max_x, min_y, max_y) = game_map.get_min_max();
 
     let window = q_window.single();
 
@@ -113,7 +112,7 @@ fn move_camera_with_keys(
     keyboard: Res<ButtonInput<KeyCode>>,
     mut q_camera: Query<&mut Transform, With<Camera>>,
 ) {
-    let (mut camera_transform) = q_camera.single_mut();
+    let mut camera_transform = q_camera.single_mut();
 
     if keyboard.just_pressed(KeyCode::KeyA) {
         camera_transform.translation.x -= 300.0;

@@ -53,7 +53,7 @@ impl TankMovementManager {
                     .find(|(tank, _)| tank.is_clicked_on(wx, wy));
 
                 match clicked_on_tank {
-                    Some((mut tank, mut sprite)) => {
+                    Some((_, _)) => {
                         // TODO: attack enemy tank
                     }
                     None => {

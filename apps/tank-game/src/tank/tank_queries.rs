@@ -6,7 +6,7 @@ pub struct TankQueries;
 
 impl TankQueries {
     pub fn find_selected<'a>(
-        mut query: &'a mut Query<'a, 'a, (&'a mut Tank, &'a mut Sprite), With<Tank>>,
+        query: &'a mut Query<'a, 'a, (&'a mut Tank, &'a mut Sprite), With<Tank>>,
     ) -> Vec<Mut<'a, Tank>> {
         query
             .iter_mut()
@@ -15,7 +15,7 @@ impl TankQueries {
             .collect()
     }
 
-    pub fn deselect_all_my_units(mut query: &mut Query<(&mut Tank, &mut Sprite), With<Tank>>, me: &Me) {
+    pub fn deselect_all_my_units(query: &mut Query<(&mut Tank, &mut Sprite), With<Tank>>, me: &Me) {
         query
             .iter_mut()
             .filter(|(tank, _)| tank.is_mine(&me))

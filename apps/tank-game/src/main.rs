@@ -83,6 +83,12 @@ pub mod menu {
     }
     pub mod menu_plugin;
 }
+pub mod building {
+    pub mod components {
+        pub mod building;
+    }
+    pub mod building_type;
+}
 
 use bevy::prelude::*;
 use bevy::window::WindowResolution;

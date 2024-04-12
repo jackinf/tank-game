@@ -33,7 +33,7 @@ impl Tank {
 
     pub fn get_default_color(&self) -> Color {
         match self.player {
-            Player::P1 => Color::rgb(0.2, 0.2, 0.8),
+            Player::P1 => Color::rgb(0.3, 0.3, 0.7),
             Player::P2 => Color::rgb(0.8, 0.2, 0.2),
         }
     }

@@ -5,7 +5,6 @@ use crate::tank::tank_queries::TankQueries;
 use bevy::input::mouse::MouseButtonInput;
 use bevy::input::ButtonState;
 use bevy::prelude::*;
-use bevy::sprite::*;
 
 #[derive(Component)]
 struct UnitSelectionRect {
@@ -32,7 +31,7 @@ impl Plugin for UnitSelectionPlugin {
     }
 }
 
-fn setup(mut commands: Commands, mut asset_server: ResMut<AssetServer>) {
+fn setup(mut commands: Commands, asset_server: ResMut<AssetServer>) {
     commands
         .spawn((SpriteBundle {
             texture: asset_server.load("pixels/white.png"),
@@ -49,7 +48,7 @@ fn setup(mut commands: Commands, mut asset_server: ResMut<AssetServer>) {
 /// while holding down left mouse button, set the start and end positions of the selection rectangle
 fn calculate_selection_rect_coordinates(
     mut q_unit_selection_rect: Query<&mut UnitSelectionRect, With<UnitSelectionRect>>,
-    mut my_world_coords: ResMut<CursorCoordinates>,
+    my_world_coords: ResMut<CursorCoordinates>,
     mut mouse_button_input_events: EventReader<MouseButtonInput>,
     mut tank_query: Query<(&mut Tank, &mut Sprite), With<Tank>>,
     me: Res<Me>,
@@ -122,7 +121,7 @@ fn display_selection_rect(
     >,
     my_world_coords: ResMut<CursorCoordinates>,
 ) {
-    let (mut tank_selection_rect, mut transform, mut sprite) = q_tank_selection_rect.single_mut();
+    let (tank_selection_rect, mut transform, mut sprite) = q_tank_selection_rect.single_mut();
 
     if tank_selection_rect.is_visible() {
         sprite.color.set_a(0.5);

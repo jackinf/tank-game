@@ -60,7 +60,7 @@ impl Tile {
         self.tile_coord
     }
     pub fn get_world_coord(&self) -> (f32, f32) {
-        (self.x2, self.y1) // not sure why x2 and y1, not x1 and y1
+        (self.x2, self.y2)
     }
 
     pub fn get_center(&self) -> Vec2 {
