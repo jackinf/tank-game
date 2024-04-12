@@ -6,7 +6,7 @@ use bevy::prelude::*;
 
 use crate::debug::tank_log_timer::TankLogTimer;
 use crate::menu::menu_info::MenuInfo;
-use crate::menu::menu_plugin::{ConstructionInfo};
+use crate::menu::menu_plugin::ConstructionInfo;
 use crate::tank::tank::Tank;
 
 pub struct DebugPlugin;

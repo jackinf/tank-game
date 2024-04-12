@@ -50,7 +50,7 @@ fn neighbors(pos: (usize, usize), bounds: (usize, usize)) -> Vec<(usize, usize)>
     result
 }
 
-pub fn a_star(
+fn a_star(
     grid: &Vec<Vec<usize>>,
     start: (usize, usize),
     goal: (usize, usize),
@@ -130,18 +130,18 @@ pub fn find_path(
     }
 }
 
-fn print_grid(grid: &Vec<Vec<usize>>) {
-    for row in grid.iter() {
-        for cell in row.iter() {
-            print!("{}, ", cell);
-        }
-        println!();
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn print_grid(grid: &Vec<Vec<usize>>) {
+        for row in grid.iter() {
+            for cell in row.iter() {
+                print!("{}, ", cell);
+            }
+            println!();
+        }
+    }
 
     #[test]
     fn test_a_star_case1() {

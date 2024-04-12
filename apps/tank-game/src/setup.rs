@@ -13,28 +13,19 @@ use crate::common::constants::{
 };
 use crate::common::game_map::GameMap;
 use crate::common::tile::Tile;
-use crate::setup::tank_id_counter::TankIdCounter;
+use crate::common::unit_id::UnitId;
+use crate::common::unit_id_counter::UnitIdCounter;
 use crate::tank::tank::Tank;
 use crate::tank::tank_gun::TankGun;
 use crate::tank::tank_health::{HealthBar, TankHealth};
-use crate::tank::tank_id::TankId;
-
-pub struct SetupPlugin;
-
-impl Plugin for SetupPlugin {
-    fn build(&self, app: &mut App) {
-        app.insert_resource(TankIdCounter(1))
-            .add_systems(PreStartup, setup);
-    }
-}
 
 pub fn setup(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
-    mut tank_id_counter: ResMut<TankIdCounter>,
+    mut tank_id_counter: ResMut<UnitIdCounter>,
     mut game_map: ResMut<GameMap>,
 ) {
-    // read file "map1.txt" into a 2d array
+    // read file into a 2d array
     let tilemap = read_map_from_file();
 
     let mut grid = vec![];
@@ -71,7 +62,7 @@ pub fn setup(
 }
 
 fn read_map_from_file() -> Vec<Vec<usize>> {
-    let map_file = File::open("apps/tank-game/assets/map2.txt").unwrap();
+    let map_file = File::open("apps/tank-game/assets/map0.txt").unwrap();
     let reader = BufReader::new(map_file);
 
     // 0 - empty, 1 - tank, 2 - wall, 3 - water
@@ -137,7 +128,7 @@ fn spawn_tank(
     commands: &mut Commands,
     asset_server: &Res<AssetServer>,
     translation: Vec2,
-    tank_id_counter: &mut ResMut<TankIdCounter>,
+    tank_id_counter: &mut ResMut<UnitIdCounter>,
 ) {
     let tank_id = tank_id_counter.0;
     tank_id_counter.0 += 1;
@@ -169,7 +160,7 @@ fn spawn_tank(
                 texture: gun_texture,
                 ..default()
             })
-            .insert(TankGun::new(TankId(tank_id)));
+            .insert(TankGun::new(UnitId(tank_id)));
 
         // Spawn the health bar as a child of the tank
         parent

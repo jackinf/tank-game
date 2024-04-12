@@ -6,13 +6,13 @@ use bevy::prelude::*;
 use bevy::sprite::*;
 
 #[derive(Component)]
-struct TankSelectionRect {
+struct UnitSelectionRect {
     start: Option<Vec2>,
 }
 
-impl TankSelectionRect {
+impl UnitSelectionRect {
     fn new() -> Self {
-        TankSelectionRect { start: None }
+        UnitSelectionRect { start: None }
     }
 
     fn is_visible(&self) -> bool {
@@ -20,9 +20,9 @@ impl TankSelectionRect {
     }
 }
 
-pub struct TankSelectionPlugin;
+pub struct UnitSelectionPlugin;
 
-impl Plugin for TankSelectionPlugin {
+impl Plugin for UnitSelectionPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(Startup, setup)
             .add_systems(Update, calculate_selection_rect_coordinates)
@@ -41,12 +41,12 @@ fn setup(mut commands: Commands, mut asset_server: ResMut<AssetServer>) {
             },
             ..default()
         },))
-        .insert(TankSelectionRect::new());
+        .insert(UnitSelectionRect::new());
 }
 
 // while holding down left mouse button, set the start and end positions of the selection rectangle
 fn calculate_selection_rect_coordinates(
-    mut q_tank_selection_rect: Query<&mut TankSelectionRect, With<TankSelectionRect>>,
+    mut q_tank_selection_rect: Query<&mut UnitSelectionRect, With<UnitSelectionRect>>,
     mut my_world_coords: ResMut<CursorCoordinates>,
     mut mouse_button_input_events: EventReader<MouseButtonInput>,
     mut tank_query: Query<(&mut Tank, &mut Sprite), With<Tank>>,
@@ -57,7 +57,7 @@ fn calculate_selection_rect_coordinates(
 
         let clicked_on_tank = tank_query
             .iter_mut()
-            .find(|(tank, _)| tank.is_tank_clicked_on(wx, wy));
+            .find(|(tank, _)| tank.is_clicked_on(wx, wy));
 
         match (
             mouse_button_input_event.button,
@@ -69,7 +69,7 @@ fn calculate_selection_rect_coordinates(
             }
             (MouseButton::Left, ButtonState::Pressed, None) => {
                 tank_query.iter_mut().for_each(|(mut tank, mut sprite)| {
-                    tank.deselect_tank(&mut sprite);
+                    tank.deselect(&mut sprite);
                 });
 
                 let mut tank_selection_rect = q_tank_selection_rect.single_mut();
@@ -96,9 +96,9 @@ fn calculate_selection_rect_coordinates(
                     let in_y = y1 <= tank.target_position.y && tank.target_position.y <= y2;
 
                     if in_x && in_y {
-                        tank.select_tank(&mut sprite);
+                        tank.select(&mut sprite);
                     } else {
-                        tank.deselect_tank(&mut sprite);
+                        tank.deselect(&mut sprite);
                     }
                 }
             }
@@ -113,8 +113,8 @@ fn calculate_selection_rect_coordinates(
 
 fn display_selection_rect(
     mut q_tank_selection_rect: Query<
-        (&mut TankSelectionRect, &mut Transform, &mut Sprite),
-        With<TankSelectionRect>,
+        (&mut UnitSelectionRect, &mut Transform, &mut Sprite),
+        With<UnitSelectionRect>,
     >,
     my_world_coords: ResMut<CursorCoordinates>,
 ) {

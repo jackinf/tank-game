@@ -1,13 +1,13 @@
-use crate::tank::tank_id::TankId;
+use crate::common::unit_id::UnitId;
 use bevy::prelude::Component;
 
 #[derive(Component)]
 pub struct TankGun {
-    pub parent_id: TankId,
+    pub parent_id: UnitId,
 }
 
 impl TankGun {
-    pub fn new(parent_id: TankId) -> Self {
+    pub fn new(parent_id: UnitId) -> Self {
         TankGun { parent_id }
     }
 }

@@ -1,12 +1,12 @@
 use crate::common::constants::TILE_SIZE;
-use crate::tank::tank_id::TankId;
+use crate::common::unit_id::UnitId;
 use bevy::math::Vec2;
 use bevy::prelude::{Color, Component, Mut, Sprite};
 use std::collections::VecDeque;
 
 #[derive(Component)]
 pub struct Tank {
-    pub id: TankId,
+    pub id: UnitId,
     pub selected: bool,
     pub health: u32,
     pub target_position: Vec2,
@@ -18,7 +18,7 @@ pub struct Tank {
 impl Tank {
     pub fn new(id: usize, target_position: Vec2) -> Self {
         Tank {
-            id: TankId(id),
+            id: UnitId(id),
             selected: false,
             health: 100,
             target_position,
@@ -55,7 +55,7 @@ impl Tank {
         self.moving = false;
     }
 
-    pub fn is_tank_clicked_on(&self, wx: f32, wy: f32) -> bool {
+    pub fn is_clicked_on(&self, wx: f32, wy: f32) -> bool {
         let offset = TILE_SIZE / 2.0;
 
         let x1 = self.target_position.x - offset;
@@ -71,18 +71,18 @@ impl Tank {
 
     pub fn toggle(&mut self, sprite: &mut Mut<Sprite>) {
         if self.selected {
-            self.deselect_tank(sprite);
+            self.deselect(sprite);
         } else {
-            self.select_tank(sprite);
+            self.select(sprite);
         }
     }
 
-    pub fn select_tank(&mut self, sprite: &mut Mut<Sprite>) {
+    pub fn select(&mut self, sprite: &mut Mut<Sprite>) {
         self.selected = true;
         sprite.color = Color::rgb(2.0, 2.0, 2.0);
     }
 
-    pub fn deselect_tank(&mut self, sprite: &mut Mut<Sprite>) {
+    pub fn deselect(&mut self, sprite: &mut Mut<Sprite>) {
         self.selected = false;
         sprite.color = Color::WHITE;
     }
