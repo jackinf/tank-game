@@ -1,16 +1,16 @@
+use crate::common::components::tile::Tile;
+use crate::common::resources::game_map::GameMap;
 use bevy::input::keyboard::KeyboardInput;
 use bevy::input::mouse::MouseButtonInput;
 use bevy::input::ButtonState;
 use bevy::prelude::*;
 use std::collections::VecDeque;
-use crate::common::components::tile::Tile;
-use crate::common::resources::game_map::GameMap;
 
 use crate::common::tile_queries::TileQueries;
+use crate::common::utils::astar;
 use crate::cursor::resources::cursor_coordinates::CursorCoordinates;
 use crate::tank::components::tank::Tank;
 use crate::tank::components::tank_gun::TankGun;
-use crate::utils::astar;
 
 pub struct TankMovementManager;
 
@@ -70,6 +70,7 @@ impl TankMovementManager {
                                     TileQueries::find_accessible(&tile_query, &tank.target_position)
                                 {
                                     // TODO: expensive! optimize this
+                                    // TODO: consider using use bevy::utils::petgraph::algo::astar;
                                     let path_f32: VecDeque<(f32, f32)> = astar::find_path(
                                         &game_map.get_tile_type_grid(),
                                         start,

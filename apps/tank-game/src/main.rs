@@ -9,6 +9,7 @@ fn main() {
             ..default()
         }))
         .insert_resource(UnitIdCounter(1))
+        .insert_resource(Me::new(Player::P1))
         .add_systems(PreStartup, setup)
         .insert_resource(GameMap::default())
         .add_plugins((
@@ -24,15 +25,24 @@ fn main() {
 pub mod common {
     pub mod resources {
         pub mod game_map;
+        pub mod me;
         pub mod unit_id_counter;
     }
     pub mod components {
         pub mod tile;
         pub mod unit_id;
     }
+    pub mod managers {
+        pub mod tile_manager;
+    }
     pub mod constants;
     pub mod tile_queries;
     pub mod unit_selection_plugin;
+    pub mod utils {
+        pub mod astar;
+        pub mod enum_helpers;
+        pub mod file_helpers;
+    }
 }
 
 pub mod setup;
@@ -74,15 +84,12 @@ pub mod menu {
     pub mod menu_plugin;
 }
 
-mod utils {
-    pub mod astar;
-}
-
 use bevy::prelude::*;
 use bevy::window::WindowResolution;
 
-use crate::common::constants::{MAX_HEIGHT, MAX_WIDTH};
+use crate::common::constants::{Player, MAX_HEIGHT, MAX_WIDTH};
 use crate::common::resources::game_map::GameMap;
+use crate::common::resources::me::Me;
 use crate::common::resources::unit_id_counter::UnitIdCounter;
 use crate::common::unit_selection_plugin::UnitSelectionPlugin;
 use crate::cursor::cursor_plugin::CursorPlugin;

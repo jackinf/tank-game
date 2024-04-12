@@ -1,7 +1,8 @@
-use bevy::math::Vec2;
 use crate::common::components::tile::Tile;
+use bevy::math::Vec2;
 
-pub type Grid = Vec<Vec<Tile>>;
+pub type TileGrid = Vec<Vec<Tile>>;
+pub type RawGrid = Vec<Vec<usize>>;
 pub type WorldCoord = (f32, f32);
 pub type TileCoord = (usize, usize);
 
@@ -9,10 +10,6 @@ pub const MAX_WIDTH: u16 = 1600;
 pub const MAX_HEIGHT: u16 = 1000;
 pub const TILE_SIZE: f32 = 64.0;
 pub const SPRITE_SCALE: f32 = 0.5;
-pub const TILE_TANK: usize = 1;
-pub const TILE_GRASS: usize = 0;
-pub const TILE_WALL: usize = 2;
-pub const TILE_WATER: usize = 3;
 pub const OFFSET_X: f32 = -0.0;
 pub const OFFSET_Y: f32 = -0.0;
 
@@ -24,3 +21,46 @@ pub const TANK_MAX_HEALTH: u32 = 100;
 
 pub const CAMERA_SPEED: f32 = 10.0;
 pub const SIDE_MARGIN_PERCENTAGE: f32 = 0.1;
+
+pub enum TileType {
+    Grass = 0,
+    Gold = 1,
+    Wall = 2,
+    Water = 3,
+}
+
+impl TryFrom<usize> for TileType {
+    type Error = ();
+
+    fn try_from(value: usize) -> Result<Self, Self::Error> {
+        match value {
+            0 => Ok(TileType::Grass),
+            1 => Ok(TileType::Gold),
+            2 => Ok(TileType::Wall),
+            3 => Ok(TileType::Water),
+            _ => Err(()),
+        }
+    }
+}
+
+pub enum UnitType {
+    Tank = 1,
+    Soldier = 2,
+    Harvester = 3,
+}
+
+#[derive(Clone)]
+pub enum Player {
+    P1 = 1,
+    P2 = 2,
+}
+
+impl PartialEq for Player {
+    fn eq(&self, other: &Self) -> bool {
+        match (self, other) {
+            (Player::P1, Player::P1) => true,
+            (Player::P2, Player::P2) => true,
+            _ => false,
+        }
+    }
+}

@@ -1,9 +1,11 @@
+use crate::common::resources::me::Me;
+use crate::cursor::resources::cursor_coordinates::CursorCoordinates;
+use crate::tank::components::tank::Tank;
+use crate::tank::tank_queries::TankQueries;
 use bevy::input::mouse::MouseButtonInput;
 use bevy::input::ButtonState;
 use bevy::prelude::*;
 use bevy::sprite::*;
-use crate::cursor::resources::cursor_coordinates::CursorCoordinates;
-use crate::tank::components::tank::Tank;
 
 #[derive(Component)]
 struct UnitSelectionRect {
@@ -44,12 +46,13 @@ fn setup(mut commands: Commands, mut asset_server: ResMut<AssetServer>) {
         .insert(UnitSelectionRect::new());
 }
 
-// while holding down left mouse button, set the start and end positions of the selection rectangle
+/// while holding down left mouse button, set the start and end positions of the selection rectangle
 fn calculate_selection_rect_coordinates(
-    mut q_tank_selection_rect: Query<&mut UnitSelectionRect, With<UnitSelectionRect>>,
+    mut q_unit_selection_rect: Query<&mut UnitSelectionRect, With<UnitSelectionRect>>,
     mut my_world_coords: ResMut<CursorCoordinates>,
     mut mouse_button_input_events: EventReader<MouseButtonInput>,
     mut tank_query: Query<(&mut Tank, &mut Sprite), With<Tank>>,
+    me: Res<Me>,
 ) {
     for mouse_button_input_event in mouse_button_input_events.read() {
         let wx = my_world_coords.0.x;
@@ -65,18 +68,17 @@ fn calculate_selection_rect_coordinates(
             clicked_on_tank,
         ) {
             (MouseButton::Left, ButtonState::Pressed, Some((mut tank, mut sprite))) => {
-                tank.toggle(&mut sprite);
+                if tank.is_mine(&me) {
+                    tank.toggle(&mut sprite);
+                }
             }
             (MouseButton::Left, ButtonState::Pressed, None) => {
-                tank_query.iter_mut().for_each(|(mut tank, mut sprite)| {
-                    tank.deselect(&mut sprite);
-                });
+                TankQueries::deselect_all_my_units(&mut tank_query, &me);
 
-                let mut tank_selection_rect = q_tank_selection_rect.single_mut();
-                tank_selection_rect.start = Some(Vec2::new(wx, wy));
+                q_unit_selection_rect.single_mut().start = Some(Vec2::new(wx, wy));
             }
             (MouseButton::Left, ButtonState::Released, _) => {
-                let mut tank_selection_rect = q_tank_selection_rect.single_mut();
+                let mut tank_selection_rect = q_unit_selection_rect.single_mut();
                 if tank_selection_rect.start.is_none() {
                     continue;
                 }
@@ -86,7 +88,9 @@ fn calculate_selection_rect_coordinates(
                 tank_selection_rect.start = None;
 
                 // finds and selects tanks within the selection rectangle
-                for (mut tank, mut sprite) in &mut tank_query.iter_mut() {
+                for (mut tank, mut sprite) in
+                    &mut tank_query.iter_mut().filter(|(tank, _)| tank.is_mine(&me))
+                {
                     let x1 = sx.min(wx);
                     let x2 = sx.max(wx);
                     let y1 = sy.min(wy);

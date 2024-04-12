@@ -1,15 +1,15 @@
 use crate::common::constants::{
     TANK_FULL_HEALTH_BAR_WIDTH, TANK_HEALTH_BAR_HEIGHT, TANK_MAX_HEALTH,
 };
-use bevy::prelude::{Children, Query, Rect, Sprite, Vec2};
 use crate::tank::components::tank::Tank;
 use crate::tank::components::tank_health::HealthBar;
+use bevy::prelude::{Children, Query, Rect, Sprite, Vec2};
 
 pub struct TankHealthManager;
 
 impl TankHealthManager {
     pub fn update_health_bar(
-        mut query: Query<(&Tank, &Children)>,
+        query: Query<(&Tank, &Children)>,
         mut health_bar_query: Query<(&mut Sprite, &HealthBar)>,
     ) {
         for (tank, children) in query.iter() {

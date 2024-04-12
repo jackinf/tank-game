@@ -1,4 +1,4 @@
-use crate::common::constants::TILE_GRASS;
+use crate::common::constants::TileType;
 use bevy::prelude::*;
 use std::fmt::Formatter;
 
@@ -43,7 +43,7 @@ impl Tile {
     }
 
     pub fn accessible(&self) -> bool {
-        self.tile_type == TILE_GRASS
+        self.tile_type == TileType::Grass as usize
     }
 
     pub fn in_range(&self, x: f32, y: f32) -> bool {

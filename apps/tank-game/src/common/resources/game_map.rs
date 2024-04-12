@@ -1,10 +1,10 @@
-use crate::common::constants::{Grid, TileCoord, WorldCoord};
+use crate::common::constants::{TileCoord, TileGrid, WorldCoord};
 use bevy::prelude::Resource;
 use std::collections::HashMap;
 
 #[derive(Resource, Default)]
 pub struct GameMap {
-    grid: Grid,
+    grid: TileGrid,
     tile_to_world_coordinates: HashMap<(usize, usize), (f32, f32)>,
 }
 
@@ -16,7 +16,7 @@ impl GameMap {
         }
     }
 
-    pub fn get_grid(&self) -> &Grid {
+    pub fn get_grid(&self) -> &TileGrid {
         &self.grid
     }
 
@@ -33,7 +33,7 @@ impl GameMap {
 
     pub fn set_map(
         &mut self,
-        grid: Grid,
+        grid: TileGrid,
         tile_to_world_coordinates: HashMap<TileCoord, WorldCoord>,
     ) {
         self.grid = grid;
@@ -94,7 +94,7 @@ mod tests {
             vec![1, 0, 0, 0, 0, 0, 0, 0],
         ];
 
-        let tiles: Grid = grid
+        let tiles: TileGrid = grid
             .iter()
             .enumerate()
             .map(|(row_index, row)| {

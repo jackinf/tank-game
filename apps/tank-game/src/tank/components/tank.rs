@@ -1,22 +1,24 @@
-use crate::common::constants::TILE_SIZE;
+use crate::common::components::unit_id::UnitId;
+use crate::common::constants::{Player, TILE_SIZE};
+use crate::common::resources::me::Me;
 use bevy::math::Vec2;
 use bevy::prelude::{Color, Component, Mut, Sprite};
 use std::collections::VecDeque;
-use crate::common::components::unit_id::UnitId;
 
 #[derive(Component)]
 pub struct Tank {
     pub id: UnitId,
     pub selected: bool,
     pub health: u32,
-    pub target_position: Vec2,
-    pub speed: f32, // Units per second
+    pub target_position: Vec2, // TODO: Option
+    pub speed: f32,            // Units per second
     pub moving: bool,
     pub movement_path: VecDeque<(f32, f32)>,
+    pub player: Player,
 }
 
 impl Tank {
-    pub fn new(id: usize, target_position: Vec2) -> Self {
+    pub fn new(id: usize, target_position: Vec2, player: Player) -> Self {
         Tank {
             id: UnitId(id),
             selected: false,
@@ -25,6 +27,14 @@ impl Tank {
             speed: 500.0,
             moving: false,
             movement_path: VecDeque::new(),
+            player,
+        }
+    }
+
+    pub fn get_default_color(&self) -> Color {
+        match self.player {
+            Player::P1 => Color::rgb(0.2, 0.2, 0.8),
+            Player::P2 => Color::rgb(0.8, 0.2, 0.2),
         }
     }
 
@@ -40,6 +50,10 @@ impl Tank {
 
     pub fn is_moving(&self) -> bool {
         self.moving
+    }
+
+    pub fn is_mine(&self, me: &Me) -> bool {
+        self.player == me.get_player()
     }
 
     pub fn try_take_next_position_in_path(&mut self) {
@@ -79,12 +93,15 @@ impl Tank {
 
     pub fn select(&mut self, sprite: &mut Mut<Sprite>) {
         self.selected = true;
-        sprite.color = Color::rgb(2.0, 2.0, 2.0);
+        let color = self.get_default_color();
+
+        // Make the selected tank brighter by moving closer to white (max value=(1.0, 1.0, 1.0))
+        sprite.color = Color::rgb(color.r() + 0.3, color.r() + 0.3, color.b() + 0.3);
     }
 
     pub fn deselect(&mut self, sprite: &mut Mut<Sprite>) {
         self.selected = false;
-        sprite.color = Color::WHITE;
+        sprite.color = self.get_default_color();
     }
 
     pub fn take_damage(&mut self, damage: u32) {

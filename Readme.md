@@ -7,8 +7,8 @@ This is a tank game developed in Rust using the Bevy game engine. The game inclu
 ## Getting Started
 
 To get started with this project, you will need to have Rust and Cargo installed on your machine. If you don't have them installed, you can download them from the official Rust website.
-[
-## Installation]()
+
+## Installation
 
 Clone the repository to your local machine:
 

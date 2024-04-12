@@ -1,9 +1,9 @@
 use crate::common::constants::{CAMERA_SPEED, SIDE_MARGIN_PERCENTAGE};
-use bevy::prelude::*;
-use bevy::window::PrimaryWindow;
 use crate::common::resources::game_map::GameMap;
 use crate::cursor::resources::cursor_coordinates::CursorCoordinates;
 use crate::menu::resources::menu_info::MenuInfo;
+use bevy::prelude::*;
+use bevy::window::PrimaryWindow;
 
 pub struct CursorPlugin;
 
@@ -97,7 +97,7 @@ fn convert_cursor_to_world_position(
     q_window: Query<&Window, With<PrimaryWindow>>,
     mut q_camera: Query<(&Camera, &GlobalTransform, &mut CameraMovement), With<Camera>>,
 ) {
-    let (camera, camera_transform, mut movement) = q_camera.single_mut();
+    let (camera, camera_transform, _) = q_camera.single_mut();
     let window = q_window.single();
 
     if let Some(world_position) = window

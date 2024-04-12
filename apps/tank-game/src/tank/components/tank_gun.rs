@@ -1,5 +1,5 @@
-use bevy::prelude::Component;
 use crate::common::components::unit_id::UnitId;
+use bevy::prelude::Component;
 
 #[derive(Component)]
 pub struct TankGun {
