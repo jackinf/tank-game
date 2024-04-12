@@ -1,12 +1,16 @@
+use std::collections::VecDeque;
+
+use bevy::math::Vec2;
+use bevy::prelude::{Color, Component, Mut, Sprite};
+
 use crate::common::components::unit_id::UnitId;
 use crate::common::constants::{Player, TILE_SIZE};
 use crate::common::resources::me::Me;
-use bevy::math::Vec2;
-use bevy::prelude::{Color, Component, Mut, Sprite};
-use std::collections::VecDeque;
+use crate::common::utils::common_helpers::CommonHelpers;
 
 #[derive(Component)]
 pub struct Tank {
+    // TODO: remove pubs, use getters
     pub id: UnitId,
     pub selected: bool,
     pub health: u32,
@@ -15,6 +19,9 @@ pub struct Tank {
     pub moving: bool,
     pub movement_path: VecDeque<(f32, f32)>,
     pub player: Player,
+    target: Option<UnitId>,
+    cooldown_seconds: f32,
+    last_shot_timestamp: f32,
 }
 
 impl Tank {
@@ -28,7 +35,14 @@ impl Tank {
             moving: false,
             movement_path: VecDeque::new(),
             player,
+            target: None,
+            cooldown_seconds: 10.0,
+            last_shot_timestamp: CommonHelpers::get_timestamp(),
         }
+    }
+
+    pub fn get_id(&self) -> UnitId {
+        self.id.clone()
     }
 
     pub fn get_default_color(&self) -> Color {
@@ -81,6 +95,10 @@ impl Tank {
         let in_y = y1 <= wy && wy <= y2;
 
         in_x && in_y
+    }
+
+    pub fn set_target(&mut self, target: UnitId) {
+        self.target = Some(target);
     }
 
     pub fn toggle(&mut self, sprite: &mut Mut<Sprite>) {

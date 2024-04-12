@@ -1,7 +1,9 @@
 use crate::common::components::unit_id::UnitId;
 use crate::common::constants::{Player, SPRITE_SCALE, TANK_HEALTH_BAR_SIZE, TANK_MAX_HEALTH};
 use crate::common::resources::unit_id_counter::UnitIdCounter;
+use crate::common::utils::common_helpers::CommonHelpers;
 use crate::tank::components::tank::Tank;
+use crate::tank::components::tank_bullet::TankBullet;
 use crate::tank::components::tank_gun::TankGun;
 use crate::tank::components::tank_health::{HealthBar, TankHealth};
 use bevy::prelude::*;
@@ -23,9 +25,7 @@ impl TankSpawnManager {
         let tank_texture = asset_server.load("sprites/tank_base.png");
         let gun_texture = asset_server.load("sprites/tank3gun.png");
         let tank = Tank::new(tank_id, translation, player.clone());
-
-        // generate a random number between 5.0 and 6.0 with 4 decimal places
-        let layer = (5.0 + (rand::random::<f32>() * 1.0)).round() * 10000.0 / 10000.0;
+        let layer = CommonHelpers::calculate_random_layer(5.0);
 
         let tank_base: Entity = commands
             .spawn((SpriteBundle {
@@ -82,5 +82,25 @@ impl TankSpawnManager {
                 commands.entity(entity).despawn();
             }
         }
+    }
+
+    pub fn spawn_tank_bullet(
+        commands: &mut Commands,
+        asset_server: &Res<AssetServer>,
+        destination: Vec2,
+    ) {
+        commands
+            .spawn(SpriteBundle {
+                texture: asset_server.load("pixels/white.png"),
+                transform: Transform::default()
+                    .with_translation(Vec3::new(0., 0., 100.))
+                    .with_scale(Vec3::splat(5.)),
+                sprite: Sprite {
+                    color: Color::YELLOW,
+                    ..default()
+                },
+                ..default()
+            })
+            .insert(TankBullet::new(destination));
     }
 }

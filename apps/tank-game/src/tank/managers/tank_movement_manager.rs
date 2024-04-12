@@ -1,5 +1,6 @@
 use crate::common::components::tile::Tile;
 use crate::common::resources::game_map::GameMap;
+use crate::common::resources::me::Me;
 use bevy::input::keyboard::KeyboardInput;
 use bevy::input::mouse::MouseButtonInput;
 use bevy::input::ButtonState;
@@ -22,6 +23,7 @@ impl TankMovementManager {
         mut key_button_events: EventReader<KeyboardInput>,
         my_world_coords: Res<CursorCoordinates>,
         game_map: Res<GameMap>,
+        me: Res<Me>,
     ) {
         for key_button_event in key_button_events.read() {
             if let ButtonState::Pressed = key_button_event.state {
@@ -53,8 +55,18 @@ impl TankMovementManager {
                     .find(|(tank, _)| tank.is_clicked_on(wx, wy));
 
                 match clicked_on_tank {
-                    Some((_, _)) => {
-                        // TODO: attack enemy tank
+                    Some((tank, _)) => {
+                        if !tank.is_mine(&me) {
+                            let enemy_tank_id = tank.get_id().clone(); // clicked on enemy tank, try to attack it
+                            tank_query
+                                .iter_mut()
+                                .filter(|(tank, _)| tank.is_mine(&me) && tank.selected)
+                                .map(|(tank, _)| tank)
+                                .for_each(|mut my_selected_tank| {
+                                    my_selected_tank.set_target(enemy_tank_id.clone());
+                                    // refer to tank_shooting_manager.rs
+                                });
+                        }
                     }
                     None => {
                         if let Some(goal) =
@@ -67,7 +79,11 @@ impl TankMovementManager {
 
                             for mut tank in selected_tanks {
                                 if let Some(start) =
-                                    TileQueries::find_accessible(&tile_query, &tank.target_position)
+                                    // TODO: why not use translation instead of target_position?
+                                    TileQueries::find_accessible(
+                                        &tile_query,
+                                        &tank.target_position,
+                                    )
                                 {
                                     // TODO: expensive! optimize this
                                     // TODO: consider using use bevy::utils::petgraph::algo::astar;

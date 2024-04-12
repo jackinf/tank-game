@@ -1,5 +1,6 @@
 use crate::tank::managers::tank_health_manager::TankHealthManager;
 use crate::tank::managers::tank_movement_manager::TankMovementManager;
+use crate::tank::managers::tank_shooting_manager::TankShootingManager;
 use crate::tank::managers::tank_spawn_manager::TankSpawnManager;
 use bevy::prelude::*;
 
@@ -13,6 +14,7 @@ impl Plugin for TankPlugin {
                 Update,
                 TankMovementManager::set_tank_target_position_to_move,
             )
-            .add_systems(FixedUpdate, TankMovementManager::move_tanks_towards_target);
+            .add_systems(FixedUpdate, TankMovementManager::move_tanks_towards_target)
+            .add_systems(FixedUpdate, TankShootingManager::move_bullets);
     }
 }

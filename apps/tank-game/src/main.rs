@@ -40,6 +40,7 @@ pub mod common {
     pub mod unit_selection_plugin;
     pub mod utils {
         pub mod astar;
+        pub mod common_helpers;
         pub mod enum_helpers;
         pub mod file_helpers;
     }
@@ -63,10 +64,12 @@ pub mod tank {
     pub mod managers {
         pub mod tank_health_manager;
         pub mod tank_movement_manager;
+        pub mod tank_shooting_manager;
         pub mod tank_spawn_manager;
     }
     pub mod components {
         pub mod tank;
+        pub mod tank_bullet;
         pub mod tank_gun;
         pub mod tank_health;
     }
