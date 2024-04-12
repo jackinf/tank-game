@@ -71,7 +71,7 @@ pub fn setup(
 }
 
 fn read_map_from_file() -> Vec<Vec<usize>> {
-    let map_file = File::open("apps/tank-game/assets/map1.txt").unwrap();
+    let map_file = File::open("apps/tank-game/assets/map2.txt").unwrap();
     let reader = BufReader::new(map_file);
 
     // 0 - empty, 1 - tank, 2 - wall, 3 - water

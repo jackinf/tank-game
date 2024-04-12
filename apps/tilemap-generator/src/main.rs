@@ -3,7 +3,7 @@ use std::io::{BufWriter, Write};
 
 fn main() -> std::io::Result<()> {
     let tilemap = generate_tilemap(100, 100);
-    write_tilemap_to_file("apps/tank-game/assets/map2.txt", &tilemap)
+    write_tilemap_to_file("apps/tank-game/assets/map3.txt", &tilemap)
 }
 
 fn generate_tilemap(width: usize, height: usize) -> Vec<Vec<usize>> {

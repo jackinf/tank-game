@@ -1,5 +1,2 @@
 [workspace]
-members = [ "apps/a-star", "apps/ball-game",
-    "apps/file-processor", "apps/tank-game",
-    "apps/todo", "apps/tilemap-generator", "apps/school",
-]
+members = [ "apps/tank-game", "apps/tilemap-generator"]
