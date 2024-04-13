@@ -9,6 +9,7 @@ edition = "2021"
 # remove dynamic_linking before releasing the game
 #bevy = { version = "0.13.0", features = ["dynamic_linking"] }
 bevy = "0.13.0"
+bevy_prototype_lyon = "0.11.0"
 bevy_rapier2d = "0.25.0"
 leafwing-input-manager = "0.13.3"
 rand = "0.8.5"

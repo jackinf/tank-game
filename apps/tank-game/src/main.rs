@@ -8,6 +8,8 @@ fn main() {
             }),
             ..default()
         }))
+        .insert_resource(Msaa::Sample4)
+        .add_plugins(ShapePlugin)
         .insert_resource(UnitIdCounter(1))
         .insert_resource(Me::new(Player::P1))
         .add_systems(PreStartup, setup)
@@ -95,6 +97,7 @@ pub mod building {
 
 use bevy::prelude::*;
 use bevy::window::WindowResolution;
+use bevy_prototype_lyon::prelude::ShapePlugin;
 
 use crate::common::constants::{Player, MAX_HEIGHT, MAX_WIDTH};
 use crate::common::resources::game_map::GameMap;

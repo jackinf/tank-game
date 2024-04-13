@@ -9,6 +9,8 @@ use crate::tank::components::tank_health::{HealthBar, TankHealth};
 use bevy::prelude::*;
 use bevy::render::render_resource::{AsBindGroup, ShaderRef};
 use bevy::sprite::{Anchor, MaterialMesh2dBundle, Mesh2dHandle};
+use bevy_prototype_lyon::prelude::*;
+use bevy_prototype_lyon::shapes;
 
 #[derive(Asset, TypePath, AsBindGroup, Debug, Clone)]
 struct CustomMaterial {
@@ -42,8 +44,6 @@ impl TankSpawnManager {
     pub fn spawn_tank(
         commands: &mut Commands,
         asset_server: &Res<AssetServer>,
-        mut materials: &mut ResMut<Assets<ColorMaterial>>,
-        mut meshes: &mut ResMut<Assets<Mesh>>,
         translation: Vec2,
         tank_id_counter: &mut ResMut<UnitIdCounter>,
         player: Player,
@@ -84,23 +84,17 @@ impl TankSpawnManager {
                 })
                 .insert(TankGun::new(UnitId(tank_id)));
 
-            // TODO: Add edge highlight shader
-            // parent.spawn(MaterialMesh2dBundle {
-            //     mesh: Mesh2dHandle(meshes.add(Circle { radius: 50.0, ..default() })),
-            //     transform: Transform::from_xyz(0.0, 0.0, 1000.0),
-            //     material: materials.add(CustomMaterial {
-            //         color: Color::BLACK, // Circle edge color
-            //         alpha_mode: AlphaMode::Blend,
-            //     }),
-            //     ..default()
-            // });
-
-            parent.spawn(MaterialMesh2dBundle {
-                mesh: Mesh2dHandle(meshes.add(Circle { radius: 250.0 })),
-                material: materials.add(Color::rgba(1.0, 0.0, 0.0, 0.5)),
-                transform: Transform::from_xyz(0.0, 0.0, 1000.0),
-                ..default()
-            });
+            parent.spawn((
+                ShapeBundle {
+                    path: GeometryBuilder::build_as(&shapes::Circle {
+                        radius: 250.,
+                        ..default()
+                    }),
+                    ..default()
+                },
+                // Fill::color(Color::CYAN),
+                Stroke::new(Color::BLACK, 2.0),
+            ));
 
             // Spawn the health bar as a child of the tank
             parent
