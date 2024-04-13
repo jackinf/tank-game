@@ -56,6 +56,8 @@ impl TankSpawnManager {
         let tank = Tank::new(tank_id, translation, player.clone());
         let layer = CommonHelpers::calculate_random_layer(5.0);
 
+        let tank_radius = tank.get_radius().clone();
+
         let tank_base: Entity = commands
             .spawn((SpriteBundle {
                 transform: Transform::default()
@@ -87,7 +89,7 @@ impl TankSpawnManager {
             parent.spawn((
                 ShapeBundle {
                     path: GeometryBuilder::build_as(&shapes::Circle {
-                        radius: 250.,
+                        radius: tank_radius,
                         ..default()
                     }),
                     ..default()

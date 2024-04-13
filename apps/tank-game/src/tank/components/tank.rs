@@ -48,6 +48,10 @@ impl Tank {
         self.id.clone()
     }
 
+    pub fn get_radius(&self) -> f32 {
+        250.0
+    }
+
     pub fn get_default_color(&self) -> Color {
         match self.player {
             Player::P1 => Color::rgb(0.3, 0.3, 0.7),

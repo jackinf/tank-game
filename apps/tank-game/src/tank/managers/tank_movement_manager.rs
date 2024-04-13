@@ -6,7 +6,8 @@ use bevy::input::keyboard::KeyboardInput;
 use bevy::input::mouse::MouseButtonInput;
 use bevy::input::ButtonState;
 use bevy::prelude::*;
-use std::collections::VecDeque;
+use bevy::utils::dbg;
+use std::collections::{HashMap, VecDeque};
 
 use crate::common::tile_queries::TileQueries;
 use crate::common::utils::astar;
@@ -58,6 +59,7 @@ impl TankMovementManager {
                     .map(|(tank, _)| tank.get_id().clone());
 
                 if let Some(goal) = TileQueries::find_accessible(&tile_query, &my_world_coords.0) {
+                    dbg!(goal);
                     let selected_tanks = &mut tank_query
                         .iter_mut()
                         .filter(|(tank, _)| tank.selected)
@@ -111,31 +113,51 @@ impl TankMovementManager {
     ) {
         let dt = time.delta_seconds();
 
+        let tank_id_and_positions: HashMap<UnitId, Vec2> = tank_query
+            .iter()
+            .map(|(transform, tank)| (tank.id.clone(), transform.translation.xy()))
+            .collect();
+
         for (mut transform, mut tank) in tank_query.iter_mut().filter(|(_, tank)| tank.is_moving())
         {
             let current_pos = transform.translation.xy();
             let direction = tank.target_position - current_pos;
             let distance_to_move = tank.speed * dt;
 
-            // TODO: improve code, and move into tank component
-            // let total_distance = (tank.target_position - current_pos).length();
-            let total_distance = if tank.movement_path.len() > 0 {
-                let xy = tank.movement_path.iter().last().unwrap().clone();
-                let vector = Vec2::new(xy.0, xy.1) - transform.translation.truncate();
+            // if tank has target, check if it's close enough to stop
+            if tank.has_target() {
+                let target = tank_id_and_positions
+                    .get(&tank.get_target().unwrap())
+                    .unwrap();
+                let vector = *target - current_pos;
                 let total_distance = vector.length();
                 dbg!(total_distance);
-                total_distance
-            } else {
-                let vector = tank.target_position - transform.translation.truncate();
-                let total_distance = vector.length();
-                dbg!(total_distance);
-                dbg!(total_distance);
-                total_distance
-            };
-            if total_distance < 50.0 {
-                tank.stop();
-                continue;
+                if total_distance < tank.get_radius() {
+                    println!("STOP!");
+                    tank.stop();
+                    continue;
+                }
             }
+
+            // // TODO: improve code, and move into tank component
+            // // let total_distance = (tank.target_position - current_pos).length();
+            // let total_distance = if tank.movement_path.len() > 0 {
+            //     let xy = tank.movement_path.iter().last().unwrap().clone();
+            //     let vector = Vec2::new(xy.0, xy.1) - transform.translation.truncate();
+            //     let total_distance = vector.length();
+            //     // dbg!(total_distance);
+            //     total_distance
+            // } else {
+            //     let vector = tank.target_position - transform.translation.truncate();
+            //     let total_distance = vector.length();
+            //     // dbg!(total_distance);
+            //     // dbg!(total_distance);
+            //     total_distance
+            // };
+            // if total_distance < tank.get_radius() {
+            //     tank.stop();
+            //     continue;
+            // }
 
             // Smooth movement
             if direction.length() > distance_to_move {
