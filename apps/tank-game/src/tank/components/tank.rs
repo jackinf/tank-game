@@ -49,7 +49,11 @@ impl Tank {
     }
 
     pub fn get_radius(&self) -> f32 {
-        125.0
+        250.0
+    }
+
+    pub fn get_player(&self) -> Player {
+        self.player.clone()
     }
 
     pub fn get_default_color(&self) -> Color {
