@@ -1,15 +1,11 @@
 use std::collections::VecDeque;
-use std::time::{SystemTime, UNIX_EPOCH};
 
 use bevy::math::Vec2;
 use bevy::prelude::{Color, Component, Mut, Sprite};
 
 use crate::common::components::unit_id::UnitId;
-use crate::common::constants::{Player, SPRITE_SCALE, TILE_SIZE};
+use crate::common::constants::{Player, TILE_SIZE};
 use crate::common::resources::me::Me;
-use crate::common::utils::common_helpers::CommonHelpers;
-use crate::tank::components::tank_bullet::TankBullet;
-use crate::tank::managers::tank_spawn_manager::TankSpawnManager;
 
 #[derive(Component)]
 pub struct Tank {
@@ -25,6 +21,7 @@ pub struct Tank {
     target: Option<UnitId>,
     cooldown_seconds: f64,
     last_shot_timestamp: f64,
+    stop_when_target_in_range: bool,
 }
 
 impl Tank {
@@ -41,6 +38,7 @@ impl Tank {
             target: None,
             cooldown_seconds: 1.0,
             last_shot_timestamp: 0.0,
+            stop_when_target_in_range: false,
         }
     }
 
@@ -63,14 +61,22 @@ impl Tank {
         }
     }
 
+    pub fn set_stop_when_target_in_range(&mut self, stop: bool) {
+        self.stop_when_target_in_range = stop;
+    }
+
+    pub fn get_stop_when_target_in_range(&self) -> bool {
+        self.stop_when_target_in_range
+    }
+
     pub fn start_moving_to(&mut self, target_position: Vec2) {
         self.target_position = target_position;
         self.moving = true;
     }
 
     pub fn set_movement_path(&mut self, path: VecDeque<(f32, f32)>) {
-        self.moving = true;
         self.movement_path = path;
+        self.moving = true;
     }
 
     pub fn is_moving(&self) -> bool {
@@ -86,12 +92,15 @@ impl Tank {
             let (x, y) = self.movement_path.pop_front().unwrap();
             self.target_position = Vec2::new(x, y);
         } else {
-            self.moving = false;
+            self.stop();
         }
     }
 
     pub fn stop(&mut self) {
+        println!("STOP!");
+
         self.moving = false;
+        self.set_stop_when_target_in_range(false);
     }
 
     pub fn is_clicked_on(&self, wx: f32, wy: f32) -> bool {

@@ -1,7 +1,7 @@
 use bevy::prelude::Component;
 use std::hash::{Hash, Hasher};
 
-#[derive(Component, Clone)]
+#[derive(Component, Debug, Clone)]
 pub struct UnitId(pub usize);
 
 impl PartialEq for UnitId {

@@ -1,12 +1,12 @@
 use crate::common::components::unit_id::UnitId;
-use crate::common::constants::Player;
+use crate::common::constants::{Player, BULLET_RADIUS};
 use crate::tank::components::tank::Tank;
 use crate::tank::components::tank_bullet::TankBullet;
 use crate::tank::managers::tank_spawn_manager::TankSpawnManager;
 use crate::tank::resources::tank_monitoring_timer::TankMonitoringTimer;
 use bevy::asset::AssetServer;
 use bevy::prelude::{
-    Commands, Entity, Query, Res, ResMut, Time, Transform, Vec2, Vec3, Vec3Swizzles, With,
+    Commands, Entity, Query, Res, ResMut, Time, Transform, Vec2, Vec3, Vec3Swizzles, With, Without,
 };
 use std::collections::HashMap;
 
@@ -25,6 +25,7 @@ impl TankShootingManager {
 
         let id_pos: Vec<(UnitId, Vec2, f32, Player)> = q_tanks
             .iter()
+            .filter(|(tank, _)| !tank.is_moving())
             .map(|(tank, transform)| {
                 (
                     tank.id.clone(),
@@ -57,8 +58,6 @@ impl TankShootingManager {
         q_tanks.iter_mut().for_each(|(mut tank, _)| {
             if let Some(target_id) = targets.get(&tank.id) {
                 tank.set_target(Some(target_id.clone()));
-            } else {
-                tank.set_target(None);
             }
         });
     }
@@ -79,7 +78,7 @@ impl TankShootingManager {
             .filter(|(tank, _)| {
                 tank.has_target() && !tank.is_cooling_down(time.elapsed_seconds_f64())
             })
-            .for_each(|(mut tank, transform)| {
+            .for_each(|(mut tank, _)| {
                 let source_option = id_pos.get(&tank.id);
                 let target_option = id_pos.get(&tank.get_target().unwrap());
                 if let (Some(source), Some(target)) = (source_option, target_option) {
@@ -101,13 +100,17 @@ impl TankShootingManager {
     pub fn move_bullets(
         mut commands: Commands,
         time: Res<Time>,
-        mut q_bullets: Query<(Entity, &mut Transform, &TankBullet), With<TankBullet>>,
+        mut q_bullets: Query<
+            (Entity, &mut Transform, &TankBullet),
+            (With<TankBullet>, Without<Tank>),
+        >,
+        mut q_tanks: Query<(&mut Tank, &Transform), (With<Tank>, Without<TankBullet>)>,
     ) {
         let dt = time.delta_seconds(); // Get the delta time for frame-rate independent movement
 
-        q_bullets
+        let bullets_exploded_at = q_bullets
             .iter_mut()
-            .for_each(|(entity, mut transform, bullet)| {
+            .map(|(entity, mut transform, bullet)| {
                 let destination = bullet.get_destination();
                 let speed = bullet.get_speed();
                 let vector = destination - transform.translation.truncate();
@@ -121,7 +124,21 @@ impl TankShootingManager {
                 );
                 if distance.abs() < 10.0 {
                     commands.entity(entity).despawn();
+                    Some((transform.translation.xy(), bullet.get_damage()))
+                } else {
+                    None
                 }
-            });
+            })
+            .filter(|coord| coord.is_some())
+            .map(|coord| coord.unwrap())
+            .collect::<Vec<(Vec2, u32)>>();
+
+        for (mut tank, transform) in q_tanks.iter_mut() {
+            for (bullet_position, bullet_damage) in bullets_exploded_at.iter() {
+                if transform.translation.xy().distance(*bullet_position) < BULLET_RADIUS {
+                    tank.take_damage(*bullet_damage);
+                }
+            }
+        }
     }
 }

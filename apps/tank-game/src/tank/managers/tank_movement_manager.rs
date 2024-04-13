@@ -1,12 +1,12 @@
 use crate::common::components::tile::Tile;
 use crate::common::components::unit_id::UnitId;
+use crate::common::constants::TANK_ROTATION_SPEED;
 use crate::common::resources::game_map::GameMap;
 use crate::common::resources::me::Me;
 use bevy::input::keyboard::KeyboardInput;
 use bevy::input::mouse::MouseButtonInput;
 use bevy::input::ButtonState;
 use bevy::prelude::*;
-use bevy::utils::dbg;
 use std::collections::{HashMap, VecDeque};
 
 use crate::common::tile_queries::TileQueries;
@@ -89,7 +89,17 @@ impl TankMovementManager {
                         .filter(|(tank, _)| tank.is_mine(&me) && tank.selected)
                         .map(|(tank, _)| tank)
                         .for_each(|mut my_selected_tank| {
-                            my_selected_tank.set_target(clicked_on_enemy_tank_id.clone());
+                            match &clicked_on_enemy_tank_id {
+                                Some(enemy_tank_id) => {
+                                    dbg!(enemy_tank_id);
+                                    my_selected_tank.set_target(Some(enemy_tank_id.clone()));
+                                    my_selected_tank.set_stop_when_target_in_range(true);
+                                }
+                                None => {
+                                    // TODO: not sure if i want to unset it
+                                    // my_selected_tank.set_target(None);
+                                }
+                            }
                         });
                 }
             }
@@ -113,17 +123,20 @@ impl TankMovementManager {
         {
             let current_pos = transform.translation.xy();
 
-            // if tank has target, check if it's close enough to stop
-            if let Some(target) = tank
-                .get_target()
-                .and_then(|target_id| tank_id_and_positions.get(&target_id))
-            {
-                let vector = *target - current_pos;
-                let total_distance = vector.length();
-                if total_distance < tank.get_radius() {
-                    println!("STOP!");
-                    tank.stop();
-                    continue;
+            if tank.get_stop_when_target_in_range() {
+                println!("STOP WHEN TARGET IN RANGE");
+
+                // if tank has target, check if it's close enough to stop
+                if let Some(target) = tank
+                    .get_target()
+                    .and_then(|target_id| tank_id_and_positions.get(&target_id))
+                {
+                    let vector = *target - current_pos;
+                    let total_distance = vector.length();
+                    if total_distance < tank.get_radius() {
+                        tank.stop();
+                        continue;
+                    }
                 }
             }
 
@@ -141,19 +154,17 @@ impl TankMovementManager {
         }
 
         // Rotate tank gun smoothly for all tanks
-        for (mut transform, mut tank) in tank_query.iter_mut().filter(|(_, tank)| tank.is_moving())
-        {
+        for (transform, tank) in tank_query.iter().filter(|(_, tank)| tank.is_moving()) {
             if let Some((mut gun_transform, _)) = gun_query
                 .iter_mut()
                 .find(|(_, gun)| gun.parent_id.0 == tank.id.0)
             {
-                let current_pos = transform.translation.xy();
-                let direction = tank.target_position - current_pos;
+                let direction = tank.target_position - transform.translation.xy();
                 let target_angle = direction.y.atan2(direction.x) - std::f32::consts::FRAC_PI_2;
+                let quat = Quat::from_rotation_z(target_angle);
 
-                gun_transform.rotation = gun_transform
-                    .rotation
-                    .slerp(Quat::from_rotation_z(target_angle), 10.0 * dt);
+                gun_transform.rotation =
+                    gun_transform.rotation.slerp(quat, TANK_ROTATION_SPEED * dt);
             }
         }
     }

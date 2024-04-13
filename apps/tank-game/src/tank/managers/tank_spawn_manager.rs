@@ -8,7 +8,7 @@ use crate::tank::components::tank_gun::TankGun;
 use crate::tank::components::tank_health::{HealthBar, TankHealth};
 use bevy::prelude::*;
 use bevy::render::render_resource::{AsBindGroup, ShaderRef};
-use bevy::sprite::{Anchor, MaterialMesh2dBundle, Mesh2dHandle};
+use bevy::sprite::Anchor;
 use bevy_prototype_lyon::prelude::*;
 use bevy_prototype_lyon::shapes;
 
