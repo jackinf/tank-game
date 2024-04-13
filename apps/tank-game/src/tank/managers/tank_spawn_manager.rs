@@ -89,7 +89,7 @@ impl TankSpawnManager {
             parent.spawn((
                 ShapeBundle {
                     path: GeometryBuilder::build_as(&shapes::Circle {
-                        radius: tank_radius,
+                        radius: tank_radius / SPRITE_SCALE,
                         ..default()
                     }),
                     ..default()

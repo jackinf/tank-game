@@ -22,29 +22,27 @@ impl TankShootingManager {
             .map(|(tank, transform)| (tank.id.clone(), transform.translation.xy()))
             .collect();
 
-        let tanks_that_can_shoot: HashMap<UnitId, UnitId> = q_tanks
+        q_tanks
             .iter_mut()
             .filter(|(tank, _)| {
                 tank.has_target() && !tank.is_cooling_down(time.elapsed_seconds_f64())
             })
-            .map(|(mut tank, transform)| {
-                tank.start_cooling_down(time.elapsed_seconds_f64());
+            .for_each(|(mut tank, transform)| {
+                let source_option = tank_ids_to_positions.get(&tank.id);
+                let target_option = tank_ids_to_positions.get(&tank.get_target().unwrap());
+                if let (Some(source), Some(target)) = (source_option, target_option) {
+                    if source.distance(*target) > tank.get_radius() {
+                        return;
+                    }
 
-                return (tank.id.clone(), tank.get_target().unwrap().clone());
-            })
-            .collect();
-
-        tanks_that_can_shoot
-            .into_iter()
-            .for_each(|(source_id, target_id)| {
-                let source = tank_ids_to_positions.get(&source_id).unwrap();
-                let target = tank_ids_to_positions.get(&target_id).unwrap();
-                TankSpawnManager::spawn_tank_bullet(
-                    &mut commands,
-                    &asset_server,
-                    source.clone(),
-                    target.clone(),
-                );
+                    tank.start_cooling_down(time.elapsed_seconds_f64());
+                    TankSpawnManager::spawn_tank_bullet(
+                        &mut commands,
+                        &asset_server,
+                        source.clone(),
+                        target.clone(),
+                    );
+                }
             });
     }
 

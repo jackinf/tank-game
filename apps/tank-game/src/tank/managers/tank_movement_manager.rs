@@ -59,7 +59,6 @@ impl TankMovementManager {
                     .map(|(tank, _)| tank.get_id().clone());
 
                 if let Some(goal) = TileQueries::find_accessible(&tile_query, &my_world_coords.0) {
-                    dbg!(goal);
                     let selected_tanks = &mut tank_query
                         .iter_mut()
                         .filter(|(tank, _)| tank.selected)
@@ -82,25 +81,16 @@ impl TankMovementManager {
                                     .collect();
 
                             tank.set_movement_path(path_f32);
-
-                            // if let Some(enemy_tank_id) = clicked_on_enemy_tank_id {
-                            //     dbg!("attacking enemy tank");
-                            //     tank.set_target(enemy_tank_id.clone());
-                            // }
                         }
                     }
 
-                    if let Some(enemy_tank_id) = clicked_on_enemy_tank_id {
-                        tank_query
-                            .iter_mut()
-                            .filter(|(tank, _)| tank.is_mine(&me) && tank.selected)
-                            .map(|(tank, _)| tank)
-                            .for_each(|mut my_selected_tank| {
-                                dbg!("attacking enemy tank");
-                                my_selected_tank.set_target(enemy_tank_id.clone());
-                                // refer to tank_shooting_manager.rs
-                            });
-                    }
+                    tank_query
+                        .iter_mut()
+                        .filter(|(tank, _)| tank.is_mine(&me) && tank.selected)
+                        .map(|(tank, _)| tank)
+                        .for_each(|mut my_selected_tank| {
+                            my_selected_tank.set_target(clicked_on_enemy_tank_id.clone());
+                        });
                 }
             }
         }
@@ -118,20 +108,18 @@ impl TankMovementManager {
             .map(|(transform, tank)| (tank.id.clone(), transform.translation.xy()))
             .collect();
 
+        // move all tanks via path
         for (mut transform, mut tank) in tank_query.iter_mut().filter(|(_, tank)| tank.is_moving())
         {
             let current_pos = transform.translation.xy();
-            let direction = tank.target_position - current_pos;
-            let distance_to_move = tank.speed * dt;
 
             // if tank has target, check if it's close enough to stop
-            if tank.has_target() {
-                let target = tank_id_and_positions
-                    .get(&tank.get_target().unwrap())
-                    .unwrap();
+            if let Some(target) = tank
+                .get_target()
+                .and_then(|target_id| tank_id_and_positions.get(&target_id))
+            {
                 let vector = *target - current_pos;
                 let total_distance = vector.length();
-                dbg!(total_distance);
                 if total_distance < tank.get_radius() {
                     println!("STOP!");
                     tank.stop();
@@ -139,58 +127,33 @@ impl TankMovementManager {
                 }
             }
 
-            // // TODO: improve code, and move into tank component
-            // // let total_distance = (tank.target_position - current_pos).length();
-            // let total_distance = if tank.movement_path.len() > 0 {
-            //     let xy = tank.movement_path.iter().last().unwrap().clone();
-            //     let vector = Vec2::new(xy.0, xy.1) - transform.translation.truncate();
-            //     let total_distance = vector.length();
-            //     // dbg!(total_distance);
-            //     total_distance
-            // } else {
-            //     let vector = tank.target_position - transform.translation.truncate();
-            //     let total_distance = vector.length();
-            //     // dbg!(total_distance);
-            //     // dbg!(total_distance);
-            //     total_distance
-            // };
-            // if total_distance < tank.get_radius() {
-            //     tank.stop();
-            //     continue;
-            // }
+            let direction = tank.target_position - current_pos;
+            let distance_to_move = tank.speed * dt;
 
             // Smooth movement
             if direction.length() > distance_to_move {
                 let new_pos = current_pos + direction.normalize() * distance_to_move;
-                // let target_vec3 = Vec3::new(new_pos.x, new_pos.y, transform.translation.z);
-
-                // TODO: account for a bug if the speed is too high.
-                // if so, use simpler:
-                transform.translation = Vec3::new(new_pos.x, new_pos.y, transform.translation.z);
-                // transform.translation = transform
-                //     .translation
-                //     .lerp(target_vec3, tank.speed / 10.0 * time.delta_seconds());
+                transform.translation = new_pos.extend(transform.translation.z);
             } else {
-                transform.translation.x = tank.target_position.x;
-                transform.translation.y = tank.target_position.y;
-
-                if tank.has_target() && distance_to_move < 10.0 {
-                    tank.stop();
-                } else {
-                    tank.try_take_next_position_in_path();
-                }
+                transform.translation = tank.target_position.extend(transform.translation.z);
+                tank.try_take_next_position_in_path();
             }
+        }
 
-            // Rotate tank gun smoothly
+        // Rotate tank gun smoothly for all tanks
+        for (mut transform, mut tank) in tank_query.iter_mut().filter(|(_, tank)| tank.is_moving())
+        {
             if let Some((mut gun_transform, _)) = gun_query
                 .iter_mut()
                 .find(|(_, gun)| gun.parent_id.0 == tank.id.0)
             {
+                let current_pos = transform.translation.xy();
+                let direction = tank.target_position - current_pos;
                 let target_angle = direction.y.atan2(direction.x) - std::f32::consts::FRAC_PI_2;
-                gun_transform.rotation = gun_transform.rotation.slerp(
-                    Quat::from_rotation_z(target_angle),
-                    10.0 * time.delta_seconds(),
-                );
+
+                gun_transform.rotation = gun_transform
+                    .rotation
+                    .slerp(Quat::from_rotation_z(target_angle), 10.0 * dt);
             }
         }
     }

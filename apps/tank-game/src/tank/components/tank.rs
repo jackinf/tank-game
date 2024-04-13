@@ -5,7 +5,7 @@ use bevy::math::Vec2;
 use bevy::prelude::{Color, Component, Mut, Sprite};
 
 use crate::common::components::unit_id::UnitId;
-use crate::common::constants::{Player, TILE_SIZE};
+use crate::common::constants::{Player, SPRITE_SCALE, TILE_SIZE};
 use crate::common::resources::me::Me;
 use crate::common::utils::common_helpers::CommonHelpers;
 use crate::tank::components::tank_bullet::TankBullet;
@@ -49,7 +49,7 @@ impl Tank {
     }
 
     pub fn get_radius(&self) -> f32 {
-        250.0
+        125.0
     }
 
     pub fn get_default_color(&self) -> Color {
@@ -104,8 +104,8 @@ impl Tank {
         in_x && in_y
     }
 
-    pub fn set_target(&mut self, target: UnitId) {
-        self.target = Some(target);
+    pub fn set_target(&mut self, target: Option<UnitId>) {
+        self.target = target;
     }
 
     pub fn has_target(&self) -> bool {
