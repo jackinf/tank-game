@@ -14,6 +14,8 @@ use crate::tank::managers::tank_spawn_manager::TankSpawnManager;
 pub fn setup(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
+    mut materials: ResMut<Assets<ColorMaterial>>,
+    mut meshes: ResMut<Assets<Mesh>>,
     mut tank_id_counter: ResMut<UnitIdCounter>,
     mut game_map: ResMut<GameMap>,
 ) {
@@ -61,6 +63,8 @@ pub fn setup(
                         TankSpawnManager::spawn_tank(
                             &mut commands,
                             &asset_server,
+                            &mut materials,
+                            &mut meshes,
                             world_pos,
                             &mut tank_id_counter,
                             player.clone(),

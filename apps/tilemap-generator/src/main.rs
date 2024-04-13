@@ -1,9 +1,11 @@
 use std::fs::File;
 use std::io::{BufWriter, Write};
 
-fn main() -> std::io::Result<()> {
+fn main() {
     let tilemap = generate_tilemap(100, 100);
-    write_tilemap_to_file("apps/tank-game/assets/map3.txt", &tilemap)
+    write_tilemap_to_file("apps/tank-game/assets/map3.txt", &tilemap);
+    write_tilemap_to_file("apps/tank-game/assets/map3_p1_units.txt", &tilemap);
+    write_tilemap_to_file("apps/tank-game/assets/map3_p2_units.txt", &tilemap);
 }
 
 fn generate_tilemap(width: usize, height: usize) -> Vec<Vec<usize>> {
@@ -11,10 +13,10 @@ fn generate_tilemap(width: usize, height: usize) -> Vec<Vec<usize>> {
     for y in 0..height {
         for x in 0..width {
             let tile = match rand::random::<f64>() {
-                r if r < 0.7 => 0,  // Grass
-                r if r < 0.75 => 1, // Tank
-                r if r < 0.95 => 2, // Wall
-                _ => 3,             // Water
+                r if r < 0.7 => 0,
+                r if r < 0.75 => 1,
+                r if r < 0.95 => 2,
+                _ => 3,
             };
             map[y][x] = tile;
         }
