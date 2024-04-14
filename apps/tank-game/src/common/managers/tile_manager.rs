@@ -12,7 +12,7 @@ impl TileManager {
         match tile_type {
             TileType::Wall => "sprites/tiles/wall.png".into(),
             TileType::Grass => "sprites/tiles/grass3.png".into(),
-            TileType::Gold => "sprites/tiles/grass3.png".into(),
+            TileType::Gold => "sprites/tiles/gold.png".into(),
             TileType::Water => "sprites/tiles/water.png".into(),
         }
     }
@@ -20,9 +20,9 @@ impl TileManager {
     pub fn get_tile_type_layer(tile_type: &TileType) -> f32 {
         match tile_type {
             TileType::Grass => 0.,
-            TileType::Gold => 0.,
-            TileType::Wall => 10.,
-            TileType::Water => 0.,
+            TileType::Gold => 5.,
+            TileType::Wall => 5.,
+            TileType::Water => 5.,
         }
     }
 

@@ -58,7 +58,7 @@ impl TankSpawnManager {
 
         let tank_radius = tank.get_radius().clone();
 
-        let tank_base: Entity = commands
+        commands
             .spawn((SpriteBundle {
                 transform: Transform::default()
                     .with_translation(translation.extend(layer))
@@ -72,50 +72,47 @@ impl TankSpawnManager {
             },))
             .insert(tank)
             .insert(TankHealth::new(TANK_MAX_HEALTH as f32))
-            .id();
-
-        // Spawn the tank gun as a child of the tank base
-        commands.entity(tank_base).with_children(move |parent| {
-            // Spawn the turret as a child of the tank
-            parent
-                .spawn(SpriteBundle {
-                    transform: Transform::from_xyz(0.0, 0.0, 0.1)
-                        .with_scale(Vec3::splat(SPRITE_SCALE)), // Ensure it's positioned correctly relative to the base
-                    texture: gun_texture,
-                    ..default()
-                })
-                .insert(TankGun::new(UnitId(tank_id)));
-
-            parent.spawn((
-                ShapeBundle {
-                    path: GeometryBuilder::build_as(&shapes::Circle {
-                        radius: tank_radius / SPRITE_SCALE,
+            .with_children(move |parent| {
+                // Spawn the turret as a child of the tank
+                parent
+                    .spawn(SpriteBundle {
+                        transform: Transform::from_xyz(0.0, 0.0, 0.1)
+                            .with_scale(Vec3::splat(SPRITE_SCALE)), // Ensure it's positioned correctly relative to the base
+                        texture: gun_texture,
                         ..default()
-                    }),
-                    ..default()
-                },
-                // Fill::color(Color::CYAN),
-                Stroke::new(Color::BLACK, 2.0),
-            ));
+                    })
+                    .insert(TankGun::new(UnitId(tank_id)));
 
-            // Spawn the health bar as a child of the tank
-            parent
-                .spawn(SpriteBundle {
-                    // Position the health bar above the tank
-                    transform: Transform::from_xyz(-50.0, 40.0, 0.2),
-                    sprite: Sprite {
-                        color: Color::PURPLE, // Health bar color
-                        rect: Some(Rect {
-                            min: Vec2::new(0.0, 0.0),
-                            max: TANK_HEALTH_BAR_SIZE,
+                parent.spawn((
+                    ShapeBundle {
+                        path: GeometryBuilder::build_as(&shapes::Circle {
+                            radius: tank_radius / SPRITE_SCALE,
+                            ..default()
                         }),
-                        anchor: Anchor::CenterLeft, // Anchor the health bar to the left of the tank
                         ..default()
                     },
-                    ..default()
-                })
-                .insert(HealthBar);
-        });
+                    // Fill::color(Color::CYAN),
+                    Stroke::new(Color::BLACK, 2.0),
+                ));
+
+                // Spawn the health bar as a child of the tank
+                parent
+                    .spawn(SpriteBundle {
+                        // Position the health bar above the tank
+                        transform: Transform::from_xyz(-50.0, 40.0, 0.2),
+                        sprite: Sprite {
+                            color: Color::PURPLE, // Health bar color
+                            rect: Some(Rect {
+                                min: Vec2::new(0.0, 0.0),
+                                max: TANK_HEALTH_BAR_SIZE,
+                            }),
+                            anchor: Anchor::CenterLeft, // Anchor the health bar to the left of the tank
+                            ..default()
+                        },
+                        ..default()
+                    })
+                    .insert(HealthBar);
+            });
     }
 
     pub fn despawn_tanks_with_zero_health(mut commands: Commands, query: Query<(Entity, &Tank)>) {

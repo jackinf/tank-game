@@ -95,6 +95,9 @@ pub mod building {
     pub mod components {
         pub mod building;
     }
+    pub mod managers {
+        pub mod building_spawn_manager;
+    }
     pub mod building_type;
 }
 
