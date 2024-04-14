@@ -1,4 +1,4 @@
-use crate::common::constants::TileType;
+use crate::tile::tile_type::TileType;
 use std::cmp::Ordering;
 use std::collections::{BinaryHeap, HashMap, VecDeque};
 

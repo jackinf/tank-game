@@ -24,22 +24,37 @@ fn main() {
         .run()
 }
 
+pub mod unit {
+    pub mod components {
+        pub mod unit_id;
+    }
+    pub mod managers {
+        pub mod unit_spawn_manager;
+    }
+    pub mod resources {
+        pub mod unit_id_counter;
+    }
+    pub mod unit_selection_plugin;
+    pub mod unit_type;
+}
+pub mod tile {
+    pub mod components {
+        pub mod tile;
+    }
+    pub mod managers {
+        pub mod tile_manager;
+        pub mod tile_spawn_manager;
+    }
+    pub mod tile_queries;
+    pub mod tile_type;
+}
 pub mod common {
     pub mod resources {
         pub mod game_map;
         pub mod me;
-        pub mod unit_id_counter;
-    }
-    pub mod components {
-        pub mod tile;
-        pub mod unit_id;
-    }
-    pub mod managers {
-        pub mod tile_manager;
     }
     pub mod constants;
-    pub mod tile_queries;
-    pub mod unit_selection_plugin;
+    pub mod player;
     pub mod utils {
         pub mod astar;
         pub mod common_helpers;
@@ -82,7 +97,7 @@ pub mod tank {
     pub mod tank_queries;
 }
 
-pub mod menu {
+pub mod con_menu {
     mod components {
         pub mod money_text;
     }
@@ -100,18 +115,32 @@ pub mod building {
     }
     pub mod building_type;
 }
+pub mod harvester {
+    pub mod components {
+        pub mod harvester;
+    }
+    pub mod resources {
+        pub mod harvester_timer;
+    }
+    pub mod managers {
+        pub mod harvester_manager;
+    }
+    pub mod harvester_plugin;
+}
 
 use bevy::prelude::*;
 use bevy::window::WindowResolution;
 use bevy_prototype_lyon::prelude::ShapePlugin;
 
-use crate::common::constants::{Player, MAX_HEIGHT, MAX_WIDTH};
+use crate::common::constants::{MAX_HEIGHT, MAX_WIDTH};
+use crate::common::player::Player;
 use crate::common::resources::game_map::GameMap;
 use crate::common::resources::me::Me;
-use crate::common::resources::unit_id_counter::UnitIdCounter;
-use crate::common::unit_selection_plugin::UnitSelectionPlugin;
+
+use crate::con_menu::menu_plugin::MenuPlugin;
 use crate::cursor::cursor_plugin::CursorPlugin;
 use crate::debug::debug_plugin::DebugPlugin;
-use crate::menu::menu_plugin::MenuPlugin;
 use crate::setup::setup;
 use crate::tank::tank_plugin::TankPlugin;
+use crate::unit::resources::unit_id_counter::UnitIdCounter;
+use crate::unit::unit_selection_plugin::UnitSelectionPlugin;

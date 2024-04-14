@@ -1,5 +1,3 @@
-use crate::common::components::tile::Tile;
-use crate::common::components::unit_id::UnitId;
 use crate::common::constants::TANK_ROTATION_SPEED;
 use crate::common::resources::game_map::GameMap;
 use crate::common::resources::me::Me;
@@ -9,11 +7,13 @@ use bevy::input::ButtonState;
 use bevy::prelude::*;
 use std::collections::{HashMap, VecDeque};
 
-use crate::common::tile_queries::TileQueries;
 use crate::common::utils::astar;
 use crate::cursor::resources::cursor_coordinates::CursorCoordinates;
 use crate::tank::components::tank::Tank;
 use crate::tank::components::tank_gun::TankGun;
+use crate::tile::components::tile::Tile;
+use crate::tile::tile_queries::TileQueries;
+use crate::unit::components::unit_id::UnitId;
 
 // TODO: rename to: TankActionManager
 pub struct TankMovementManager;

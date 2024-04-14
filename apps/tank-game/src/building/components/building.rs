@@ -1,5 +1,6 @@
 use crate::building::building_type::BuildingType;
-use crate::common::constants::{Player, TileCoord};
+use crate::common::constants::TileCoord;
+use crate::common::player::Player;
 use bevy::prelude::Component;
 
 #[derive(Component, Clone)]
@@ -28,5 +29,9 @@ impl Building {
 
     pub fn get_building_tile_coord(&self) -> TileCoord {
         self.building_tile_coord
+    }
+
+    pub fn get_player(&self) -> Player {
+        self.player.clone()
     }
 }

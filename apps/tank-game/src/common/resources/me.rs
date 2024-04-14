@@ -1,4 +1,4 @@
-use crate::common::constants::Player;
+use crate::common::player::Player;
 use bevy::prelude::Resource;
 
 #[derive(Resource)]

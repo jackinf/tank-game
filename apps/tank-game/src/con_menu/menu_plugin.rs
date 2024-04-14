@@ -1,9 +1,10 @@
-use crate::common::components::tile::Tile;
 use crate::common::constants::{SPRITE_SCALE, TILE_SIZE};
-use crate::common::tile_queries::TileQueries;
+
+use crate::con_menu::components::money_text::MoneyText;
+use crate::con_menu::resources::menu_info::MenuInfo;
 use crate::cursor::resources::cursor_coordinates::CursorCoordinates;
-use crate::menu::components::money_text::MoneyText;
-use crate::menu::resources::menu_info::MenuInfo;
+use crate::tile::components::tile::Tile;
+use crate::tile::tile_queries::TileQueries;
 use bevy::input::mouse::MouseButtonInput;
 use bevy::input::ButtonState;
 use bevy::prelude::Val::Px;

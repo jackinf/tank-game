@@ -1,13 +1,13 @@
-use crate::common::components::tile::Tile;
-use crate::common::tile_queries::TileQueries;
 use crate::cursor::resources::cursor_coordinates::CursorCoordinates;
 use crate::debug::resources::tank_log_timer::TankLogTimer;
 use bevy::app::Plugin;
 use bevy::prelude::*;
 
-use crate::menu::menu_plugin::ConstructionInfo;
-use crate::menu::resources::menu_info::MenuInfo;
+use crate::con_menu::menu_plugin::ConstructionInfo;
+use crate::con_menu::resources::menu_info::MenuInfo;
 use crate::tank::components::tank::Tank;
+use crate::tile::components::tile::Tile;
+use crate::tile::tile_queries::TileQueries;
 
 pub struct DebugPlugin;
 

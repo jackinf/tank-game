@@ -1,5 +1,5 @@
-use crate::common::components::tile::Tile;
 use crate::common::constants::TileCoord;
+use crate::tile::components::tile::Tile;
 use bevy::prelude::{Query, Vec2};
 
 pub struct TileQueries;

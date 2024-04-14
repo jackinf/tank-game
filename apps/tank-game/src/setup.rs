@@ -6,14 +6,20 @@ use bevy::asset::AssetServer;
 use bevy::prelude::*;
 use bevy::prelude::{Commands, Res, ResMut};
 
-use crate::common::constants::{
-    Player, RawGrid, TileType, UnitType, OFFSET_X, OFFSET_Y, TILE_SIZE,
-};
-use crate::common::managers::tile_manager::TileManager;
+use crate::common::constants::{RawGrid, TileGrid, OFFSET_X, OFFSET_Y, TILE_SIZE};
+
+use crate::common::player::Player;
 use crate::common::resources::game_map::GameMap;
-use crate::common::resources::unit_id_counter::UnitIdCounter;
+use crate::common::utils::enum_helpers::EnumHelpers;
+
 use crate::common::utils::file_helpers::FileHelpers;
 use crate::tank::managers::tank_spawn_manager::TankSpawnManager;
+use crate::tile::managers::tile_manager::TileManager;
+use crate::tile::managers::tile_spawn_manager::TileSpawnManager;
+use crate::tile::tile_type::TileType;
+use crate::unit::managers::unit_spawn_manager::UnitSpawnManager;
+use crate::unit::resources::unit_id_counter::UnitIdCounter;
+use crate::unit::unit_type::UnitType;
 
 pub fn setup(
     mut commands: Commands,
@@ -27,6 +33,14 @@ pub fn setup(
     let all_unit_maps: Vec<(RawGrid, Player)> =
         vec![(p1_unit_map, Player::P1), (p2_unit_map, Player::P2)];
 
+    // Reuse unit map for now
+    let p1_building_map =
+        FileHelpers::read_map_from_file("apps/tank-game/assets/map2_p1_units.txt");
+    let p2_building_map =
+        FileHelpers::read_map_from_file("apps/tank-game/assets/map2_p2_units.txt");
+    let all_building_maps: Vec<(RawGrid, Player)> =
+        vec![(p1_building_map, Player::P1), (p2_building_map, Player::P2)];
+
     let mut grid_to_tilemap = HashMap::new();
 
     let calculate_world_position = |row_index: usize, col_index: usize| {
@@ -35,58 +49,28 @@ pub fn setup(
         Vec2::new(x, y)
     };
 
-    let grid = tile_map
-        .into_iter()
-        .enumerate()
-        .map(|(row_index, row_on_row)| {
-            row_on_row
-                .into_iter()
-                .enumerate()
-                .map(|(col_index, cell)| {
-                    let pos = calculate_world_position(row_index, col_index);
-                    let map_coord = (row_index, col_index);
-                    grid_to_tilemap.insert(map_coord, (pos.x, pos.y));
+    let grid = TileSpawnManager::spawn_tiles(
+        &mut commands,
+        &asset_server,
+        tile_map,
+        &mut grid_to_tilemap,
+        calculate_world_position,
+    );
 
-                    let grass = TileType::Grass as usize;
-                    TileManager::spawn_tile(&mut commands, &asset_server, pos, grass, map_coord);
-                    TileManager::spawn_tile(&mut commands, &asset_server, pos, cell, map_coord)
-                })
-                .collect()
-        })
-        .collect();
+    UnitSpawnManager::spawn_units(
+        &mut commands,
+        &asset_server,
+        &mut tank_id_counter,
+        all_unit_maps,
+        calculate_world_position,
+    );
 
-    all_unit_maps.into_iter().for_each(|(unit_map, player)| {
-        unit_map
-            .iter()
-            .enumerate()
-            .for_each(|(row_index, row_on_row)| {
-                row_on_row.iter().enumerate().for_each(|(col_index, cell)| {
-                    let pos = calculate_world_position(row_index, col_index);
-                    let map_coord = (row_index, col_index);
-
-                    // TODO: don't mix units and buildings together
-                    if *cell == UnitType::Tank as usize {
-                        TankSpawnManager::spawn_tank(
-                            &mut commands,
-                            &asset_server,
-                            pos,
-                            &mut tank_id_counter,
-                            player.clone(),
-                        );
-                    } else if *cell != BuildingType::None as usize {
-                        let pos1 = Vec2::new(pos.x - TILE_SIZE / 2.0, pos.y + TILE_SIZE / 2.0);
-                        BuildingSpawnManager::spawn(
-                            &mut commands,
-                            &asset_server,
-                            pos1,
-                            *cell,
-                            map_coord,
-                            player.clone(),
-                        );
-                    }
-                });
-            });
-    });
+    BuildingSpawnManager::spawn_buildings(
+        &mut commands,
+        &asset_server,
+        all_building_maps,
+        calculate_world_position,
+    );
 
     game_map.set_map(grid, grid_to_tilemap);
 }

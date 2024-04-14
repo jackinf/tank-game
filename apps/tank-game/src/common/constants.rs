@@ -1,4 +1,4 @@
-use crate::common::components::tile::Tile;
+use crate::tile::components::tile::Tile;
 use bevy::math::Vec2;
 use bevy::prelude::Color;
 
@@ -28,46 +28,3 @@ pub const SIDE_MARGIN_PERCENTAGE: f32 = 0.1;
 
 pub const P1_COLOR: Color = Color::rgba(0.7, 0.7, 1.0, 1.);
 pub const P2_COLOR: Color = Color::rgba(1.0, 0.7, 0.7, 1.);
-
-pub enum TileType {
-    Grass = 0,
-    Gold = 1,
-    Wall = 2,
-    Water = 3,
-}
-
-impl TryFrom<usize> for TileType {
-    type Error = ();
-
-    fn try_from(value: usize) -> Result<Self, Self::Error> {
-        match value {
-            0 => Ok(TileType::Grass),
-            1 => Ok(TileType::Gold),
-            2 => Ok(TileType::Wall),
-            3 => Ok(TileType::Water),
-            _ => Err(()),
-        }
-    }
-}
-
-pub enum UnitType {
-    Tank = 1,
-    Soldier = 2,
-    Harvester = 3,
-}
-
-#[derive(Clone)]
-pub enum Player {
-    P1 = 1,
-    P2 = 2,
-}
-
-impl PartialEq for Player {
-    fn eq(&self, other: &Self) -> bool {
-        match (self, other) {
-            (Player::P1, Player::P1) => true,
-            (Player::P2, Player::P2) => true,
-            _ => false,
-        }
-    }
-}

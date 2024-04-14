@@ -1,11 +1,13 @@
-use crate::common::components::unit_id::UnitId;
-use crate::common::constants::{Player, SPRITE_SCALE, TANK_HEALTH_BAR_SIZE, TANK_MAX_HEALTH};
-use crate::common::resources::unit_id_counter::UnitIdCounter;
+use crate::common::constants::{SPRITE_SCALE, TANK_HEALTH_BAR_SIZE, TANK_MAX_HEALTH};
+
+use crate::common::player::Player;
 use crate::common::utils::common_helpers::CommonHelpers;
 use crate::tank::components::tank::Tank;
 use crate::tank::components::tank_bullet::TankBullet;
 use crate::tank::components::tank_gun::TankGun;
 use crate::tank::components::tank_health::{HealthBar, TankHealth};
+use crate::unit::components::unit_id::UnitId;
+use crate::unit::resources::unit_id_counter::UnitIdCounter;
 use bevy::prelude::*;
 use bevy::render::render_resource::{AsBindGroup, ShaderRef};
 use bevy::sprite::Anchor;

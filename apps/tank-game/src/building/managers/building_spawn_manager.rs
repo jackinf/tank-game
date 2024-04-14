@@ -4,25 +4,58 @@ use bevy::sprite::{Anchor, SpriteBundle};
 
 use crate::building::building_type::BuildingType;
 use crate::building::components::building::Building;
-use crate::common::constants::{Player, SPRITE_SCALE};
+use crate::common::constants::{RawGrid, SPRITE_SCALE, TILE_SIZE};
+use crate::common::player::Player;
 use crate::common::utils::enum_helpers::EnumHelpers;
 
 pub struct BuildingSpawnManager;
 
 impl BuildingSpawnManager {
-    pub fn spawn(
+    pub fn spawn_buildings(
+        mut commands: &mut Commands,
+        asset_server: &Res<AssetServer>,
+        all_building_maps: Vec<(RawGrid, Player)>,
+        calculate_world_position: fn(usize, usize) -> Vec2,
+    ) {
+        all_building_maps
+            .into_iter()
+            .for_each(|(unit_map, player)| {
+                unit_map
+                    .iter()
+                    .enumerate()
+                    .for_each(|(row_index, row_on_row)| {
+                        row_on_row.iter().enumerate().for_each(|(col_index, cell)| {
+                            let pos = calculate_world_position(row_index, col_index);
+                            let map_coord = (row_index, col_index);
+
+                            if let Some(building_type) =
+                                EnumHelpers::assert_valid_enum::<BuildingType>(*cell)
+                            {
+                                BuildingSpawnManager::spawn_single(
+                                    &mut commands,
+                                    &asset_server,
+                                    // I'm not sure why I need this hack but the building is not placed correctly
+                                    Vec2::new(pos.x - TILE_SIZE / 2.0, pos.y + TILE_SIZE / 2.0),
+                                    building_type,
+                                    map_coord,
+                                    player.clone(),
+                                );
+                            }
+                        });
+                    });
+            });
+    }
+
+    pub fn spawn_single(
         commands: &mut Commands,
         asset_server: &Res<AssetServer>,
         translation: Vec2,
-        building_type_raw: usize,
+        building_type: BuildingType,
         map_coord: (usize, usize),
         player: Player,
     ) {
-        let building_type: BuildingType =
-            EnumHelpers::assert_valid_enum::<BuildingType>(building_type_raw);
         let sprite_path = building_type.get_building_type_sprite();
         let layer = building_type.get_building_type_layer();
-        // let tile_size = building_type.get_size();
 
         let color = match player {
             Player::P1 => crate::common::constants::P1_COLOR,

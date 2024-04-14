@@ -1,4 +1,4 @@
-use crate::common::constants::TileType;
+use crate::tile::tile_type::TileType;
 use bevy::prelude::*;
 use std::fmt::Formatter;
 

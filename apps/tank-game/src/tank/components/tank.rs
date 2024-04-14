@@ -3,9 +3,10 @@ use std::collections::VecDeque;
 use bevy::math::Vec2;
 use bevy::prelude::{Color, Component, Mut, Sprite};
 
-use crate::common::components::unit_id::UnitId;
-use crate::common::constants::{Player, TILE_SIZE};
+use crate::common::constants::TILE_SIZE;
+use crate::common::player::Player;
 use crate::common::resources::me::Me;
+use crate::unit::components::unit_id::UnitId;
 
 #[derive(Component)]
 pub struct Tank {

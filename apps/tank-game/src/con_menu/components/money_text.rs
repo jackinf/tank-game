@@ -1,4 +1,4 @@
-use crate::menu::resources::menu_info::MenuInfo;
+use crate::con_menu::resources::menu_info::MenuInfo;
 use bevy::asset::AssetServer;
 use bevy::hierarchy::ChildBuilder;
 use bevy::prelude::{

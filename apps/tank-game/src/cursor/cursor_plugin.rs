@@ -1,6 +1,6 @@
 use crate::common::constants::{CAMERA_SPEED, SIDE_MARGIN_PERCENTAGE};
+use crate::con_menu::resources::menu_info::MenuInfo;
 use crate::cursor::resources::cursor_coordinates::CursorCoordinates;
-use crate::menu::resources::menu_info::MenuInfo;
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 
