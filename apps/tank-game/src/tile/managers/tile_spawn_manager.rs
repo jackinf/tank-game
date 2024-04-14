@@ -1,5 +1,4 @@
 use crate::common::constants::{RawGrid, TileCoord, TileGrid};
-use crate::common::utils::enum_helpers::EnumHelpers;
 use crate::tile::managers::tile_manager::TileManager;
 use crate::tile::tile_type::TileType;
 use bevy::prelude::{AssetServer, Commands, Res, Vec2};
@@ -12,7 +11,7 @@ impl TileSpawnManager {
         mut commands: &mut Commands,
         assets: &Res<AssetServer>,
         tile_map: RawGrid,
-        mut grid_to_tilemap: &mut HashMap<TileCoord, (f32, f32)>,
+        grid_to_tilemap: &mut HashMap<TileCoord, (f32, f32)>,
         calculate_world_position: fn(usize, usize) -> Vec2,
     ) -> TileGrid {
         let grid = tile_map
@@ -35,7 +34,8 @@ impl TileSpawnManager {
                             map_coord,
                         );
 
-                        let tile_type = EnumHelpers::assert_valid_enum::<TileType>(cell).unwrap();
+                        // TODO: Consider a more appropriate error message instead of unwrap
+                        let tile_type = TileType::try_from(cell).unwrap();
                         TileManager::spawn_tile(&mut commands, &assets, pos, tile_type, map_coord)
                     })
                     .collect()

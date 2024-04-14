@@ -6,7 +6,6 @@ use crate::building::building_type::BuildingType;
 use crate::building::components::building::Building;
 use crate::common::constants::{RawGrid, SPRITE_SCALE, TILE_SIZE};
 use crate::common::player::Player;
-use crate::common::utils::enum_helpers::EnumHelpers;
 
 pub struct BuildingSpawnManager;
 
@@ -28,9 +27,7 @@ impl BuildingSpawnManager {
                             let pos = calculate_world_position(row_index, col_index);
                             let map_coord = (row_index, col_index);
 
-                            if let Some(building_type) =
-                                EnumHelpers::assert_valid_enum::<BuildingType>(*cell)
-                            {
+                            if let Ok(building_type) = BuildingType::try_from(*cell) {
                                 BuildingSpawnManager::spawn_single(
                                     &mut commands,
                                     &asset_server,

@@ -1,25 +1,17 @@
 use std::collections::HashMap;
 
-use crate::building::building_type::BuildingType;
-use crate::building::managers::building_spawn_manager::BuildingSpawnManager;
 use bevy::asset::AssetServer;
 use bevy::prelude::*;
 use bevy::prelude::{Commands, Res, ResMut};
 
-use crate::common::constants::{RawGrid, TileGrid, OFFSET_X, OFFSET_Y, TILE_SIZE};
-
+use crate::building::managers::building_spawn_manager::BuildingSpawnManager;
+use crate::common::constants::{RawGrid, OFFSET_X, OFFSET_Y, TILE_SIZE};
 use crate::common::player::Player;
 use crate::common::resources::game_map::GameMap;
-use crate::common::utils::enum_helpers::EnumHelpers;
-
 use crate::common::utils::file_helpers::FileHelpers;
-use crate::tank::managers::tank_spawn_manager::TankSpawnManager;
-use crate::tile::managers::tile_manager::TileManager;
 use crate::tile::managers::tile_spawn_manager::TileSpawnManager;
-use crate::tile::tile_type::TileType;
 use crate::unit::managers::unit_spawn_manager::UnitSpawnManager;
 use crate::unit::resources::unit_id_counter::UnitIdCounter;
-use crate::unit::unit_type::UnitType;
 
 pub fn setup(
     mut commands: Commands,

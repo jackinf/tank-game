@@ -1,5 +1,4 @@
 use crate::common::constants::{SPRITE_SCALE, TILE_SIZE};
-use crate::common::utils::enum_helpers::EnumHelpers;
 use crate::tile::components::tile::Tile;
 use crate::tile::tile_type::TileType;
 use bevy::asset::AssetServer;

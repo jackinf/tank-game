@@ -58,7 +58,6 @@ pub mod common {
     pub mod utils {
         pub mod astar;
         pub mod common_helpers;
-        pub mod enum_helpers;
         pub mod file_helpers;
     }
 }
@@ -124,6 +123,7 @@ pub mod harvester {
     }
     pub mod managers {
         pub mod harvester_manager;
+        pub mod harvester_spawn_manager;
     }
     pub mod harvester_plugin;
 }
