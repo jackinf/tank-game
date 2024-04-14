@@ -1,7 +1,7 @@
 use crate::harvester::managers::harvester_state_manager::HarvesterStateManager;
 use crate::harvester::resources::harvester_timer::HarvesterTimer;
 use bevy::app::App;
-use bevy::prelude::{Plugin, Timer, TimerMode, Update};
+use bevy::prelude::{FixedUpdate, Plugin, Timer, TimerMode, Update};
 
 pub struct HarvesterPlugin;
 
@@ -15,6 +15,10 @@ impl Plugin for HarvesterPlugin {
         .add_systems(
             Update,
             HarvesterStateManager::find_gold_for_hungry_harvester,
+        )
+        .add_systems(
+            FixedUpdate,
+            HarvesterStateManager::move_harvester_towards_path,
         );
     }
 }

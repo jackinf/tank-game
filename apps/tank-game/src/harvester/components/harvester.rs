@@ -107,6 +107,14 @@ impl Harvester {
         self.gold_current_capacity >= self.gold_max_capacity
     }
 
+    pub fn get_speed(&self) -> f32 {
+        100.0
+    }
+
+    pub fn try_take_next_position_in_path(&mut self) {
+        self.movement_path.pop_front();
+    }
+
     /*
        State Machine logic
     */

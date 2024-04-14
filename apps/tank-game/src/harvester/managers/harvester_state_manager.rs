@@ -8,6 +8,7 @@ use crate::tile::components::tile::Tile;
 use crate::tile::tile_queries::TileQueries;
 use crate::tile::tile_type::TileType;
 use bevy::prelude::{Query, Res, ResMut, Time, Transform, Vec2, Vec3Swizzles, With};
+use bevy::utils::dbg;
 use std::collections::VecDeque;
 
 pub struct HarvesterStateManager;
@@ -72,6 +73,42 @@ impl HarvesterStateManager {
                         dbg!(goal);
                         harvester.set_movement_path(path);
                     }
+                }
+            });
+    }
+
+    pub fn move_harvester_towards_path(
+        time: Res<Time>,
+        mut q_harvesters: Query<(&mut Harvester, &mut Transform), With<Harvester>>,
+        game_map: Res<GameMap>,
+    ) {
+        let dt = time.delta_seconds();
+
+        q_harvesters
+            .iter_mut()
+            .for_each(|(mut harvester, mut transform)| {
+                if !harvester.has_movement_path() {
+                    return;
+                }
+
+                let current_pos = transform.translation.xy();
+                let last_tile = harvester.get_movement_path().into_iter().next().unwrap();
+                let mut last_world_pos = game_map
+                    .get_tile_to_world_coordinates()
+                    .get(&last_tile)
+                    .unwrap();
+                let mut last_world_pos = Vec2::new(last_world_pos.0, last_world_pos.1);
+
+                let direction = last_world_pos - current_pos;
+                let distance_to_move = harvester.get_speed() * dt;
+
+                // Smooth movement
+                if direction.length() > distance_to_move {
+                    let new_pos = current_pos + direction.normalize() * distance_to_move;
+                    transform.translation = new_pos.extend(transform.translation.z);
+                } else {
+                    transform.translation = last_world_pos.extend(transform.translation.z);
+                    harvester.try_take_next_position_in_path();
                 }
             });
     }
