@@ -4,7 +4,7 @@ use crate::harvester::components::harvester::Harvester;
 use crate::unit::resources::unit_id_counter::UnitIdCounter;
 use bevy::asset::AssetServer;
 use bevy::math::Vec2;
-use bevy::prelude::{default, Commands, Res, ResMut, SpriteBundle, Transform, Vec3};
+use bevy::prelude::{default, Commands, Res, ResMut, Sprite, SpriteBundle, Transform, Vec3};
 
 pub struct HarvesterSpawnManager;
 
@@ -16,6 +16,11 @@ impl HarvesterSpawnManager {
         unit_id_counter: &mut ResMut<UnitIdCounter>,
         player: Player,
     ) {
+        let color = match player {
+            Player::P1 => crate::common::constants::P1_COLOR,
+            Player::P2 => crate::common::constants::P2_COLOR,
+        };
+
         let unit_id = unit_id_counter.0;
         unit_id_counter.0 += 1;
 
@@ -30,6 +35,7 @@ impl HarvesterSpawnManager {
                     .with_translation(pos.extend(layer))
                     .with_scale(Vec3::splat(SPRITE_SCALE)),
                 texture,
+                sprite: Sprite { color, ..default() },
                 ..default()
             },))
             .insert(harvester);

@@ -20,6 +20,7 @@ fn main() {
             TankPlugin,
             UnitSelectionPlugin,
             MenuPlugin,
+            HarvesterPlugin,
         ))
         .run()
 }
@@ -39,6 +40,7 @@ pub mod unit {
 }
 pub mod tile {
     pub mod components {
+        pub mod gold;
         pub mod tile;
     }
     pub mod managers {
@@ -122,8 +124,8 @@ pub mod harvester {
         pub mod harvester_timer;
     }
     pub mod managers {
-        pub mod harvester_manager;
         pub mod harvester_spawn_manager;
+        pub mod harvester_state_manager;
     }
     pub mod harvester_plugin;
 }
@@ -140,6 +142,7 @@ use crate::common::resources::me::Me;
 use crate::con_menu::menu_plugin::MenuPlugin;
 use crate::cursor::cursor_plugin::CursorPlugin;
 use crate::debug::debug_plugin::DebugPlugin;
+use crate::harvester::harvester_plugin::HarvesterPlugin;
 use crate::setup::setup;
 use crate::tank::tank_plugin::TankPlugin;
 use crate::unit::resources::unit_id_counter::UnitIdCounter;

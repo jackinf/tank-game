@@ -1,5 +1,6 @@
 use std::convert::TryFrom;
 
+#[derive(Clone)]
 pub enum TileType {
     Grass = 0,
     Gold = 1,

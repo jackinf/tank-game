@@ -27,6 +27,13 @@ impl GameMap {
             .collect()
     }
 
+    pub fn get_tile_type_grid_i32(&self) -> Vec<Vec<i32>> {
+        self.grid
+            .iter()
+            .map(|row| row.iter().map(|tile| tile.get_tile_type() as i32).collect())
+            .collect()
+    }
+
     pub fn get_tile_to_world_coordinates(&self) -> &HashMap<TileCoord, WorldCoord> {
         &self.tile_to_world_coordinates
     }
