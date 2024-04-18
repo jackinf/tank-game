@@ -6,9 +6,19 @@ use std::collections::VecDeque;
 #[derive(Clone, Debug)]
 pub enum HarvesterState {
     Idle,
+    SearchingForGold,
+    MovingToGold,
     Harvesting,
-    Returning,
+    ReturningToBase,
     ForcedByPlayer,
+}
+
+// log setter for HarvesterState
+impl HarvesterState {
+    pub fn set(&mut self, state: HarvesterState) {
+        dbg!(state.clone());
+        *self = state;
+    }
 }
 
 #[derive(Component, Clone, Debug)]
@@ -31,6 +41,7 @@ pub struct Harvester {
 
 impl Harvester {
     pub fn new(player: Player, id: usize) -> Self {
+        println!("Creating new Harvester with id: {}", id);
         Self {
             id,
             player,
@@ -120,7 +131,7 @@ impl Harvester {
     */
 
     pub fn set_idle(&mut self) {
-        self.state = HarvesterState::Idle;
+        self.state.set(HarvesterState::Idle);
     }
 
     pub fn is_idle(&self) -> bool {
@@ -128,26 +139,38 @@ impl Harvester {
     }
 
     pub fn set_harvesting(&mut self) {
-        self.state = HarvesterState::Harvesting;
+        self.state.set(HarvesterState::Harvesting);
     }
 
     pub fn is_harvesting(&self) -> bool {
         matches!(self.state, HarvesterState::Harvesting)
     }
 
-    pub fn set_returning(&mut self) {
-        self.state = HarvesterState::Returning;
+    pub fn set_returning_to_base(&mut self) {
+        self.state.set(HarvesterState::ReturningToBase);
     }
 
-    pub fn is_returning(&self) -> bool {
-        matches!(self.state, HarvesterState::Returning)
+    pub fn is_returning_to_base(&self) -> bool {
+        matches!(self.state, HarvesterState::ReturningToBase)
     }
 
     pub fn set_forced_by_player(&mut self) {
-        self.state = HarvesterState::ForcedByPlayer;
+        self.state.set(HarvesterState::ForcedByPlayer);
     }
 
     pub fn is_forced_by_player(&self) -> bool {
         matches!(self.state, HarvesterState::ForcedByPlayer)
+    }
+    pub fn set_moving_to_gold(&mut self) {
+        self.state.set(HarvesterState::MovingToGold);
+    }
+    pub fn is_moving_to_gold(&self) -> bool {
+        matches!(self.state, HarvesterState::MovingToGold)
+    }
+    pub fn set_searching_for_gold(&mut self) {
+        self.state.set(HarvesterState::SearchingForGold);
+    }
+    pub fn is_searching_for_gold(&self) -> bool {
+        matches!(self.state, HarvesterState::SearchingForGold)
     }
 }

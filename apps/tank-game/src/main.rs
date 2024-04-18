@@ -20,7 +20,7 @@ fn main() {
             TankPlugin,
             UnitSelectionPlugin,
             MenuPlugin,
-            // HarvesterPlugin,
+            HarvesterPlugin,
         ))
         .add_systems(Update, CursorManager::convert_cursor_to_world_position)
         .run()

@@ -26,6 +26,7 @@ impl HarvesterStateManager {
         q_harvesters
             .iter_mut()
             .for_each(|(mut harvester, transform)| {
+                println!("Harvester state: {:?}", harvester.get_state());
                 if harvester.is_forced_by_player() {
                     // player command overrides everything
                     return;
@@ -33,14 +34,14 @@ impl HarvesterStateManager {
 
                 if harvester.is_idle() {
                     if harvester.is_full() {
-                        harvester.set_returning();
+                        harvester.set_returning_to_base();
                     } else {
-                        harvester.set_harvesting();
+                        harvester.set_searching_for_gold();
                     }
                     return;
                 }
 
-                if harvester.is_harvesting() && harvester.is_returning() {
+                if harvester.is_harvesting() || harvester.is_returning_to_base() {
                     // carry on ;)
                     return;
                 }
@@ -61,18 +62,17 @@ impl HarvesterStateManager {
 
         q_harvesters
             .iter_mut()
+            .filter(|(harvester, _)| harvester.is_searching_for_gold())
             .for_each(|(mut harvester, transform)| {
-                if harvester.is_harvesting() && !harvester.has_movement_path() {
-                    let start =
-                        TileQueries::find_accessible(&tile_query, &transform.translation.xy())
-                            .unwrap();
-                    let found_option = find_first_gold(&game_map.get_tile_type_grid_i32(), start);
+                let start =
+                    TileQueries::find_accessible(&tile_query, &transform.translation.xy()).unwrap();
+                let found_option = find_first_gold(&game_map.get_tile_type_grid_i32(), start);
 
-                    if let Some(goal) = found_option {
-                        let path = find_path(&game_map.get_tile_type_grid(), start, goal);
-                        dbg!(goal);
-                        harvester.set_movement_path(path);
-                    }
+                if let Some(goal) = found_option {
+                    let path = find_path(&game_map.get_tile_type_grid(), start, goal);
+                    dbg!(goal);
+                    harvester.set_movement_path(path);
+                    harvester.set_moving_to_gold();
                 }
             });
     }
@@ -86,29 +86,33 @@ impl HarvesterStateManager {
 
         q_harvesters
             .iter_mut()
+            .filter(|(harvester, _)| harvester.is_moving_to_gold())
+            .filter(|(harvester, _)| harvester.has_movement_path())
             .for_each(|(mut harvester, mut transform)| {
-                if !harvester.has_movement_path() {
-                    return;
-                }
+                let next_tile = harvester.get_movement_path().into_iter().next().unwrap();
+                let mut next_world_pos = game_map
+                    .get_tile_to_world_coordinates()
+                    .get(&next_tile)
+                    .unwrap();
+                let mut last_world_pos = Vec2::new(next_world_pos.0, next_world_pos.1);
 
                 let current_pos = transform.translation.xy();
-                let last_tile = harvester.get_movement_path().into_iter().next().unwrap();
-                let mut last_world_pos = game_map
-                    .get_tile_to_world_coordinates()
-                    .get(&last_tile)
-                    .unwrap();
-                let mut last_world_pos = Vec2::new(last_world_pos.0, last_world_pos.1);
-
-                let direction = last_world_pos - current_pos;
+                let direction_vector = last_world_pos - current_pos;
+                let direction = direction_vector.normalize();
                 let distance_to_move = harvester.get_speed() * dt;
 
-                // Smooth movement
-                if direction.length() > distance_to_move {
-                    let new_pos = current_pos + direction.normalize() * distance_to_move;
-                    transform.translation = new_pos.extend(transform.translation.z);
-                } else {
+                let is_close_enough = direction_vector.length() < distance_to_move;
+                if is_close_enough {
+                    // Made it to the temporary destination, now pick the next one, or start mining
                     transform.translation = last_world_pos.extend(transform.translation.z);
                     harvester.try_take_next_position_in_path();
+                    if !harvester.has_movement_path() {
+                        harvester.set_harvesting();
+                    }
+                } else {
+                    // Continue movement
+                    let new_pos = current_pos + direction * distance_to_move;
+                    transform.translation = new_pos.extend(transform.translation.z);
                 }
             });
     }
