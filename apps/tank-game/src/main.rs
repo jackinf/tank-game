@@ -9,19 +9,20 @@ fn main() {
             ..default()
         }))
         .insert_resource(Msaa::Sample4)
-        .add_plugins(ShapePlugin)
         .insert_resource(UnitIdCounter(1))
         .insert_resource(Me::new(Player::P1))
-        .add_systems(PreStartup, setup)
         .insert_resource(GameMap::default())
+        .add_systems(PreStartup, setup)
         .add_plugins((
+            ShapePlugin,
             DebugPlugin,
             CursorPlugin,
             TankPlugin,
             UnitSelectionPlugin,
             MenuPlugin,
-            HarvesterPlugin,
+            // HarvesterPlugin,
         ))
+        .add_systems(Update, CursorManager::convert_cursor_to_world_position)
         .run()
 }
 
@@ -54,6 +55,9 @@ pub mod common {
     pub mod resources {
         pub mod game_map;
         pub mod me;
+    }
+    pub mod managers {
+        pub mod cursor_manager;
     }
     pub mod constants;
     pub mod player;
@@ -135,6 +139,7 @@ use bevy::window::WindowResolution;
 use bevy_prototype_lyon::prelude::ShapePlugin;
 
 use crate::common::constants::{MAX_HEIGHT, MAX_WIDTH};
+use crate::common::managers::cursor_manager::CursorManager;
 use crate::common::player::Player;
 use crate::common::resources::game_map::GameMap;
 use crate::common::resources::me::Me;

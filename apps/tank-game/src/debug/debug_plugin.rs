@@ -18,8 +18,8 @@ impl Plugin for DebugPlugin {
             .add_systems(Update, buying_stuff)
             .add_systems(Update, damage_selected_tanks)
             .add_systems(Update, construction_complete)
-            .add_systems(Update, log_construction_info)
-            .add_systems(Update, logger);
+            .add_systems(Update, log_construction_info);
+        // .add_systems(Update, logger);
     }
 }
 

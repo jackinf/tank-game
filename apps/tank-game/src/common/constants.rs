@@ -23,7 +23,8 @@ pub const TANK_MAX_HEALTH: u32 = 100;
 pub const TANK_ROTATION_SPEED: f32 = 10.0;
 pub const BULLET_RADIUS: f32 = 10.0;
 
-pub const CAMERA_SPEED: f32 = 10.0;
+pub const CAMERA_SPEED_STATIC: f32 = 0.0; // TODO: make 500.0
+pub const CAMERA_SPEED_DYNAMIC: f32 = 10.0;
 pub const SIDE_MARGIN_PERCENTAGE: f32 = 0.1;
 
 pub const P1_COLOR: Color = Color::rgba(0.7, 0.7, 1.0, 1.);
