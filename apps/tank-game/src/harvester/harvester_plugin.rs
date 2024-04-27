@@ -11,7 +11,7 @@ impl Plugin for HarvesterPlugin {
             1.0,
             TimerMode::Repeating,
         )))
-        .add_systems(Update, HarvesterStateManager::run_state_machine_step)
+        .add_systems(Update, HarvesterStateManager::begin)
         .add_systems(
             Update,
             HarvesterStateManager::find_gold_for_hungry_harvester,
@@ -19,6 +19,18 @@ impl Plugin for HarvesterPlugin {
         .add_systems(
             FixedUpdate,
             HarvesterStateManager::move_harvester_towards_path,
+        )
+        .add_systems(
+            Update,
+            HarvesterStateManager::collect_gold,
+        )
+        .add_systems(
+            Update,
+            HarvesterStateManager::find_base_to_return,
+        )
+        .add_systems(
+            FixedUpdate,
+            HarvesterStateManager::return_to_base,
         );
     }
 }

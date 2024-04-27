@@ -1,6 +1,6 @@
 use crate::common::constants::TileSize;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum BuildingType {
     Base = 10,
     Factory = 20,

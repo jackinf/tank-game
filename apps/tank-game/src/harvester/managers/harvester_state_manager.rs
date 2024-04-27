@@ -8,13 +8,16 @@ use crate::tile::components::tile::Tile;
 use crate::tile::tile_queries::TileQueries;
 use crate::tile::tile_type::TileType;
 use bevy::prelude::{Query, Res, ResMut, Time, Transform, Vec2, Vec3Swizzles, With};
-use bevy::utils::dbg;
 use std::collections::VecDeque;
+use crate::building::building_type::BuildingType;
+use crate::building::components::building::Building;
+use crate::common::player::Player;
+use crate::con_menu::resources::menu_info::MenuInfo;
 
 pub struct HarvesterStateManager;
 
 impl HarvesterStateManager {
-    pub fn run_state_machine_step(
+    pub fn begin(
         mut timer: ResMut<HarvesterTimer>,
         time: Res<Time>,
         mut q_harvesters: Query<(&mut Harvester, &Transform), With<Harvester>>,
@@ -26,24 +29,8 @@ impl HarvesterStateManager {
         q_harvesters
             .iter_mut()
             .for_each(|(mut harvester, transform)| {
-                println!("Harvester state: {:?}", harvester.get_state());
-                if harvester.is_forced_by_player() {
-                    // player command overrides everything
-                    return;
-                }
-
                 if harvester.is_idle() {
-                    if harvester.is_full() {
-                        harvester.set_returning_to_base();
-                    } else {
-                        harvester.set_searching_for_gold();
-                    }
-                    return;
-                }
-
-                if harvester.is_harvesting() || harvester.is_returning_to_base() {
-                    // carry on ;)
-                    return;
+                    harvester.set_searching_for_gold();
                 }
             });
     }
@@ -53,7 +40,6 @@ impl HarvesterStateManager {
         time: Res<Time>,
         mut q_harvesters: Query<(&mut Harvester, &Transform), With<Harvester>>,
         tile_query: Query<&Tile>,
-        q_gold: Query<&Transform, With<Gold>>,
         game_map: Res<GameMap>,
     ) {
         if !timer.0.tick(time.delta()).just_finished() {
@@ -72,7 +58,7 @@ impl HarvesterStateManager {
                     let path = find_path(&game_map.get_tile_type_grid(), start, goal);
                     dbg!(goal);
                     harvester.set_movement_path(path);
-                    harvester.set_moving_to_gold();
+                    harvester.set_moving_to_gold(goal);
                 }
             });
     }
@@ -81,13 +67,14 @@ impl HarvesterStateManager {
         time: Res<Time>,
         mut q_harvesters: Query<(&mut Harvester, &mut Transform), With<Harvester>>,
         game_map: Res<GameMap>,
+        mut menu_info: ResMut<MenuInfo>,
     ) {
         let dt = time.delta_seconds();
 
         q_harvesters
             .iter_mut()
-            .filter(|(harvester, _)| harvester.is_moving_to_gold())
             .filter(|(harvester, _)| harvester.has_movement_path())
+            .filter(|(harvester, _)| harvester.is_moving_to_gold() || harvester.is_returning_to_base())
             .for_each(|(mut harvester, mut transform)| {
                 let next_tile = harvester.get_movement_path().into_iter().next().unwrap();
                 let mut next_world_pos = game_map
@@ -107,13 +94,132 @@ impl HarvesterStateManager {
                     transform.translation = last_world_pos.extend(transform.translation.z);
                     harvester.try_take_next_position_in_path();
                     if !harvester.has_movement_path() {
-                        harvester.set_harvesting();
+                        // Made it. Decide, what to do now based on the previous action.
+
+                        if harvester.is_moving_to_gold() {
+                            harvester.set_harvesting();
+                        } else if harvester.is_returning_to_base() {
+                            let unloaded_gold = harvester.unload_gold();
+                            menu_info.add_money(unloaded_gold as i32);
+                            harvester.set_idle();
+                        }
                     }
                 } else {
                     // Continue movement
                     let new_pos = current_pos + direction * distance_to_move;
                     transform.translation = new_pos.extend(transform.translation.z);
                 }
+            });
+    }
+
+    pub fn collect_gold(
+        mut timer: ResMut<HarvesterTimer>,
+        time: Res<Time>,
+        mut q_harvesters: Query<(&mut Harvester, &Transform), With<Harvester>>,
+        mut q_gold: Query<&Gold>,
+        game_map: Res<GameMap>
+    ) {
+        if !timer.0.tick(time.delta()).just_finished() {
+            return;
+        }
+
+        let timestamp = time.elapsed_seconds_f64();
+
+        q_harvesters
+            .iter_mut()
+            .filter(|(harvester, _)| harvester.is_harvesting())
+            .filter(|(harvester, _)| harvester.is_full() == false)
+            .filter(|(harvester, _)| harvester.is_cooling_down_to_harvest(timestamp) == false)
+            .for_each(|(mut harvester, transform)| {
+                // TODO: check if harvester is close enough to gold
+                let harvester_pos = transform.translation.xy();
+                let gold_res = q_gold
+                    .iter_mut()
+                    .find(|gold| {
+                        let gold_pos = game_map.get_tile_to_world_coordinates().get(&gold.at());
+                        if gold_pos.is_none() {
+                            return false;
+                        }
+                        let (x, y) = gold_pos.unwrap();
+                        let gold_pos = Vec2::new(*x, *y);
+                        let distance = (harvester_pos - gold_pos).length();
+                        distance < 10.0
+                    });
+
+                match gold_res {
+                    None => {
+                        // search for gold again
+                        harvester.set_searching_for_gold();
+                    },
+                    Some(_) => {
+                        harvester.collect_gold(10, timestamp);
+                        println!("Harvester {} collected 10 gold!", harvester.get_id());
+
+                        if harvester.is_full() {
+                            harvester.set_find_base_to_return();
+                        }
+
+                        // TODO: decrease gold value somehow
+                        // let mut res = q_gold.get_mut(gold_id).unwrap();
+                        // let mut gold: &mut Gold = res.1;
+                        // gold.reduce_value_by(10);
+                    }
+                }
+            });
+    }
+
+    pub fn find_base_to_return(
+        mut timer: ResMut<HarvesterTimer>,
+        time: Res<Time>,
+        mut q_harvesters: Query<(&mut Harvester, &Transform), With<Harvester>>,
+        game_map: Res<GameMap>,
+        q_buildings: Query<&Building>,
+        q_tiles: Query<&Tile>,
+    ) {
+        if !timer.0.tick(time.delta()).just_finished() {
+            return;
+        }
+
+        let building_infos: Vec<(TileCoord, Player)> = q_buildings.iter()
+            .filter(|building| building.get_building_type() == BuildingType::Base)
+            .map(|building| {
+                let tile_coord = building.get_building_tile_coord();
+                (tile_coord, building.get_player().clone())
+            })
+            .collect();
+
+        q_harvesters
+            .iter_mut()
+            .filter(|(harvester, _)| harvester.is_find_base_to_return())
+            .for_each(|(mut harvester, transform)| {
+                let building_res = building_infos.iter()
+                    .find(|(_, player)| player == &harvester.get_player());
+
+                if let Some((base_tile, _)) = building_res {
+                    let start =
+                        TileQueries::find_accessible(&q_tiles, &transform.translation.xy()).unwrap();
+                    let path = find_path(&game_map.get_tile_type_grid(), start, *base_tile);
+                    harvester.set_movement_path(path);
+                    harvester.set_returning_to_base();
+                }
+            });
+    }
+
+    pub fn return_to_base(
+        mut timer: ResMut<HarvesterTimer>,
+        time: Res<Time>,
+        mut q_harvesters: Query<(&mut Harvester, &Transform), With<Harvester>>,
+        game_map: Res<GameMap>
+    ) {
+        if !timer.0.tick(time.delta()).just_finished() {
+            return;
+        }
+
+        q_harvesters
+            .iter_mut()
+            .filter(|(harvester, _)| harvester.is_returning_to_base())
+            .for_each(|(mut harvester, transform)| {
+
             });
     }
 }

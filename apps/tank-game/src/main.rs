@@ -65,6 +65,7 @@ pub mod common {
         pub mod astar;
         pub mod common_helpers;
         pub mod file_helpers;
+        pub mod logger;
     }
 }
 

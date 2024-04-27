@@ -2,6 +2,7 @@ use crate::common::constants::TileCoord;
 use crate::common::player::Player;
 use bevy::prelude::Component;
 use std::collections::VecDeque;
+use crate::common::utils::logger::Logger;
 
 #[derive(Clone, Debug)]
 pub enum HarvesterState {
@@ -9,6 +10,7 @@ pub enum HarvesterState {
     SearchingForGold,
     MovingToGold,
     Harvesting,
+    FindBaseToReturn,
     ReturningToBase,
     ForcedByPlayer,
 }
@@ -48,7 +50,7 @@ impl Harvester {
             state: HarvesterState::Idle,
             return_to_tile: None,
             gold_current_capacity: 0,
-            gold_max_capacity: 1000,
+            gold_max_capacity: 100,
             harvesting_speed: 100,
             harvesting_cooldown_seconds: 1.0,
             last_harvest_timestamp: 0.0,
@@ -106,10 +108,11 @@ impl Harvester {
     }
 
     pub fn is_cooling_down_to_harvest(&self, elapsed_seconds: f64) -> bool {
-        elapsed_seconds - self.last_harvest_timestamp < self.harvesting_cooldown_seconds
+        let time_since_last_harvest = elapsed_seconds - self.last_harvest_timestamp;
+        time_since_last_harvest < self.harvesting_cooldown_seconds
     }
 
-    pub fn mine_gold(&mut self, gold: u32, elapsed_seconds: f64) {
+    pub fn collect_gold(&mut self, gold: u32, elapsed_seconds: f64) {
         self.gold_current_capacity += gold;
         self.last_harvest_timestamp = elapsed_seconds;
     }
@@ -131,6 +134,7 @@ impl Harvester {
     */
 
     pub fn set_idle(&mut self) {
+        Logger::log(&format!("Setting harvester {} to Idle", self.id));
         self.state.set(HarvesterState::Idle);
     }
 
@@ -139,6 +143,7 @@ impl Harvester {
     }
 
     pub fn set_harvesting(&mut self) {
+        Logger::log(&format!("Setting harvester {} to Harvesting", self.id));
         self.state.set(HarvesterState::Harvesting);
     }
 
@@ -146,7 +151,15 @@ impl Harvester {
         matches!(self.state, HarvesterState::Harvesting)
     }
 
+    pub fn set_find_base_to_return(&mut self) {
+        Logger::log(&format!("Setting harvester {} to FindBaseToReturn", self.id));
+        self.state.set(HarvesterState::FindBaseToReturn);
+    }
+    pub fn is_find_base_to_return(&self) -> bool {
+        matches!(self.state, HarvesterState::FindBaseToReturn)
+    }
     pub fn set_returning_to_base(&mut self) {
+        Logger::log(&format!("Setting harvester {} to ReturningToBase", self.id));
         self.state.set(HarvesterState::ReturningToBase);
     }
 
@@ -155,22 +168,34 @@ impl Harvester {
     }
 
     pub fn set_forced_by_player(&mut self) {
+        Logger::log(&format!("Setting harvester {} to ForcedByPlayer", self.id));
         self.state.set(HarvesterState::ForcedByPlayer);
     }
 
     pub fn is_forced_by_player(&self) -> bool {
         matches!(self.state, HarvesterState::ForcedByPlayer)
     }
-    pub fn set_moving_to_gold(&mut self) {
+    pub fn set_moving_to_gold(&mut self, goal: TileCoord) {
+        Logger::log(&format!("Setting harvester {} to MovingToGold", self.id));
         self.state.set(HarvesterState::MovingToGold);
     }
+
     pub fn is_moving_to_gold(&self) -> bool {
         matches!(self.state, HarvesterState::MovingToGold)
     }
+
     pub fn set_searching_for_gold(&mut self) {
+        Logger::log(&format!("Setting harvester {} to SearchingForGold", self.id));
         self.state.set(HarvesterState::SearchingForGold);
     }
+
     pub fn is_searching_for_gold(&self) -> bool {
         matches!(self.state, HarvesterState::SearchingForGold)
+    }
+
+    pub fn unload_gold(&mut self) -> u32 {
+        let gold = self.gold_current_capacity;
+        self.gold_current_capacity = 0;
+        gold
     }
 }

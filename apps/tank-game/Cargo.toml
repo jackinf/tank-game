@@ -14,10 +14,10 @@ bevy_rapier2d = "0.25.0"
 leafwing-input-manager = "0.13.3"
 rand = "0.8.5"
 
-## Enable a small amount of optimization in debug mode
-#[profile.dev]
-#opt-level = 1
+# Enable a small amount of optimization in debug mode
+[profile.dev]
+opt-level = 1
 
-## Enable high optimizations for dependencies (incl. Bevy), but not for our code:
-#[profile.dev.package."*"]
-#opt-level = 3
+# Enable high optimizations for dependencies (incl. Bevy), but not for our code:
+[profile.dev.package."*"]
+opt-level = 3

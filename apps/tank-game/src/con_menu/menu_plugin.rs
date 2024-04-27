@@ -9,6 +9,9 @@ use bevy::input::mouse::MouseButtonInput;
 use bevy::input::ButtonState;
 use bevy::prelude::Val::Px;
 use bevy::prelude::*;
+use crate::building::building_type::BuildingType;
+use crate::building::components::building::Building;
+use crate::common::player::Player;
 
 pub struct MenuPlugin;
 
@@ -116,7 +119,12 @@ fn draw_construction_tiles(
                             .with_translation(Vec2::new(x, y).extend(100.))
                             .with_scale(Vec3::splat(SPRITE_SCALE)),
                         ..default()
-                    });
+                    })
+                        .insert(Building::new(
+                            BuildingType::Base,
+                            tile.get_tile_coord(),
+                            Player::P1,
+                        ));
                 }
             }
         }

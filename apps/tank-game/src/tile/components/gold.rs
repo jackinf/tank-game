@@ -12,11 +12,15 @@ impl Gold {
         Self { value, tile_coord }
     }
 
+    pub fn reduce_value_by(&mut self, amount: usize) {
+        self.value -= amount;
+    }
+
     pub fn get_value(&self) -> usize {
         self.value
     }
 
-    pub fn at(&self) -> TileCoord {
+    pub fn at(&self, ) -> TileCoord {
         self.tile_coord
     }
 }
