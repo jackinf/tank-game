@@ -1,5 +1,8 @@
 use crate::common::constants::{SPRITE_SCALE, TILE_SIZE};
 
+use crate::building::building_type::BuildingType;
+use crate::building::components::building::Building;
+use crate::common::player::Player;
 use crate::con_menu::components::money_text::MoneyText;
 use crate::con_menu::resources::menu_info::MenuInfo;
 use crate::cursor::resources::cursor_coordinates::CursorCoordinates;
@@ -9,9 +12,6 @@ use bevy::input::mouse::MouseButtonInput;
 use bevy::input::ButtonState;
 use bevy::prelude::Val::Px;
 use bevy::prelude::*;
-use crate::building::building_type::BuildingType;
-use crate::building::components::building::Building;
-use crate::common::player::Player;
 
 pub struct MenuPlugin;
 
@@ -113,13 +113,14 @@ fn draw_construction_tiles(
                     construction_info.set_ready(false);
 
                     // spawn a building
-                    commands.spawn(SpriteBundle {
-                        texture: asset_server.load("sprites/building_a.png"),
-                        transform: Transform::default()
-                            .with_translation(Vec2::new(x, y).extend(100.))
-                            .with_scale(Vec3::splat(SPRITE_SCALE)),
-                        ..default()
-                    })
+                    commands
+                        .spawn(SpriteBundle {
+                            texture: asset_server.load("sprites/building_a.png"),
+                            transform: Transform::default()
+                                .with_translation(Vec2::new(x, y).extend(100.))
+                                .with_scale(Vec3::splat(SPRITE_SCALE)),
+                            ..default()
+                        })
                         .insert(Building::new(
                             BuildingType::Base,
                             tile.get_tile_coord(),

@@ -16,21 +16,8 @@ impl Plugin for HarvesterPlugin {
             Update,
             HarvesterStateManager::find_gold_for_hungry_harvester,
         )
-        .add_systems(
-            FixedUpdate,
-            HarvesterStateManager::move_harvester_towards_path,
-        )
-        .add_systems(
-            Update,
-            HarvesterStateManager::collect_gold,
-        )
-        .add_systems(
-            Update,
-            HarvesterStateManager::find_base_to_return,
-        )
-        .add_systems(
-            FixedUpdate,
-            HarvesterStateManager::return_to_base,
-        );
+        .add_systems(FixedUpdate, HarvesterStateManager::move_harvester)
+        .add_systems(Update, HarvesterStateManager::collect_gold)
+        .add_systems(Update, HarvesterStateManager::find_base_to_return);
     }
 }

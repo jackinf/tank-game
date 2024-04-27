@@ -20,7 +20,7 @@ impl Gold {
         self.value
     }
 
-    pub fn at(&self, ) -> TileCoord {
+    pub fn at(&self) -> TileCoord {
         self.tile_coord
     }
 }

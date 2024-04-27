@@ -1,8 +1,8 @@
 use crate::common::constants::TileCoord;
 use crate::common::player::Player;
+use crate::common::utils::logger::Logger;
 use bevy::prelude::Component;
 use std::collections::VecDeque;
-use crate::common::utils::logger::Logger;
 
 #[derive(Clone, Debug)]
 pub enum HarvesterState {
@@ -152,7 +152,10 @@ impl Harvester {
     }
 
     pub fn set_find_base_to_return(&mut self) {
-        Logger::log(&format!("Setting harvester {} to FindBaseToReturn", self.id));
+        Logger::log(&format!(
+            "Setting harvester {} to FindBaseToReturn",
+            self.id
+        ));
         self.state.set(HarvesterState::FindBaseToReturn);
     }
     pub fn is_find_base_to_return(&self) -> bool {
@@ -185,7 +188,10 @@ impl Harvester {
     }
 
     pub fn set_searching_for_gold(&mut self) {
-        Logger::log(&format!("Setting harvester {} to SearchingForGold", self.id));
+        Logger::log(&format!(
+            "Setting harvester {} to SearchingForGold",
+            self.id
+        ));
         self.state.set(HarvesterState::SearchingForGold);
     }
 
