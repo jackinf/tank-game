@@ -1,6 +1,3 @@
-use crate::common::constants::TILE_SIZE;
-
-use crate::building::building_type::BuildingType;
 use crate::con_menu::components::money_text::MoneyText;
 use crate::con_menu::resources::menu_info::MenuInfo;
 use bevy::prelude::Val::Px;
@@ -11,44 +8,41 @@ pub struct MenuPlugin;
 impl Plugin for MenuPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(PreStartup, setup)
-            .insert_resource(MenuInfo::new())
             .add_systems(Update, detect_mouse_over_container)
-            .add_systems(Update, MoneyText::update);
+            .add_systems(Update, MoneyText::update)
+            .add_systems(Update, toggle_menu_visibility);
     }
 }
 
 #[derive(Component)]
-pub struct PlacementBuilding {
-    layout: (usize, usize),
-    building_type: Option<BuildingType>,
+struct Target<T> {
+    id: Entity,
+    phantom: std::marker::PhantomData<T>,
 }
 
-impl PlacementBuilding {
-    pub fn new() -> Self {
+impl<T> Target<T> {
+    fn new(id: Entity) -> Self {
         Self {
-            layout: (2, 2),
-            building_type: None,
+            id,
+            phantom: std::marker::PhantomData,
         }
     }
+}
 
-    pub fn get_layout(&self) -> (usize, usize) {
-        self.layout
-    }
-
-    pub fn set_ready(&mut self, building_type: Option<BuildingType>) {
-        self.building_type = building_type;
-    }
-
-    pub fn is_ready(&self) -> bool {
-        self.building_type.is_some()
-    }
-
-    pub fn get_building_type(&self) -> Option<BuildingType> {
-        self.building_type.clone()
+fn toggle_menu_visibility(
+    keyboard: Res<ButtonInput<KeyCode>>,
+    mut query: Query<&mut Visibility, With<MenuInfo>>,
+) {
+    if keyboard.just_pressed(KeyCode::KeyN) {
+        let mut visibility = query.single_mut();
+        *visibility = Visibility::Visible;
+    } else if keyboard.just_pressed(KeyCode::KeyB) {
+        let mut visibility = query.single_mut();
+        *visibility = Visibility::Hidden;
     }
 }
 
-fn setup(mut commands: Commands, asset_server: Res<AssetServer>, menu_info: Res<MenuInfo>) {
+fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     // Assume you have your sprite sheet or individual sprites ready
     let menu_item_image: Handle<Image> = asset_server.load("sprites/tank.png");
 
@@ -59,6 +53,8 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, menu_info: Res<
     let cell_height = 100.0;
     let padding = 10.0; // Padding between cells
 
+    let menu_info = MenuInfo::new();
+
     // Create a parent entity for the grid
     commands
         .spawn(NodeBundle {
@@ -68,9 +64,11 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, menu_info: Res<
                 align_items: AlignItems::FlexStart,
                 ..default()
             },
+            visibility: Visibility::Visible,
             ..default()
         })
         .insert(Interaction::None)
+        .insert(menu_info.clone())
         .with_children(|parent| {
             parent
                 .spawn(NodeBundle {
@@ -84,7 +82,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, menu_info: Res<
                 })
                 .with_children(|row_parent| {
                     // Add money text
-                    MoneyText::spawn(&asset_server, row_parent, menu_info);
+                    MoneyText::spawn(&asset_server, row_parent, menu_info.get_money());
                 });
 
             for row in 0..rows {
@@ -141,27 +139,13 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, menu_info: Res<
                     });
             }
         });
-
-    // selector entity for placing buildings
-    commands
-        .spawn((SpriteBundle {
-            texture: asset_server.load("pixels/white.png"),
-            transform: Transform::default()
-                .with_translation(Vec3::new(0., 0., 100.))
-                .with_scale(Vec2::new(2.0 * TILE_SIZE, 2.0 * TILE_SIZE).extend(1.0)),
-            sprite: Sprite {
-                color: Color::PINK.with_a(0.0), // hide by default
-                ..default()
-            },
-            ..default()
-        },))
-        .insert(PlacementBuilding::new());
 }
 
 fn detect_mouse_over_container(
     query: Query<&Interaction, (Changed<Interaction>, Without<Button>)>,
-    mut menu_info: ResMut<MenuInfo>,
+    mut q_menu_info: Query<&mut MenuInfo>,
 ) {
+    let mut menu_info = q_menu_info.single_mut();
     for interaction in query.iter() {
         match *interaction {
             Interaction::Hovered => menu_info.set_hovered(true),

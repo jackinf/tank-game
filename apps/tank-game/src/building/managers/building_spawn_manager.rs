@@ -8,11 +8,11 @@ use bevy::sprite::{Anchor, SpriteBundle};
 
 use crate::building::building_type::BuildingType;
 use crate::building::components::building::Building;
+use crate::building::components::building_placement_tiles::BuildingPlacementTiles;
 use crate::common::constants::{RawGrid, SPRITE_SCALE, TILE_SIZE};
 use crate::common::player::Player;
 use crate::common::resources::me::Me;
 use crate::common::utils::logger::Logger;
-use crate::con_menu::menu_plugin::PlacementBuilding;
 use crate::cursor::resources::cursor_coordinates::CursorCoordinates;
 use crate::tile::components::tile::Tile;
 use crate::tile::tile_queries::TileQueries;
@@ -91,8 +91,8 @@ impl BuildingSpawnManager {
         asset_server: Res<AssetServer>,
         q_tiles: Query<&Tile>,
         mut q_placement: Query<
-            (&mut Transform, &mut Sprite, &mut PlacementBuilding),
-            With<PlacementBuilding>,
+            (&mut Transform, &mut Sprite, &mut BuildingPlacementTiles),
+            With<BuildingPlacementTiles>,
         >,
         cursor: Res<CursorCoordinates>,
         mut mouse_button_events: EventReader<MouseButtonInput>,

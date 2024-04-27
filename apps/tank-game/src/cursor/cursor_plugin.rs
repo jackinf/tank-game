@@ -34,7 +34,7 @@ impl CameraManager {
         time: Res<Time>,
         q_window: Query<&Window, With<PrimaryWindow>>,
         mut q_camera: Query<&mut Transform, With<Camera>>,
-        menu_info: Res<MenuInfo>,
+        q_menu_info: Query<&MenuInfo>,
         mut mouse_button_events: EventReader<MouseButtonInput>,
         mut click_info: ResMut<ClickInfo>,
         // game_map: Res<GameMap>,
@@ -42,6 +42,7 @@ impl CameraManager {
         let dt = time.delta_seconds();
 
         let mut transform = q_camera.single_mut();
+        let menu_info = q_menu_info.single();
         if menu_info.is_hovered() {
             // Don't move the camera if the cursor is over the UI
             return;

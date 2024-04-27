@@ -1,6 +1,6 @@
-use bevy::prelude::Resource;
+use bevy::prelude::{Component, Resource};
 
-#[derive(Resource)]
+#[derive(Component, Clone)]
 pub struct MenuInfo {
     money: i32,
     hovered: bool,

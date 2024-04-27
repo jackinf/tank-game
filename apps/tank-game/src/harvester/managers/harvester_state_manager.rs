@@ -61,9 +61,10 @@ impl HarvesterStateManager {
         time: Res<Time>,
         mut q_harvesters: Query<(&mut Harvester, &mut Transform), With<Harvester>>,
         game_map: Res<GameMap>,
-        mut menu_info: ResMut<MenuInfo>,
+        mut q_menu_info: Query<&mut MenuInfo>,
     ) {
         let dt = time.delta_seconds();
+        let mut menu_info = q_menu_info.single_mut();
 
         q_harvesters
             .iter_mut()

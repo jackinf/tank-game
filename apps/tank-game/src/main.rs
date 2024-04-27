@@ -124,6 +124,7 @@ pub mod con_menu {
 pub mod building {
     pub mod components {
         pub mod building;
+        pub mod building_placement_tiles;
     }
     pub mod managers {
         pub mod building_spawn_manager;

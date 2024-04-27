@@ -10,15 +10,11 @@ use bevy::prelude::{
 pub struct MoneyText;
 
 impl MoneyText {
-    pub fn spawn(
-        asset_server: &Res<AssetServer>,
-        parent: &mut ChildBuilder,
-        menu_info: Res<MenuInfo>,
-    ) {
+    pub fn spawn(asset_server: &Res<AssetServer>, parent: &mut ChildBuilder, money: i32) {
         parent
             .spawn((
                 TextBundle::from_section(
-                    format!("Credits: {}", menu_info.get_money()),
+                    format!("Credits: {}", money),
                     TextStyle {
                         font: asset_server.load("fonts/AmericanCaptain.ttf"),
                         font_size: 30.0,
@@ -34,13 +30,14 @@ impl MoneyText {
             .insert(MoneyText);
     }
 
-    pub fn update(menu_info: Res<MenuInfo>, mut query: Query<&mut Text, With<MoneyText>>) {
+    pub fn update(q_menu_info: Query<&MenuInfo>, mut query: Query<&mut Text, With<MoneyText>>) {
+        // TODO: check if it's not updated too often
+
         // Check if the MenuInfo resource has been updated
-        if menu_info.is_changed() {
-            for mut text in query.iter_mut() {
-                // Update the text component
-                text.sections[0].value = format!("Money: {}", menu_info.get_money());
-            }
+        let menu_info = q_menu_info.single();
+        for mut text in query.iter_mut() {
+            // Update the text component
+            text.sections[0].value = format!("Money: {}", menu_info.get_money());
         }
     }
 }

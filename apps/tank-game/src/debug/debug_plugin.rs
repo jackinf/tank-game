@@ -1,10 +1,10 @@
 use crate::building::building_type::BuildingType;
+use crate::building::components::building_placement_tiles::BuildingPlacementTiles;
 use crate::cursor::resources::cursor_coordinates::CursorCoordinates;
 use crate::debug::resources::tank_log_timer::TankLogTimer;
 use bevy::app::Plugin;
 use bevy::prelude::*;
 
-use crate::con_menu::menu_plugin::PlacementBuilding;
 use crate::con_menu::resources::menu_info::MenuInfo;
 use crate::tank::components::tank::Tank;
 use crate::tile::components::tile::Tile;
@@ -19,7 +19,6 @@ impl Plugin for DebugPlugin {
             .add_systems(Update, buying_stuff)
             .add_systems(Update, damage_selected_tanks)
             .add_systems(Update, construction_complete);
-        // .add_systems(Update, logger);
     }
 }
 
@@ -40,7 +39,7 @@ fn logger(
 }
 
 fn construction_complete(
-    mut q_placement_building: Query<&mut PlacementBuilding>,
+    mut q_placement_building: Query<&mut BuildingPlacementTiles>,
     keyboard: Res<ButtonInput<KeyCode>>,
 ) {
     if !keyboard.just_pressed(KeyCode::KeyM) {
@@ -62,8 +61,9 @@ fn inflate_all_tanks(
     }
 }
 
-fn buying_stuff(mut menu_info: ResMut<MenuInfo>, keyboard: Res<ButtonInput<KeyCode>>) {
+fn buying_stuff(mut q_menu_info: Query<&mut MenuInfo>, keyboard: Res<ButtonInput<KeyCode>>) {
     if keyboard.just_pressed(KeyCode::KeyB) {
+        let mut menu_info = q_menu_info.single_mut();
         menu_info.add_money(-100);
         println!("Buying stuff, money left: {}", menu_info.get_money());
     }
