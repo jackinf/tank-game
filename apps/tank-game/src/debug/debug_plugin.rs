@@ -1,9 +1,10 @@
+use crate::building::building_type::BuildingType;
 use crate::cursor::resources::cursor_coordinates::CursorCoordinates;
 use crate::debug::resources::tank_log_timer::TankLogTimer;
 use bevy::app::Plugin;
 use bevy::prelude::*;
 
-use crate::con_menu::menu_plugin::ConstructionInfo;
+use crate::con_menu::menu_plugin::PlacementBuilding;
 use crate::con_menu::resources::menu_info::MenuInfo;
 use crate::tank::components::tank::Tank;
 use crate::tile::components::tile::Tile;
@@ -17,8 +18,7 @@ impl Plugin for DebugPlugin {
             .add_systems(Update, inflate_all_tanks)
             .add_systems(Update, buying_stuff)
             .add_systems(Update, damage_selected_tanks)
-            .add_systems(Update, construction_complete)
-            .add_systems(Update, log_construction_info);
+            .add_systems(Update, construction_complete);
         // .add_systems(Update, logger);
     }
 }
@@ -40,28 +40,15 @@ fn logger(
 }
 
 fn construction_complete(
-    mut construction_info: ResMut<ConstructionInfo>,
+    mut q_placement_building: Query<&mut PlacementBuilding>,
     keyboard: Res<ButtonInput<KeyCode>>,
 ) {
     if !keyboard.just_pressed(KeyCode::KeyM) {
         return;
     }
 
-    construction_info.set_ready(true);
-}
-
-fn log_construction_info(
-    mut timer: ResMut<TankLogTimer>,
-    time: Res<Time>,
-    construction_info: Res<ConstructionInfo>,
-) {
-    if !timer.0.tick(time.delta()).just_finished() {
-        return;
-    }
-
-    if construction_info.is_ready() {
-        println!("Construction is ready!");
-    }
+    let mut placement_building = q_placement_building.single_mut();
+    placement_building.set_ready(Some(BuildingType::Base));
 }
 
 fn inflate_all_tanks(

@@ -1,8 +1,9 @@
-use crate::common::constants::{SPRITE_SCALE, TILE_SIZE};
+use crate::common::constants::TILE_SIZE;
 
 use crate::building::building_type::BuildingType;
-use crate::building::components::building::Building;
-use crate::common::player::Player;
+use crate::building::managers::building_spawn_manager::BuildingSpawnManager;
+use crate::common::resources::me::Me;
+use crate::common::utils::logger::Logger;
 use crate::con_menu::components::money_text::MoneyText;
 use crate::con_menu::resources::menu_info::MenuInfo;
 use crate::cursor::resources::cursor_coordinates::CursorCoordinates;
@@ -19,46 +20,40 @@ impl Plugin for MenuPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(PreStartup, setup)
             .insert_resource(MenuInfo::new())
-            .insert_resource(ConstructionInfo::new())
             .add_systems(Update, detect_mouse_over_container)
             .add_systems(FixedUpdate, draw_construction_tiles)
             .add_systems(Update, MoneyText::update);
     }
 }
 
-#[derive(Resource)]
-pub struct ConstructionInfo {
-    ready: bool,
-}
-
-impl ConstructionInfo {
-    pub fn set_ready(&mut self, ready: bool) {
-        self.ready = ready;
-    }
-
-    pub fn is_ready(&self) -> bool {
-        self.ready
-    }
-}
-
-impl ConstructionInfo {
-    pub fn new() -> Self {
-        Self { ready: false }
-    }
-}
-
 #[derive(Component)]
 pub struct PlacementBuilding {
     layout: (usize, usize),
+    building_type: Option<BuildingType>,
 }
 
 impl PlacementBuilding {
     pub fn new() -> Self {
-        Self { layout: (2, 2) }
+        Self {
+            layout: (2, 2),
+            building_type: None,
+        }
     }
 
     pub fn get_layout(&self) -> (usize, usize) {
         self.layout
+    }
+
+    pub fn set_ready(&mut self, building_type: Option<BuildingType>) {
+        self.building_type = building_type;
+    }
+
+    pub fn is_ready(&self) -> bool {
+        self.building_type.is_some()
+    }
+
+    pub fn get_building_type(&self) -> Option<BuildingType> {
+        self.building_type.clone()
     }
 }
 
@@ -67,37 +62,39 @@ fn draw_construction_tiles(
     asset_server: Res<AssetServer>,
     q_tiles: Query<&Tile>,
     mut q_placement: Query<
-        (&mut Transform, &mut Sprite, &PlacementBuilding),
+        (&mut Transform, &mut Sprite, &mut PlacementBuilding),
         With<PlacementBuilding>,
     >,
     cursor: Res<CursorCoordinates>,
-    mut construction_info: ResMut<ConstructionInfo>,
     mut mouse_button_events: EventReader<MouseButtonInput>,
+    res_me: Res<Me>,
 ) {
-    if !construction_info.ready {
-        return;
-    }
-
     match (
         q_placement.single_mut(),
         TileQueries::find_accessible_tile(&q_tiles, &cursor.0),
     ) {
-        ((mut transform, mut sprite, placement), Some(tile)) => {
+        ((mut transform, mut sprite, mut placement), Some(tile)) => {
+            if !placement.is_ready() {
+                return;
+            }
             sprite.color.set_a(0.5); // show tile
-            let (x, y) = tile.get_world_coord();
-            transform.translation = Vec3::new(x, y, transform.translation.z);
+            let (world_x, world_y) = tile.get_world_coord();
+            transform.translation = Vec3::new(world_x, world_y, transform.translation.z);
 
             for mouse_button_event in mouse_button_events.read() {
                 if mouse_button_event.button == MouseButton::Left
                     && mouse_button_event.state == ButtonState::Pressed
                 {
                     // validate if all tiles in layout.x * layout.y are accessible
+                    // TODO: broken
+                    let (tile_x, tile_y) = tile.get_tile_coord();
                     let (layout_x, layout_y) = placement.get_layout();
                     let mut all_accessible = true;
                     for i in 0..layout_x {
                         for j in 0..layout_y {
-                            let (x, y) = tile.get_tile_coord();
-                            let tile = TileQueries::find_tile(&q_tiles, (x + i, y + j));
+                            let map_coord = (tile_x + i, tile_y + j);
+                            // TODO: tile might not have info on other objects placed there. Create a map of free & occupied cells
+                            let tile = TileQueries::find_tile(&q_tiles, map_coord);
                             if tile.is_none() || !tile.unwrap().accessible() {
                                 all_accessible = false;
                                 break;
@@ -109,28 +106,27 @@ fn draw_construction_tiles(
                         continue;
                     }
 
+                    // is ready check makes sure that there's a building type
+                    let building_type = placement.get_building_type().unwrap().clone();
                     sprite.color.set_a(0.0);
-                    construction_info.set_ready(false);
+                    placement.set_ready(None);
 
                     // spawn a building
-                    commands
-                        .spawn(SpriteBundle {
-                            texture: asset_server.load("sprites/building_a.png"),
-                            transform: Transform::default()
-                                .with_translation(Vec2::new(x, y).extend(100.))
-                                .with_scale(Vec3::splat(SPRITE_SCALE)),
-                            ..default()
-                        })
-                        .insert(Building::new(
-                            BuildingType::Base,
-                            tile.get_tile_coord(),
-                            Player::P1,
-                        ));
+                    Logger::log(&format!("Placed on tiles: {tile_x} and {tile_y}"));
+                    BuildingSpawnManager::spawn_single(
+                        &mut commands,
+                        &asset_server,
+                        // TODO: why -TILE_SIZE & +TILE_SIZE?
+                        Vec2::new(world_x - TILE_SIZE, world_y + TILE_SIZE),
+                        building_type,
+                        (tile_x, tile_y),
+                        res_me.get_player(),
+                    );
                 }
             }
         }
         ((_, mut sprite, _), None) => {
-            sprite.color.set_a(0.0); // hide tile
+            sprite.color.set_a(0.0); // hide placement tile(s)
         }
     }
 }
