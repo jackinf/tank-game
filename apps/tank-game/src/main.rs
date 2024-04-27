@@ -21,6 +21,7 @@ fn main() {
         UnitSelectionPlugin,
         MenuPlugin,
         HarvesterPlugin,
+        BuildingPlugin,
     ))
     .add_systems(Update, CursorManager::convert_cursor_to_world_position)
     .add_plugins(bevy::diagnostic::FrameTimeDiagnosticsPlugin)
@@ -127,6 +128,7 @@ pub mod building {
     pub mod managers {
         pub mod building_spawn_manager;
     }
+    pub mod building_plugin;
     pub mod building_type;
 }
 pub mod harvester {
@@ -143,6 +145,7 @@ pub mod harvester {
     pub mod harvester_plugin;
 }
 
+use crate::building::building_plugin::BuildingPlugin;
 use bevy::prelude::*;
 use bevy::window::WindowResolution;
 use bevy_prototype_lyon::prelude::ShapePlugin;
