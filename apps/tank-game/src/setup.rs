@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use bevy::asset::AssetServer;
 use bevy::prelude::*;
 use bevy::prelude::{Commands, Res, ResMut};
+use iyes_perf_ui::PerfUiCompleteBundle;
 
 use crate::building::managers::building_spawn_manager::BuildingSpawnManager;
 use crate::common::constants::{RawGrid, OFFSET_X, OFFSET_Y, TILE_SIZE};
@@ -65,4 +66,6 @@ pub fn setup(
     );
 
     game_map.set_map(grid, grid_to_tilemap);
+
+    commands.spawn(PerfUiCompleteBundle::default());
 }

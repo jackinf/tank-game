@@ -1,29 +1,37 @@
 fn main() {
-    App::new()
-        .add_plugins(DefaultPlugins.set(WindowPlugin {
-            primary_window: Some(Window {
-                resolution: WindowResolution::new(MAX_WIDTH as f32, MAX_HEIGHT as f32),
-                title: "Tank Game".into(),
-                ..default()
-            }),
+    let mut app = App::new();
+    app.add_plugins(DefaultPlugins.set(WindowPlugin {
+        primary_window: Some(Window {
+            resolution: WindowResolution::new(MAX_WIDTH as f32, MAX_HEIGHT as f32),
+            title: "Tank Game".into(),
             ..default()
-        }))
-        .insert_resource(Msaa::Sample4)
-        .insert_resource(UnitIdCounter(1))
-        .insert_resource(Me::new(Player::P1))
-        .insert_resource(GameMap::default())
-        .add_systems(PreStartup, setup)
-        .add_plugins((
-            ShapePlugin,
-            DebugPlugin,
-            CursorPlugin,
-            TankPlugin,
-            UnitSelectionPlugin,
-            MenuPlugin,
-            HarvesterPlugin,
-        ))
-        .add_systems(Update, CursorManager::convert_cursor_to_world_position)
-        .run()
+        }),
+        ..default()
+    }))
+    .insert_resource(Msaa::Sample4)
+    .insert_resource(UnitIdCounter(1))
+    .insert_resource(Me::new(Player::P1))
+    .insert_resource(GameMap::default())
+    .add_systems(PreStartup, setup)
+    .add_plugins((
+        ShapePlugin,
+        DebugPlugin,
+        CursorPlugin,
+        TankPlugin,
+        UnitSelectionPlugin,
+        MenuPlugin,
+        HarvesterPlugin,
+    ))
+    .add_systems(Update, CursorManager::convert_cursor_to_world_position)
+    .add_plugins(bevy::diagnostic::FrameTimeDiagnosticsPlugin)
+    .add_plugins(bevy::diagnostic::EntityCountDiagnosticsPlugin)
+    .add_plugins(bevy::diagnostic::SystemInformationDiagnosticsPlugin)
+    .add_plugins(PerfUiPlugin);
+
+    // use bevy::diagnostic::LogDiagnosticsPlugin;
+    // app.add_plugins(LogDiagnosticsPlugin::default());
+
+    app.run()
 }
 
 pub mod unit {
@@ -138,6 +146,7 @@ pub mod harvester {
 use bevy::prelude::*;
 use bevy::window::WindowResolution;
 use bevy_prototype_lyon::prelude::ShapePlugin;
+use iyes_perf_ui::PerfUiPlugin;
 
 use crate::common::constants::{MAX_HEIGHT, MAX_WIDTH};
 use crate::common::managers::cursor_manager::CursorManager;
