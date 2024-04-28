@@ -38,40 +38,52 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         })
         .with_children(|parent| {
             parent
-                .spawn((
-                    TextBundle::from_section(
-                        "Cursor: (##, ##)",
-                        TextStyle {
-                            font: asset_server.load("fonts/AmericanCaptain.ttf"),
-                            font_size: 20.0,
-                            ..default()
-                        },
-                    )
-                    .with_style(Style {
-                        margin: UiRect::all(Val::Px(5.)),
+                .spawn(NodeBundle {
+                    style: Style {
+                        justify_content: JustifyContent::FlexStart,
+                        flex_direction: FlexDirection::Column,
+                        align_items: AlignItems::FlexStart,
                         ..default()
-                    }),
-                    Label,
-                ))
-                .insert(WorldCoordText);
+                    },
+                    ..default()
+                })
+                .with_children(|parent| {
+                    parent
+                        .spawn((
+                            TextBundle::from_section(
+                                "Cursor: (##, ##)",
+                                TextStyle {
+                                    font: asset_server.load("fonts/AmericanCaptain.ttf"),
+                                    font_size: 20.0,
+                                    ..default()
+                                },
+                            )
+                            .with_style(Style {
+                                margin: UiRect::all(Val::Px(5.)),
+                                ..default()
+                            }),
+                            Label,
+                        ))
+                        .insert(WorldCoordText);
 
-            parent
-                .spawn((
-                    TextBundle::from_section(
-                        "Tile: (##, ##)",
-                        TextStyle {
-                            font: asset_server.load("fonts/AmericanCaptain.ttf"),
-                            font_size: 20.0,
-                            ..default()
-                        },
-                    )
-                    .with_style(Style {
-                        margin: UiRect::all(Val::Px(5.)),
-                        ..default()
-                    }),
-                    Label,
-                ))
-                .insert(TileCoordText);
+                    parent
+                        .spawn((
+                            TextBundle::from_section(
+                                "Tile: (##, ##)",
+                                TextStyle {
+                                    font: asset_server.load("fonts/AmericanCaptain.ttf"),
+                                    font_size: 20.0,
+                                    ..default()
+                                },
+                            )
+                            .with_style(Style {
+                                margin: UiRect::all(Val::Px(5.)),
+                                ..default()
+                            }),
+                            Label,
+                        ))
+                        .insert(TileCoordText);
+                });
         });
 }
 
