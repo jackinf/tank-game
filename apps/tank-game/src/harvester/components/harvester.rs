@@ -35,7 +35,7 @@ pub struct Harvester {
     harvesting_cooldown_seconds: f64,
     last_harvest_timestamp: f64,
 
-    // TODO: unity with Tank using Unit or VehicleUnit trait
+    // TODO: unify with Tank using Unit or VehicleUnit trait
     movement_path: VecDeque<TileCoord>,
     health: u32,
     selected: bool,

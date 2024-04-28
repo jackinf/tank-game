@@ -25,8 +25,8 @@ impl TryFrom<usize> for TileType {
 impl TileType {
     pub fn get_tile_type_sprite(&self) -> String {
         match self {
-            TileType::Wall => "sprites/tiles/wall.png".into(),
-            TileType::Grass => "sprites/tiles/grass3.png".into(),
+            TileType::Wall => "sprites/tiles/wall_b.png".into(),
+            TileType::Grass => "sprites/tiles/grass_b.png".into(),
             TileType::Gold => "sprites/tiles/gold.png".into(),
             TileType::Water => "sprites/tiles/water.png".into(),
         }
