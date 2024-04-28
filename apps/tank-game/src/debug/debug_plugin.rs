@@ -8,7 +8,6 @@ use bevy::prelude::*;
 use crate::con_menu::components::menu_info::MenuInfo;
 use crate::tank::components::tank::Tank;
 use crate::tile::components::tile::Tile;
-use crate::tile::tile_queries::TileQueries;
 
 pub struct DebugPlugin;
 
@@ -30,11 +29,10 @@ fn logger(
     q_tiles: Query<&Tile>,
 ) {
     if timer.0.tick(time.delta()).just_finished() {
-        let tile_coordinates =
-            TileQueries::find_accessible(&q_tiles, &q_coords.0).unwrap_or((999, 999));
         println!(
             "Cursor coordinates: {:?}. Tile coordinates: {:?}",
-            q_coords.0, tile_coordinates
+            q_coords.get_world(),
+            q_coords.get_tile()
         );
     }
 }

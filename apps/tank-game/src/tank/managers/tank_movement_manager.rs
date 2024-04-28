@@ -50,15 +50,16 @@ impl TankMovementManager {
             if MouseButton::Right == mouse_button_event.button
                 && mouse_button_event.state == ButtonState::Pressed
             {
-                let wx = my_world_coords.0.x;
-                let wy = my_world_coords.0.y;
+                let world_coords = my_world_coords.get_world();
+                let wx = world_coords.x;
+                let wy = world_coords.y;
 
                 let clicked_on_enemy_tank_id: Option<UnitId> = tank_query
                     .iter_mut()
                     .find(|(tank, _)| tank.is_clicked_on(wx, wy) && !tank.is_mine(&me))
                     .map(|(tank, _)| tank.get_id().clone());
 
-                if let Some(goal) = TileQueries::find_accessible(&tile_query, &my_world_coords.0) {
+                if let Some(goal) = TileQueries::find_accessible(&tile_query, &world_coords) {
                     let selected_tanks = &mut tank_query
                         .iter_mut()
                         .filter(|(tank, _)| tank.selected)

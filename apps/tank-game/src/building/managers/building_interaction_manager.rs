@@ -49,7 +49,7 @@ impl BuildingInteractionManager {
                     }
                     let world_coord_start = world_coord_start.unwrap();
                     let world_coord_end = world_coord_end.unwrap();
-                    let world_coord_curr = my_world_coords.0;
+                    let world_coord_curr = my_world_coords.get_world();
 
                     let is_between_x = world_coord_curr.x >= world_coord_start.0
                         && world_coord_curr.x <= world_coord_end.0;

@@ -54,8 +54,9 @@ fn calculate_selection_rect_coordinates(
     me: Res<Me>,
 ) {
     for mouse_button_input_event in mouse_button_input_events.read() {
-        let wx = my_world_coords.0.x;
-        let wy = my_world_coords.0.y;
+        let world_coords = my_world_coords.get_world();
+        let wx = world_coords.x;
+        let wy = world_coords.y;
 
         let clicked_on_tank = tank_query
             .iter_mut()
@@ -125,16 +126,17 @@ fn display_selection_rect(
 
     if tank_selection_rect.is_visible() {
         sprite.color.set_a(0.5);
+        let world_coords = my_world_coords.get_world();
 
         let start = tank_selection_rect.start.unwrap();
         transform.translation = {
-            let x = start.x + (my_world_coords.0.x - start.x) / 2.0;
-            let y = start.y + (my_world_coords.0.y - start.y) / 2.0;
+            let x = start.x + (world_coords.x - start.x) / 2.0;
+            let y = start.y + (world_coords.y - start.y) / 2.0;
             Vec3::new(x, y, 100.0)
         };
 
         let start = tank_selection_rect.start.unwrap();
-        let end = my_world_coords.0;
+        let end = world_coords;
         let width = end.x - start.x;
         let height = end.y - start.y;
         transform.scale = Vec3::new(width, height, 1.0);

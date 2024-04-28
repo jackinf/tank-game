@@ -2,8 +2,7 @@ use crate::con_menu::components::menu_info::MenuInfo;
 use bevy::asset::AssetServer;
 use bevy::hierarchy::ChildBuilder;
 use bevy::prelude::{
-    default, Component, DetectChanges, Label, Query, Res, Style, Text, TextBundle, TextStyle,
-    UiRect, Val, With,
+    default, Component, Label, Query, Res, Style, Text, TextBundle, TextStyle, UiRect, Val, With,
 };
 
 #[derive(Component)]

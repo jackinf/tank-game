@@ -100,7 +100,7 @@ impl BuildingSpawnManager {
     ) {
         match (
             q_placement.single_mut(),
-            TileQueries::find_accessible_tile(&q_tiles, &cursor.0),
+            TileQueries::find_accessible_tile(&q_tiles, &cursor.get_world()),
         ) {
             ((mut transform, mut sprite, mut placement), Some(tile)) => {
                 if !placement.is_ready() {
