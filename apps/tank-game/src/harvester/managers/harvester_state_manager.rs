@@ -4,7 +4,7 @@ use crate::common::constants::TileCoord;
 use crate::common::player::Player;
 use crate::common::resources::game_map::GameMap;
 use crate::common::utils::astar::find_path;
-use crate::con_menu::resources::menu_info::MenuInfo;
+use crate::con_menu::components::menu_info::MenuInfo;
 use crate::harvester::components::harvester::Harvester;
 use crate::harvester::resources::harvester_timer::HarvesterTimer;
 use crate::tile::components::gold::Gold;
@@ -145,7 +145,7 @@ impl HarvesterStateManager {
                     }
                     Some(_) => {
                         harvester.collect_gold(10, timestamp);
-                        println!("Harvester {} collected 10 gold!", harvester.get_id());
+                        // println!("Harvester {} collected 10 gold!", harvester.get_id());
 
                         if harvester.is_full() {
                             harvester.set_find_base_to_return();

@@ -23,7 +23,6 @@ fn main() {
         HarvesterPlugin,
         BuildingPlugin,
     ))
-    .add_systems(Update, CursorManager::convert_cursor_to_world_position)
     .add_plugins(bevy::diagnostic::FrameTimeDiagnosticsPlugin)
     .add_plugins(bevy::diagnostic::EntityCountDiagnosticsPlugin)
     .add_plugins(bevy::diagnostic::SystemInformationDiagnosticsPlugin)
@@ -65,9 +64,6 @@ pub mod common {
         pub mod game_map;
         pub mod me;
     }
-    pub mod managers {
-        pub mod cursor_manager;
-    }
     pub mod constants;
     pub mod player;
     pub mod utils {
@@ -80,7 +76,12 @@ pub mod common {
 
 pub mod setup;
 pub mod cursor {
+    pub mod managers {
+        pub mod camera_manager;
+        pub mod cursor_manager;
+    }
     pub mod resources {
+        pub mod click_info;
         pub mod cursor_coordinates;
     }
     pub mod cursor_plugin;
@@ -113,12 +114,17 @@ pub mod tank {
 }
 
 pub mod con_menu {
-    mod components {
-        pub mod money_text;
-    }
-    pub mod resources {
+    pub mod components {
         pub mod menu_info;
+        pub mod money_text;
+        pub mod submenu_info;
     }
+    pub mod managers {
+        pub mod base_menu_manager;
+        pub mod factory_menu_manager;
+        pub mod menu_manager;
+    }
+    pub mod resources {}
     pub mod menu_plugin;
 }
 pub mod building {
@@ -127,6 +133,7 @@ pub mod building {
         pub mod building_placement_tiles;
     }
     pub mod managers {
+        pub mod building_interaction_manager;
         pub mod building_spawn_manager;
     }
     pub mod building_plugin;
@@ -153,13 +160,13 @@ use bevy_prototype_lyon::prelude::ShapePlugin;
 use iyes_perf_ui::PerfUiPlugin;
 
 use crate::common::constants::{MAX_HEIGHT, MAX_WIDTH};
-use crate::common::managers::cursor_manager::CursorManager;
 use crate::common::player::Player;
 use crate::common::resources::game_map::GameMap;
 use crate::common::resources::me::Me;
 
 use crate::con_menu::menu_plugin::MenuPlugin;
 use crate::cursor::cursor_plugin::CursorPlugin;
+use crate::cursor::managers::cursor_manager::CursorManager;
 use crate::debug::debug_plugin::DebugPlugin;
 use crate::harvester::harvester_plugin::HarvesterPlugin;
 use crate::setup::setup;

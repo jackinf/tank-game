@@ -5,7 +5,7 @@ use crate::debug::resources::tank_log_timer::TankLogTimer;
 use bevy::app::Plugin;
 use bevy::prelude::*;
 
-use crate::con_menu::resources::menu_info::MenuInfo;
+use crate::con_menu::components::menu_info::MenuInfo;
 use crate::tank::components::tank::Tank;
 use crate::tile::components::tile::Tile;
 use crate::tile::tile_queries::TileQueries;
@@ -18,7 +18,8 @@ impl Plugin for DebugPlugin {
             .add_systems(Update, inflate_all_tanks)
             .add_systems(Update, buying_stuff)
             .add_systems(Update, damage_selected_tanks)
-            .add_systems(Update, construction_complete);
+            .add_systems(Update, construction_complete)
+            .add_systems(Update, logger);
     }
 }
 

@@ -1,6 +1,9 @@
+use crate::con_menu::components::menu_info::MenuInfo;
 use crate::con_menu::components::money_text::MoneyText;
-use crate::con_menu::resources::menu_info::MenuInfo;
-use bevy::prelude::Val::Px;
+use crate::con_menu::components::submenu_info::SubMenuInfo;
+use crate::con_menu::managers::base_menu_manager::BaseMenuManager;
+use crate::con_menu::managers::factory_menu_manager::FactoryMenuManager;
+use crate::con_menu::managers::menu_manager::MenuManager;
 use bevy::prelude::*;
 
 pub struct MenuPlugin;
@@ -14,45 +17,27 @@ impl Plugin for MenuPlugin {
     }
 }
 
-#[derive(Component)]
-struct Target<T> {
-    id: Entity,
-    phantom: std::marker::PhantomData<T>,
-}
-
-impl<T> Target<T> {
-    fn new(id: Entity) -> Self {
-        Self {
-            id,
-            phantom: std::marker::PhantomData,
-        }
-    }
-}
-
 fn toggle_menu_visibility(
     keyboard: Res<ButtonInput<KeyCode>>,
-    mut query: Query<&mut Visibility, With<MenuInfo>>,
+    mut query: Query<(&mut Visibility, &SubMenuInfo), With<SubMenuInfo>>,
 ) {
     if keyboard.just_pressed(KeyCode::KeyN) {
-        let mut visibility = query.single_mut();
+        let (mut visibility, _) = query
+            .iter_mut()
+            .find(|(_, info)| info.is_factory())
+            .unwrap();
         *visibility = Visibility::Visible;
-    } else if keyboard.just_pressed(KeyCode::KeyB) {
-        let mut visibility = query.single_mut();
+    } else if keyboard.just_pressed(KeyCode::KeyV) {
+        let (mut visibility, _) = query
+            .iter_mut()
+            .find(|(_, info)| info.is_factory())
+            .unwrap();
         *visibility = Visibility::Hidden;
     }
 }
 
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     // Assume you have your sprite sheet or individual sprites ready
-    let menu_item_image: Handle<Image> = asset_server.load("sprites/tank.png");
-
-    // Grid settings
-    let rows = 5;
-    let cols = 2;
-    let cell_width = 100.0;
-    let cell_height = 100.0;
-    let padding = 10.0; // Padding between cells
-
     let menu_info = MenuInfo::new();
 
     // Create a parent entity for the grid
@@ -64,7 +49,6 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                 align_items: AlignItems::FlexStart,
                 ..default()
             },
-            visibility: Visibility::Visible,
             ..default()
         })
         .insert(Interaction::None)
@@ -81,63 +65,11 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                     ..default()
                 })
                 .with_children(|row_parent| {
-                    // Add money text
                     MoneyText::spawn(&asset_server, row_parent, menu_info.get_money());
                 });
 
-            for row in 0..rows {
-                // Create a row container
-                parent
-                    .spawn(NodeBundle {
-                        style: Style {
-                            justify_content: JustifyContent::FlexStart,
-                            flex_direction: FlexDirection::Row,
-                            align_items: AlignItems::FlexStart,
-                            padding: UiRect::all(Px(padding)),
-                            ..default()
-                        },
-                        ..default()
-                    })
-                    .with_children(|row_parent| {
-                        for col in 0..cols {
-                            // Spawn each cell as a sprite with a price label
-                            row_parent
-                                .spawn(ImageBundle {
-                                    image: UiImage::new(menu_item_image.clone()),
-                                    style: Style {
-                                        width: Val::Px(cell_width),
-                                        height: Val::Px(cell_height),
-                                        ..default()
-                                    },
-                                    ..default()
-                                })
-                                .with_children(|cell| {
-                                    // Add price text here if needed, e.g., as a child of the cell
-                                    cell.spawn(
-                                        TextBundle::from_section(
-                                            // This could be dynamic based on the item or cell
-                                            format!("Price: {}", 100 * (row * cols + col + 1)),
-                                            TextStyle {
-                                                font: asset_server
-                                                    .load("fonts/AmericanCaptain.ttf"),
-                                                font_size: 20.0,
-                                                color: Color::WHITE,
-                                            },
-                                        )
-                                        .with_style(
-                                            Style {
-                                                // Position your price text here, adjust as necessary
-                                                position_type: PositionType::Absolute,
-                                                bottom: Val::Px(5.0),
-                                                right: Val::Px(5.0),
-                                                ..default()
-                                            },
-                                        ),
-                                    );
-                                });
-                        }
-                    });
-            }
+            FactoryMenuManager::show_menu(parent, &asset_server);
+            BaseMenuManager::show_menu(parent, &asset_server);
         });
 }
 

@@ -1,4 +1,5 @@
 use crate::common::constants::TileSize;
+use crate::con_menu::components::submenu_info::{SubMenuInfo, SubMenuType};
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum BuildingType {
@@ -42,6 +43,14 @@ impl BuildingType {
             BuildingType::Base => (2, 2),
             BuildingType::Factory => (2, 2),
             BuildingType::PowerPlant => (2, 2),
+        }
+    }
+
+    pub fn get_sub_menu_type(&self) -> Option<SubMenuType> {
+        match &self {
+            BuildingType::Base => Some(SubMenuType::Base),
+            BuildingType::Factory => Some(SubMenuType::Factory),
+            _ => None,
         }
     }
 }

@@ -1,17 +1,21 @@
 use crate::building::components::building_placement_tiles::BuildingPlacementTiles;
+use crate::building::managers::building_interaction_manager::BuildingInteractionManager;
 use crate::building::managers::building_spawn_manager::BuildingSpawnManager;
 use crate::common::constants::TILE_SIZE;
 use bevy::app::{App, FixedUpdate, PreStartup};
 use bevy::asset::AssetServer;
 use bevy::math::{Vec2, Vec3};
-use bevy::prelude::{default, Color, Commands, Plugin, Res, Sprite, SpriteBundle, Transform};
+use bevy::prelude::{
+    default, Color, Commands, Plugin, Res, Sprite, SpriteBundle, Transform, Update,
+};
 
 pub struct BuildingPlugin;
 
 impl Plugin for BuildingPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(PreStartup, setup)
-            .add_systems(FixedUpdate, BuildingSpawnManager::draw_construction_tiles);
+            .add_systems(FixedUpdate, BuildingSpawnManager::draw_construction_tiles)
+            .add_systems(Update, BuildingInteractionManager::interact);
     }
 }
 

@@ -31,6 +31,12 @@ impl Building {
         self.building_tile_coord
     }
 
+    pub fn get_building_tile_end_coord(&self) -> TileCoord {
+        let (x, y) = self.building_tile_coord;
+        let (width, height) = self.building_type.get_size();
+        (x + width, y + height - 1)
+    }
+
     pub fn get_player(&self) -> Player {
         self.player.clone()
     }
