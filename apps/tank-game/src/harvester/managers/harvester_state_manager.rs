@@ -50,7 +50,7 @@ impl HarvesterStateManager {
 
                 if let Some(goal) = found_option {
                     let path = find_path(&game_map.get_tile_type_grid(), start, goal);
-                    dbg!(goal);
+                    // dbg!(goal);
                     harvester.set_movement_path(path);
                     harvester.set_moving_to_gold(goal);
                 }

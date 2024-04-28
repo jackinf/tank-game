@@ -134,7 +134,7 @@ impl Harvester {
     */
 
     pub fn set_idle(&mut self) {
-        Logger::log(&format!("Setting harvester {} to Idle", self.id));
+        // Logger::log(&format!("Setting harvester {} to Idle", self.id));
         self.state.set(HarvesterState::Idle);
     }
 
@@ -143,7 +143,7 @@ impl Harvester {
     }
 
     pub fn set_harvesting(&mut self) {
-        Logger::log(&format!("Setting harvester {} to Harvesting", self.id));
+        // Logger::log(&format!("Setting harvester {} to Harvesting", self.id));
         self.state.set(HarvesterState::Harvesting);
     }
 
@@ -152,17 +152,17 @@ impl Harvester {
     }
 
     pub fn set_find_base_to_return(&mut self) {
-        Logger::log(&format!(
-            "Setting harvester {} to FindBaseToReturn",
-            self.id
-        ));
+        // Logger::log(&format!(
+        //     "Setting harvester {} to FindBaseToReturn",
+        //     self.id
+        // ));
         self.state.set(HarvesterState::FindBaseToReturn);
     }
     pub fn is_find_base_to_return(&self) -> bool {
         matches!(self.state, HarvesterState::FindBaseToReturn)
     }
     pub fn set_returning_to_base(&mut self) {
-        Logger::log(&format!("Setting harvester {} to ReturningToBase", self.id));
+        // Logger::log(&format!("Setting harvester {} to ReturningToBase", self.id));
         self.state.set(HarvesterState::ReturningToBase);
     }
 
@@ -171,7 +171,7 @@ impl Harvester {
     }
 
     pub fn set_forced_by_player(&mut self) {
-        Logger::log(&format!("Setting harvester {} to ForcedByPlayer", self.id));
+        // Logger::log(&format!("Setting harvester {} to ForcedByPlayer", self.id));
         self.state.set(HarvesterState::ForcedByPlayer);
     }
 
@@ -179,7 +179,7 @@ impl Harvester {
         matches!(self.state, HarvesterState::ForcedByPlayer)
     }
     pub fn set_moving_to_gold(&mut self, goal: TileCoord) {
-        Logger::log(&format!("Setting harvester {} to MovingToGold", self.id));
+        // Logger::log(&format!("Setting harvester {} to MovingToGold", self.id));
         self.state.set(HarvesterState::MovingToGold);
     }
 
@@ -188,10 +188,10 @@ impl Harvester {
     }
 
     pub fn set_searching_for_gold(&mut self) {
-        Logger::log(&format!(
-            "Setting harvester {} to SearchingForGold",
-            self.id
-        ));
+        // Logger::log(&format!(
+        //     "Setting harvester {} to SearchingForGold",
+        //     self.id
+        // ));
         self.state.set(HarvesterState::SearchingForGold);
     }
 
