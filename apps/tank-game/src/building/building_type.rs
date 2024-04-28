@@ -24,9 +24,9 @@ impl TryFrom<usize> for BuildingType {
 impl BuildingType {
     pub fn get_building_type_sprite(&self) -> String {
         match &self {
-            BuildingType::Base => "sprites/building_b.png".into(),
-            BuildingType::Factory => "sprites/building_c.png".into(),
-            BuildingType::PowerPlant => "sprites/building_d.png".into(),
+            BuildingType::Base => "sprites/building_b_tr.png".into(),
+            BuildingType::Factory => "sprites/building_c_tr.png".into(),
+            BuildingType::PowerPlant => "sprites/building_d_tr.png".into(),
         }
     }
 
