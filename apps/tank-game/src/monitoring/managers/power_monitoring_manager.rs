@@ -16,12 +16,12 @@ impl PowerMonitoringManager {
             return;
         }
 
-        let power_plants_count = q_buildings
+        let total_power: i32 = q_buildings
             .iter()
-            .filter(|building| building.is_power_plant())
-            .count();
+            .map(|building| building.get_building_type().get_power_level())
+            .sum::<i32>()
+            .into();
 
-        let total_energy = power_plants_count * 10;
-        me.set_energy(total_energy as u32);
+        me.set_energy(total_power);
     }
 }

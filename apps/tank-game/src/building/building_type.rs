@@ -53,4 +53,12 @@ impl BuildingType {
             _ => None,
         }
     }
+
+    pub fn get_power_level(&self) -> i32 {
+        match &self {
+            BuildingType::Base => -50,
+            BuildingType::Factory => -20,
+            BuildingType::PowerPlant => 100,
+        }
+    }
 }

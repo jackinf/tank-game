@@ -4,7 +4,7 @@ use bevy::prelude::Resource;
 #[derive(Resource)]
 pub struct Me {
     money: u32,
-    energy: u32,
+    energy: i32,
     player: Player,
 }
 
@@ -12,7 +12,7 @@ impl Me {
     pub fn new(player: Player) -> Self {
         Me {
             money: 1000,
-            energy: 100,
+            energy: 0,
             player,
         }
     }
@@ -21,7 +21,7 @@ impl Me {
         self.money
     }
 
-    pub fn get_energy(&self) -> u32 {
+    pub fn get_energy(&self) -> i32 {
         self.energy
     }
 
@@ -33,7 +33,7 @@ impl Me {
         self.money += amount;
     }
 
-    pub fn set_energy(&mut self, energy: u32) {
+    pub fn set_energy(&mut self, energy: i32) {
         self.energy = energy;
     }
 
