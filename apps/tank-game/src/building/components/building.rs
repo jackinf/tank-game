@@ -1,9 +1,10 @@
+use std::collections::HashSet;
+
+use bevy::prelude::Component;
+
 use crate::building::building_type::BuildingType;
 use crate::common::constants::{TileCoord, TileSize};
 use crate::common::player::Player;
-use crate::cursor::resources::cursor_coordinates::CursorCoordinates;
-use bevy::prelude::Component;
-use std::collections::HashSet;
 
 #[derive(Component, Clone)]
 pub struct Building {

@@ -1,5 +1,5 @@
 use crate::common::constants::TileSize;
-use crate::con_menu::components::submenu_info::{SubMenuInfo, SubMenuType};
+use crate::con_menu::components::submenu_info::SubMenuType;
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum BuildingType {

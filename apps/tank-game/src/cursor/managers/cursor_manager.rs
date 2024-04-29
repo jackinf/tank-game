@@ -1,8 +1,9 @@
+use bevy::prelude::{Camera, GlobalTransform, Query, ResMut, Vec3Swizzles, Window, With};
+use bevy::window::PrimaryWindow;
+
 use crate::cursor::resources::cursor_coordinates::CursorCoordinates;
 use crate::tile::components::tile::Tile;
 use crate::tile::tile_queries::TileQueries;
-use bevy::prelude::{Camera, GlobalTransform, Query, Res, ResMut, Vec3Swizzles, Window, With};
-use bevy::window::PrimaryWindow;
 
 pub struct CursorManager;
 

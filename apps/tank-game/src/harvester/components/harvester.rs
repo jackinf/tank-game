@@ -1,8 +1,9 @@
+use std::collections::VecDeque;
+
+use bevy::prelude::Component;
+
 use crate::common::constants::TileCoord;
 use crate::common::player::Player;
-use crate::common::utils::logger::Logger;
-use bevy::prelude::Component;
-use std::collections::VecDeque;
 
 #[derive(Clone, Debug)]
 pub enum HarvesterState {

@@ -1,13 +1,14 @@
+use bevy::prelude::*;
+use bevy::utils::petgraph::visit::Walker;
+use bevy::window::PrimaryWindow;
+
 use crate::building::components::building::Building;
-use crate::common::constants::{SPRITE_SCALE, TILE_SIZE};
+use crate::common::constants::TILE_SIZE;
 use crate::cursor::managers::camera_manager::CameraManager;
 use crate::cursor::managers::cursor_manager::CursorManager;
 use crate::cursor::resources::click_info::ClickInfo;
 use crate::cursor::resources::cursor_coordinates::CursorCoordinates;
 use crate::tank::components::tank::Tank;
-use bevy::prelude::*;
-use bevy::utils::petgraph::visit::Walker;
-use bevy::window::{Cursor, CursorGrabMode, PrimaryWindow};
 
 pub struct CursorPlugin;
 

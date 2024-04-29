@@ -1,10 +1,10 @@
+use bevy::prelude::*;
+
 use crate::con_menu::components::menu_info::MenuInfo;
 use crate::con_menu::components::money_text::MoneyText;
 use crate::con_menu::components::submenu_info::SubMenuInfo;
 use crate::con_menu::managers::base_menu_manager::BaseMenuManager;
 use crate::con_menu::managers::factory_menu_manager::FactoryMenuManager;
-use crate::con_menu::managers::menu_manager::MenuManager;
-use bevy::prelude::*;
 
 pub struct MenuPlugin;
 

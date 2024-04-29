@@ -1,11 +1,10 @@
-use crate::building::components::building::Building;
-use crate::common::resources::game_map::GameMap;
-use crate::common::utils::logger::Logger;
-use crate::con_menu::components::submenu_info::SubMenuInfo;
-use crate::cursor::resources::cursor_coordinates::CursorCoordinates;
 use bevy::input::mouse::MouseButtonInput;
 use bevy::input::ButtonState;
 use bevy::prelude::{EventReader, MouseButton, Query, Res, Visibility, With};
+
+use crate::building::components::building::Building;
+use crate::con_menu::components::submenu_info::SubMenuInfo;
+use crate::cursor::resources::cursor_coordinates::CursorCoordinates;
 
 pub struct BuildingInteractionManager;
 

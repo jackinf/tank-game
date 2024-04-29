@@ -1,4 +1,4 @@
-use bevy::prelude::{Component, Resource};
+use bevy::prelude::Component;
 
 #[derive(Component, Clone)]
 pub struct MenuInfo {

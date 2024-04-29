@@ -1,11 +1,11 @@
+use bevy::asset::AssetServer;
+use bevy::math::{Vec2, Vec3};
+use bevy::prelude::{default, Commands, Res, SpriteBundle, Transform};
+
 use crate::common::constants::{SPRITE_SCALE, TILE_SIZE};
 use crate::tile::components::gold::Gold;
 use crate::tile::components::tile::Tile;
 use crate::tile::tile_type::TileType;
-use bevy::asset::AssetServer;
-use bevy::math::{Vec2, Vec3};
-use bevy::prelude::{default, Commands, Res, SpriteBundle, Transform};
-use std::cmp::PartialEq;
 
 pub struct TileManager;
 
