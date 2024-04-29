@@ -1,4 +1,4 @@
-use crate::con_menu::components::menu_info::MenuInfo;
+use crate::common::resources::me::Me;
 use bevy::asset::AssetServer;
 use bevy::hierarchy::ChildBuilder;
 use bevy::prelude::{
@@ -6,17 +6,17 @@ use bevy::prelude::{
 };
 
 #[derive(Component)]
-pub struct MoneyText;
+pub struct PowerText;
 
-impl MoneyText {
-    pub fn spawn(asset_server: &Res<AssetServer>, parent: &mut ChildBuilder, money: i32) {
+impl PowerText {
+    pub fn spawn(asset_server: &Res<AssetServer>, parent: &mut ChildBuilder) {
         parent
             .spawn((
                 TextBundle::from_section(
-                    format!("Credits: {}", money),
+                    "Power: 0",
                     TextStyle {
                         font: asset_server.load("fonts/AmericanCaptain.ttf"),
-                        font_size: 30.0,
+                        font_size: 20.0,
                         ..default()
                     },
                 )
@@ -26,17 +26,16 @@ impl MoneyText {
                 }),
                 Label,
             ))
-            .insert(MoneyText);
+            .insert(PowerText);
     }
 
-    pub fn update(q_menu_info: Query<&MenuInfo>, mut query: Query<&mut Text, With<MoneyText>>) {
+    pub fn update(me: Res<Me>, mut query: Query<&mut Text, With<PowerText>>) {
         // TODO: check if it's not updated too often
 
         // Check if the MenuInfo resource has been updated
-        let menu_info = q_menu_info.single();
         for mut text in query.iter_mut() {
             // Update the text component
-            text.sections[0].value = format!("Credits: {}", menu_info.get_money());
+            text.sections[0].value = format!("Power: {}", me.get_energy() * 10);
         }
     }
 }

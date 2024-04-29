@@ -26,6 +26,7 @@ fn main() {
         MenuPlugin,
         HarvesterPlugin,
         BuildingPlugin,
+        MonitoringPlugin,
     ))
     .add_plugins(bevy::diagnostic::FrameTimeDiagnosticsPlugin)
     .add_plugins(bevy::diagnostic::EntityCountDiagnosticsPlugin)
@@ -119,11 +120,17 @@ pub mod tank {
     pub mod tank_plugin;
     pub mod tank_queries;
 }
-
+pub mod monitoring {
+    pub mod managers {
+        pub mod power_monitoring_manager;
+    }
+    pub mod monitoring_plugin;
+}
 pub mod con_menu {
     pub mod components {
         pub mod menu_info;
         pub mod money_text;
+        pub mod power_text;
         pub mod submenu_info;
     }
     pub mod managers {
@@ -175,6 +182,7 @@ use crate::con_menu::menu_plugin::MenuPlugin;
 use crate::cursor::cursor_plugin::CursorPlugin;
 use crate::debug::debug_plugin::DebugPlugin;
 use crate::harvester::harvester_plugin::HarvesterPlugin;
+use crate::monitoring::monitoring_plugin::MonitoringPlugin;
 use crate::setup::setup;
 use crate::tank::tank_plugin::TankPlugin;
 use crate::unit::resources::unit_id_counter::UnitIdCounter;

@@ -46,6 +46,10 @@ impl Building {
     pub fn contains(&self, current: TileCoord) -> bool {
         self.building_tiles.contains(&current)
     }
+
+    pub fn is_power_plant(&self) -> bool {
+        self.building_type == BuildingType::PowerPlant
+    }
 }
 
 fn calculate_all_building_tiles(start: TileCoord, size: TileSize) -> HashSet<TileCoord> {

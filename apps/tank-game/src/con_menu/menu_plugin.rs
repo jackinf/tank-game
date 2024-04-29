@@ -2,6 +2,7 @@ use bevy::prelude::*;
 
 use crate::con_menu::components::menu_info::MenuInfo;
 use crate::con_menu::components::money_text::MoneyText;
+use crate::con_menu::components::power_text::PowerText;
 use crate::con_menu::components::submenu_info::SubMenuInfo;
 use crate::con_menu::managers::base_menu_manager::BaseMenuManager;
 use crate::con_menu::managers::factory_menu_manager::FactoryMenuManager;
@@ -13,6 +14,7 @@ impl Plugin for MenuPlugin {
         app.add_systems(PreStartup, setup)
             .add_systems(Update, detect_mouse_over_container)
             .add_systems(Update, MoneyText::update)
+            .add_systems(Update, PowerText::update)
             .add_systems(Update, toggle_menu_visibility);
     }
 }
@@ -66,6 +68,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                 })
                 .with_children(|row_parent| {
                     MoneyText::spawn(&asset_server, row_parent, menu_info.get_money());
+                    PowerText::spawn(&asset_server, row_parent);
                 });
 
             FactoryMenuManager::show_menu(parent, &asset_server);

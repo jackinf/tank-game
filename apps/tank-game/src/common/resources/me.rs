@@ -33,15 +33,11 @@ impl Me {
         self.money += amount;
     }
 
-    pub fn add_energy(&mut self, amount: u32) {
-        self.energy += amount;
+    pub fn set_energy(&mut self, energy: u32) {
+        self.energy = energy;
     }
 
     pub fn subtract_money(&mut self, amount: u32) {
         self.money -= amount;
-    }
-
-    pub fn subtract_energy(&mut self, amount: u32) {
-        self.energy -= amount;
     }
 }

@@ -3,6 +3,7 @@ use bevy::prelude::Component;
 #[derive(Component, Clone)]
 pub struct MenuInfo {
     money: i32,
+    power: i32,
     hovered: bool,
 }
 
@@ -10,6 +11,7 @@ impl MenuInfo {
     pub fn new() -> Self {
         Self {
             money: 4000,
+            power: 0,
             hovered: false,
         }
     }
@@ -20,6 +22,10 @@ impl MenuInfo {
 
     pub fn add_money(&mut self, amount: i32) {
         self.money += amount;
+    }
+
+    pub fn set_money(&mut self, money: i32) {
+        self.money = money;
     }
 
     pub fn set_hovered(&mut self, hovered: bool) {
