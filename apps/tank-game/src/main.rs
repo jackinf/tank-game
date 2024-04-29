@@ -4,6 +4,10 @@ fn main() {
         primary_window: Some(Window {
             resolution: WindowResolution::new(MAX_WIDTH as f32, MAX_HEIGHT as f32),
             title: "Tank Game".into(),
+            cursor: Cursor {
+                icon: CursorIcon::Default,
+                ..default()
+            },
             ..default()
         }),
         ..default()
@@ -60,12 +64,15 @@ pub mod tile {
     pub mod tile_type;
 }
 pub mod common {
+    pub mod components {}
     pub mod resources {
         pub mod game_map;
         pub mod me;
     }
     pub mod constants;
+    pub mod hoverable;
     pub mod player;
+
     pub mod utils {
         pub mod astar;
         pub mod common_helpers;
@@ -155,7 +162,7 @@ pub mod harvester {
 
 use crate::building::building_plugin::BuildingPlugin;
 use bevy::prelude::*;
-use bevy::window::WindowResolution;
+use bevy::window::{Cursor, WindowResolution};
 use bevy_prototype_lyon::prelude::ShapePlugin;
 use iyes_perf_ui::PerfUiPlugin;
 
@@ -166,7 +173,6 @@ use crate::common::resources::me::Me;
 
 use crate::con_menu::menu_plugin::MenuPlugin;
 use crate::cursor::cursor_plugin::CursorPlugin;
-use crate::cursor::managers::cursor_manager::CursorManager;
 use crate::debug::debug_plugin::DebugPlugin;
 use crate::harvester::harvester_plugin::HarvesterPlugin;
 use crate::setup::setup;

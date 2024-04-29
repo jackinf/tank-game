@@ -40,7 +40,7 @@ impl BuildingInteractionManager {
                     }
                     let found_sub_menu_type = found_sub_menu_type.unwrap();
                     let tile_coord = tile_coord.unwrap(); // safe to unwrap till if-condition above
-                    let building_clicked = building.is_clicked(tile_coord);
+                    let building_clicked = building.contains(tile_coord);
 
                     if building_clicked {
                         for (mut visibility, sub_menu_info) in q_sub_menu_info.iter_mut() {

@@ -1,8 +1,13 @@
+use crate::building::components::building::Building;
+use crate::common::constants::{SPRITE_SCALE, TILE_SIZE};
 use crate::cursor::managers::camera_manager::CameraManager;
 use crate::cursor::managers::cursor_manager::CursorManager;
 use crate::cursor::resources::click_info::ClickInfo;
 use crate::cursor::resources::cursor_coordinates::CursorCoordinates;
+use crate::tank::components::tank::Tank;
 use bevy::prelude::*;
+use bevy::utils::petgraph::visit::Walker;
+use bevy::window::{Cursor, CursorGrabMode, PrimaryWindow};
 
 pub struct CursorPlugin;
 
@@ -11,6 +16,8 @@ impl Plugin for CursorPlugin {
         app.insert_resource(CursorCoordinates::new())
             .insert_resource(ClickInfo::new(None))
             .add_systems(PreStartup, setup)
+            // .add_systems(PreStartup, setup_cursor)
+            .add_systems(FixedUpdate, cursor_hovered_over)
             .add_systems(Update, CursorManager::convert_cursor_to_world_position)
             .add_systems(PreStartup, CameraManager::spawn_camera)
             .add_systems(Update, CameraManager::move_camera_with_keys)
@@ -106,4 +113,41 @@ fn show_cursor_coordinates_in_ui(
         "Tile: None".to_string()
     };
     tile_coord_text.sections[0].value = tile_value;
+}
+
+fn cursor_hovered_over(
+    mut q_windows: Query<&mut Window, With<PrimaryWindow>>,
+    q_buildings: Query<&Building>,
+    q_tanks: Query<&Transform, With<Tank>>,
+    cursor_info: Res<CursorCoordinates>,
+) {
+    let mut primary_window = q_windows.single_mut();
+    primary_window.cursor.icon = CursorIcon::Default;
+
+    let cursor_world = cursor_info.get_world();
+    let cursor_tile = cursor_info.get_tile();
+    if cursor_tile.is_none() {
+        return;
+    }
+    let cursor_tile = cursor_tile.unwrap();
+
+    // check if the cursor is hovered over any building
+    for building in q_buildings.iter() {
+        if building.contains(cursor_tile) {
+            primary_window.cursor.icon = CursorIcon::Grabbing;
+            return;
+        }
+    }
+
+    // check if the cursor is hovered over any tank
+    for tank_transform in q_tanks.iter() {
+        let tank_position = tank_transform.translation.truncate();
+        if tank_position.distance(cursor_world) < TILE_SIZE / 2. {
+            primary_window.cursor.icon = CursorIcon::Grabbing;
+            return;
+        }
+    }
+
+    // primary_window.cursor.grab_mode = CursorGrabMode::Confined;
+    // primary_window.cursor.visible = false;
 }

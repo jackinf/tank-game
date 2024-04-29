@@ -42,8 +42,8 @@ impl Building {
         self.player.clone()
     }
 
-    pub fn is_clicked(&self, clicked_tile_coord: TileCoord) -> bool {
-        self.building_tiles.contains(&clicked_tile_coord)
+    pub fn contains(&self, current: TileCoord) -> bool {
+        self.building_tiles.contains(&current)
     }
 }
 
