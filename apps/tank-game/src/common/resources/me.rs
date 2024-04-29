@@ -40,4 +40,12 @@ impl Me {
     pub fn subtract_money(&mut self, amount: u32) {
         self.money -= amount;
     }
+
+    pub fn get_build_speed(&self) -> f32 {
+        if self.energy > 0 {
+            1.0
+        } else {
+            0.5
+        }
+    }
 }
