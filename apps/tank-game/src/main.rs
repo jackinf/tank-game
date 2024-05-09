@@ -52,6 +52,9 @@ pub mod unit {
     pub mod unit_selection_plugin;
     pub mod unit_type;
 }
+pub mod preparation {
+    pub mod types;
+}
 pub mod tile {
     pub mod components {
         pub mod gold;

@@ -1,43 +1,64 @@
-use std::collections::HashMap;
-use std::fs;
 use crate::common::constants::RawGrid;
+use crate::preparation::types::{
+    AssetImagePath, AssetTile, AssetTileId, AssetTileSubType, AssetTileType,
+};
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
+use std::fmt::Display;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
-use serde::{Deserialize, Serialize};
-
-type TileId = u32;
-type ImagePath = String;
+use std::str::FromStr;
+use std::{fmt, fs};
 
 #[derive(Debug)]
 pub struct MainAssetInfo {
-    tiles: HashMap<TileId, ImagePath>,
+    tiles: HashMap<AssetTileId, AssetTile>,
 }
 
 impl MainAssetInfo {
-    pub fn new(tiles: HashMap<TileId, ImagePath>) -> Self {
+    pub fn new(tiles: HashMap<AssetTileId, AssetTile>) -> Self {
         MainAssetInfo { tiles }
     }
 
-    pub fn tiles(&self) -> &HashMap<TileId, ImagePath> {
+    pub fn tiles(&self) -> &HashMap<AssetTileId, AssetTile> {
         &self.tiles
     }
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-struct AssetTile {
-    id: TileId,
-    image: ImagePath,
+struct AssetRawTileProperty {
+    name: String,
+    #[serde(rename = "type")]
+    value_type: String,
+    value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-struct AssetTileSet {
-    tiles: Vec<AssetTile>,
+struct AssetRawTile {
+    id: AssetTileId,
+    image: AssetImagePath,
+    properties: Vec<AssetRawTileProperty>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct AssetRawTileSet {
+    tiles: Vec<AssetRawTile>,
 }
 
 #[derive(Debug)]
 pub enum FileHelperErrors {
     FileReadError,
     JsonParseError,
+    TileTypeNotFound { tile_id: AssetTileId },
+    TileSubTypeNotFound { tile_id: AssetTileId },
+    TileTypeParseFailed { tile_id: AssetTileId },
+    TileSubTypeParseFailed { tile_id: AssetTileId },
+}
+
+impl Display for FileHelperErrors {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Error: {:?}", self)
+    }
 }
 
 pub struct FileHelpers;
@@ -67,12 +88,36 @@ impl FileHelpers {
     }
 
     pub fn read_assets(asset_path: &str) -> Result<MainAssetInfo, FileHelperErrors> {
-        let file_content = fs::read_to_string(asset_path).map_err(|_| FileHelperErrors::FileReadError)?;
-        let tile_set: AssetTileSet = serde_json::from_str(&file_content).map_err(|_| FileHelperErrors::JsonParseError)?;
+        let file_content =
+            fs::read_to_string(asset_path).map_err(|_| FileHelperErrors::FileReadError)?;
+        let tile_set: AssetRawTileSet =
+            serde_json::from_str(&file_content).map_err(|_| FileHelperErrors::JsonParseError)?;
 
-        let mut tiles_map: HashMap<TileId, ImagePath> = HashMap::new();
+        let mut tiles_map: HashMap<AssetTileId, AssetTile> = HashMap::new();
         for tile in tile_set.tiles {
-            tiles_map.insert(tile.id, tile.image);
+            let tile_id = tile.id;
+
+            let tile_type = tile.properties.iter().find(|p| p.name == "type");
+            let tile_sub_type = tile.properties.iter().find(|p| p.name == "subtype");
+
+            let tile_type = tile_type
+                .ok_or_else(|| FileHelperErrors::TileTypeNotFound { tile_id })?
+                .value
+                .clone();
+            let tile_sub_type = tile_sub_type
+                .ok_or_else(|| FileHelperErrors::TileSubTypeNotFound { tile_id })?
+                .value
+                .clone();
+
+            let tile_type = AssetTileType::from_str(&tile_type)
+                .map_err(|_| FileHelperErrors::TileTypeParseFailed { tile_id })?;
+            let tile_sub_type = AssetTileSubType::from_str(&tile_sub_type)
+                .map_err(|_| FileHelperErrors::TileSubTypeParseFailed { tile_id })?;
+
+            tiles_map.insert(
+                tile_id,
+                AssetTile::new(tile_id, tile.image, tile_type, tile_sub_type),
+            );
         }
 
         Ok(MainAssetInfo::new(tiles_map))

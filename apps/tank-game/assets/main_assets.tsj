@@ -17,6 +17,17 @@
          "image":"sprites\/building_b_tr.png",
          "imageheight":256,
          "imagewidth":256,
+         "properties":[
+                {
+                 "name":"subtype",
+                 "type":"string",
+                 "value":"base"
+                }, 
+                {
+                 "name":"type",
+                 "type":"string",
+                 "value":"building"
+                }],
          "type":"building"
         }, 
         {
@@ -24,6 +35,17 @@
          "image":"sprites\/building_c_tr.png",
          "imageheight":256,
          "imagewidth":256,
+         "properties":[
+                {
+                 "name":"subtype",
+                 "type":"string",
+                 "value":"factory"
+                }, 
+                {
+                 "name":"type",
+                 "type":"string",
+                 "value":"building"
+                }],
          "type":"building"
         }, 
         {
@@ -31,6 +53,17 @@
          "image":"sprites\/building_d_tr.png",
          "imageheight":256,
          "imagewidth":256,
+         "properties":[
+                {
+                 "name":"subtype",
+                 "type":"string",
+                 "value":"powerplant"
+                }, 
+                {
+                 "name":"type",
+                 "type":"string",
+                 "value":"building"
+                }],
          "type":"building"
         }, 
         {
@@ -38,6 +71,17 @@
          "image":"sprites\/tank3base.png",
          "imageheight":128,
          "imagewidth":128,
+         "properties":[
+                {
+                 "name":"subtype",
+                 "type":"string",
+                 "value":"tank"
+                }, 
+                {
+                 "name":"type",
+                 "type":"string",
+                 "value":"unit"
+                }],
          "type":"unit"
         }, 
         {
@@ -45,6 +89,17 @@
          "image":"sprites\/tiles\/gold.png",
          "imageheight":64,
          "imagewidth":64,
+         "properties":[
+                {
+                 "name":"subtype",
+                 "type":"string",
+                 "value":"gold"
+                }, 
+                {
+                 "name":"type",
+                 "type":"string",
+                 "value":"ground"
+                }],
          "type":"ground"
         }, 
         {
@@ -52,6 +107,17 @@
          "image":"sprites\/tiles\/grass_b.png",
          "imageheight":128,
          "imagewidth":128,
+         "properties":[
+                {
+                 "name":"subtype",
+                 "type":"string",
+                 "value":"ground"
+                }, 
+                {
+                 "name":"type",
+                 "type":"string",
+                 "value":"ground"
+                }],
          "type":"ground"
         }, 
         {
@@ -59,6 +125,17 @@
          "image":"sprites\/tiles\/invalid.png",
          "imageheight":128,
          "imagewidth":128,
+         "properties":[
+                {
+                 "name":"subtype",
+                 "type":"string",
+                 "value":"ground"
+                }, 
+                {
+                 "name":"type",
+                 "type":"string",
+                 "value":"ground"
+                }],
          "type":"ground"
         }, 
         {
@@ -66,6 +143,17 @@
          "image":"sprites\/tiles\/wall.png",
          "imageheight":128,
          "imagewidth":128,
+         "properties":[
+                {
+                 "name":"subtype",
+                 "type":"string",
+                 "value":"ground"
+                }, 
+                {
+                 "name":"type",
+                 "type":"string",
+                 "value":"ground"
+                }],
          "type":"ground"
         }, 
         {
@@ -73,6 +161,17 @@
          "image":"sprites\/tiles\/wall_b.png",
          "imageheight":128,
          "imagewidth":128,
+         "properties":[
+                {
+                 "name":"subtype",
+                 "type":"string",
+                 "value":"wall"
+                }, 
+                {
+                 "name":"type",
+                 "type":"string",
+                 "value":"ground"
+                }],
          "type":"ground"
         }, 
         {
@@ -80,6 +179,17 @@
          "image":"sprites\/tiles\/water.png",
          "imageheight":128,
          "imagewidth":128,
+         "properties":[
+                {
+                 "name":"subtype",
+                 "type":"string",
+                 "value":"water"
+                }, 
+                {
+                 "name":"type",
+                 "type":"string",
+                 "value":"ground"
+                }],
          "type":"ground"
         }, 
         {
@@ -87,6 +197,17 @@
          "image":"sprites\/tiles\/water_b.png",
          "imageheight":128,
          "imagewidth":128,
+         "properties":[
+                {
+                 "name":"subtype",
+                 "type":"string",
+                 "value":"water"
+                }, 
+                {
+                 "name":"type",
+                 "type":"string",
+                 "value":"ground"
+                }],
          "type":"ground"
         }],
  "tilewidth":256,
