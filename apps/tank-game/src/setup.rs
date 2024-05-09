@@ -9,7 +9,7 @@ use crate::building::managers::building_spawn_manager::BuildingSpawnManager;
 use crate::common::constants::{RawGrid, OFFSET_X, OFFSET_Y, TILE_SIZE};
 use crate::common::player::Player;
 use crate::common::resources::game_map::GameMap;
-use crate::common::utils::file_helpers::FileHelpers;
+use crate::common::utils::file_helpers::{MainAssetInfo, FileHelpers};
 use crate::tile::managers::tile_spawn_manager::TileSpawnManager;
 use crate::unit::managers::unit_spawn_manager::UnitSpawnManager;
 use crate::unit::resources::unit_id_counter::UnitIdCounter;
@@ -20,17 +20,17 @@ pub fn setup(
     mut tank_id_counter: ResMut<UnitIdCounter>,
     mut game_map: ResMut<GameMap>,
 ) {
-    let tile_map = FileHelpers::read_map_from_file("apps/tank-game/assets/map2.txt");
-    let p1_unit_map = FileHelpers::read_map_from_file("apps/tank-game/assets/map2_p1_units.txt");
-    let p2_unit_map = FileHelpers::read_map_from_file("apps/tank-game/assets/map2_p2_units.txt");
+    let tile_map = FileHelpers::read_map_from_file("apps/tank-game/assets/maps_legacy/map2.txt");
+    let p1_unit_map = FileHelpers::read_map_from_file("apps/tank-game/assets/maps_legacy/map2_p1_units.txt");
+    let p2_unit_map = FileHelpers::read_map_from_file("apps/tank-game/assets/maps_legacy/map2_p2_units.txt");
     let all_unit_maps: Vec<(RawGrid, Player)> =
         vec![(p1_unit_map, Player::P1), (p2_unit_map, Player::P2)];
 
     // Reuse unit map for now
     let p1_building_map =
-        FileHelpers::read_map_from_file("apps/tank-game/assets/map2_p1_units.txt");
+        FileHelpers::read_map_from_file("apps/tank-game/assets/maps_legacy/map2_p1_units.txt");
     let p2_building_map =
-        FileHelpers::read_map_from_file("apps/tank-game/assets/map2_p2_units.txt");
+        FileHelpers::read_map_from_file("apps/tank-game/assets/maps_legacy/map2_p2_units.txt");
     let all_building_maps: Vec<(RawGrid, Player)> =
         vec![(p1_building_map, Player::P1), (p2_building_map, Player::P2)];
 
@@ -69,3 +69,12 @@ pub fn setup(
 
     commands.spawn(PerfUiCompleteBundle::default());
 }
+
+pub fn load_map_from_files() {
+    let assets_result = FileHelpers::read_assets("apps/tank-game/assets/main_assets.tsj");
+    if let Err(_) = assets_result {
+        panic!("Failed to read assets");
+    }
+    let assets = assets_result.unwrap();
+}
+

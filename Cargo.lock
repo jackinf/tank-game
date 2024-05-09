@@ -3562,6 +3562,8 @@ dependencies = [
  "iyes_perf_ui",
  "leafwing-input-manager",
  "rand",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]

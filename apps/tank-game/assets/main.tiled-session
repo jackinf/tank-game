@@ -1,0 +1,47 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "mission01.tmj",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "main.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "main_assets.tsj": {
+            "dynamicWrapping": true,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "mission01.tmj": {
+            "scale": 0.2011328125,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1916.6440085453487,
+                "y": 1280.2485919596038
+            }
+        }
+    },
+    "last.imagePath": "C:/Users/zekar/RustroverProjects/tank-game/apps/tank-game/assets/sprites/tiles",
+    "map.lastUsedFormat": "json",
+    "map.tileHeight": 128,
+    "map.tileWidth": 128,
+    "openFiles": [
+        "mission01.tmj",
+        "main_assets.tsj"
+    ],
+    "project": "main.tiled-project",
+    "recentFiles": [
+        "main_assets.tsj",
+        "mission01.tmj",
+        "main.tsx",
+        "map1..tmx"
+    ],
+    "tileset.lastUsedFormat": "json",
+    "tileset.type": 1
+}

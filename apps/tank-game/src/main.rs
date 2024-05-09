@@ -16,7 +16,7 @@ fn main() {
     .insert_resource(UnitIdCounter(1))
     .insert_resource(Me::new(Player::P1))
     .insert_resource(GameMap::default())
-    .add_systems(PreStartup, setup)
+    .add_systems(PreStartup, (setup, load_map_from_files))
     .add_plugins((
         ShapePlugin,
         DebugPlugin,
@@ -184,7 +184,7 @@ use crate::cursor::cursor_plugin::CursorPlugin;
 use crate::debug::debug_plugin::DebugPlugin;
 use crate::harvester::harvester_plugin::HarvesterPlugin;
 use crate::monitoring::monitoring_plugin::MonitoringPlugin;
-use crate::setup::setup;
+use crate::setup::{load_map_from_files, setup};
 use crate::tank::tank_plugin::TankPlugin;
 use crate::unit::resources::unit_id_counter::UnitIdCounter;
 use crate::unit::unit_selection_plugin::UnitSelectionPlugin;
