@@ -20,7 +20,7 @@ impl MainAssetInfo {
         MainAssetInfo { tiles }
     }
 
-    pub fn tiles(&self) -> &HashMap<AssetTileId, AssetTile> {
+    pub fn get_tiles(&self) -> &HashMap<AssetTileId, AssetTile> {
         &self.tiles
     }
 }

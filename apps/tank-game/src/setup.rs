@@ -10,6 +10,7 @@ use crate::common::constants::{RawGrid, OFFSET_X, OFFSET_Y, TILE_SIZE};
 use crate::common::player::Player;
 use crate::common::resources::game_map::GameMap;
 use crate::common::utils::file_helpers::{FileHelpers, MainAssetInfo};
+use crate::preparation::load_mission::load_mission;
 use crate::tile::managers::tile_spawn_manager::TileSpawnManager;
 use crate::unit::managers::unit_spawn_manager::UnitSpawnManager;
 use crate::unit::resources::unit_id_counter::UnitIdCounter;
@@ -78,4 +79,10 @@ pub fn load_map_from_files() {
         panic!("Failed to read assets: {}", err);
     }
     let assets = assets_result.unwrap();
+
+    let mission_info = load_mission(&assets, "apps/tank-game/assets/mission01.tmj");
+    if let Err(err) = mission_info {
+        panic!("Failed to load mission: {:?}", err);
+    }
+    let _ = mission_info.unwrap();
 }

@@ -53,6 +53,7 @@ pub mod unit {
     pub mod unit_type;
 }
 pub mod preparation {
+    pub mod load_mission;
     pub mod types;
 }
 pub mod tile {
