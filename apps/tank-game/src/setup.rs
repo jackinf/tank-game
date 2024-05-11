@@ -7,35 +7,30 @@ use iyes_perf_ui::PerfUiCompleteBundle;
 
 use crate::building::managers::building_spawn_manager::BuildingSpawnManager;
 use crate::common::constants::{RawGrid, OFFSET_X, OFFSET_Y, TILE_SIZE};
-use crate::common::player::Player;
 use crate::common::resources::game_map::GameMap;
-use crate::common::utils::file_helpers::{FileHelpers, MainAssetInfo};
-use crate::preparation::load_mission::load_mission;
+use crate::preparation::file_helpers::{FileHelpers, MainAssetInfo};
+use crate::preparation::load_mission::{load_mission, MissionInfo};
 use crate::tile::managers::tile_spawn_manager::TileSpawnManager;
 use crate::unit::managers::unit_spawn_manager::UnitSpawnManager;
 use crate::unit::resources::unit_id_counter::UnitIdCounter;
 
-pub fn setup(
+pub fn setup2(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut tank_id_counter: ResMut<UnitIdCounter>,
     mut game_map: ResMut<GameMap>,
 ) {
-    let tile_map = FileHelpers::read_map_from_file("apps/tank-game/assets/maps_legacy/map2.txt");
-    let p1_unit_map =
-        FileHelpers::read_map_from_file("apps/tank-game/assets/maps_legacy/map2_p1_units.txt");
-    let p2_unit_map =
-        FileHelpers::read_map_from_file("apps/tank-game/assets/maps_legacy/map2_p2_units.txt");
-    let all_unit_maps: Vec<(RawGrid, Player)> =
-        vec![(p1_unit_map, Player::P1), (p2_unit_map, Player::P2)];
+    let assets_result = FileHelpers::read_assets("apps/tank-game/assets/main_assets.tsj");
+    if let Err(err) = assets_result {
+        panic!("Failed to read assets: {}", err);
+    }
+    let assets: MainAssetInfo = assets_result.unwrap();
 
-    // Reuse unit map for now
-    let p1_building_map =
-        FileHelpers::read_map_from_file("apps/tank-game/assets/maps_legacy/map2_p1_units.txt");
-    let p2_building_map =
-        FileHelpers::read_map_from_file("apps/tank-game/assets/maps_legacy/map2_p2_units.txt");
-    let all_building_maps: Vec<(RawGrid, Player)> =
-        vec![(p1_building_map, Player::P1), (p2_building_map, Player::P2)];
+    let mission_info = load_mission(&assets, "apps/tank-game/assets/mission01.tmj");
+    if let Err(err) = mission_info {
+        panic!("Failed to load mission: {:?}", err);
+    }
+    let mission_info: MissionInfo = mission_info.unwrap();
 
     let mut grid_to_tilemap = HashMap::new();
 
@@ -45,44 +40,35 @@ pub fn setup(
         Vec2::new(x, y)
     };
 
-    let grid = TileSpawnManager::spawn_tiles(
+    let tile_map = mission_info.ground_layer;
+    let spawn_tiles_result = TileSpawnManager::spawn_tiles(
         &mut commands,
         &asset_server,
         tile_map,
         &mut grid_to_tilemap,
         calculate_world_position,
     );
+    if let Err(err) = spawn_tiles_result {
+        panic!("Failed to spawn tiles: {:?}", err);
+    }
+    let grid = spawn_tiles_result.unwrap();
 
     UnitSpawnManager::spawn_units(
         &mut commands,
         &asset_server,
         &mut tank_id_counter,
-        all_unit_maps,
+        mission_info.units_layer,
         calculate_world_position,
     );
 
     BuildingSpawnManager::spawn_buildings(
         &mut commands,
         &asset_server,
-        all_building_maps,
+        mission_info.buildings_layer,
         calculate_world_position,
     );
 
     game_map.set_map(grid, grid_to_tilemap);
 
     commands.spawn(PerfUiCompleteBundle::default());
-}
-
-pub fn load_map_from_files() {
-    let assets_result = FileHelpers::read_assets("apps/tank-game/assets/main_assets.tsj");
-    if let Err(err) = assets_result {
-        panic!("Failed to read assets: {}", err);
-    }
-    let assets = assets_result.unwrap();
-
-    let mission_info = load_mission(&assets, "apps/tank-game/assets/mission01.tmj");
-    if let Err(err) = mission_info {
-        panic!("Failed to load mission: {:?}", err);
-    }
-    let _ = mission_info.unwrap();
 }

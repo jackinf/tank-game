@@ -1,4 +1,4 @@
-use crate::building::building_type::BuildingType;
+use crate::building::building_tile::BuildingTile;
 use crate::building::components::building_placement_tiles::BuildingPlacementTiles;
 use crate::cursor::resources::cursor_coordinates::CursorCoordinates;
 use crate::debug::resources::tank_log_timer::TankLogTimer;
@@ -46,7 +46,7 @@ fn construction_complete(
     }
 
     let mut placement_building = q_placement_building.single_mut();
-    placement_building.set_ready(Some(BuildingType::Base));
+    placement_building.set_ready(Some(BuildingTile::Base));
 }
 
 fn inflate_all_tanks(

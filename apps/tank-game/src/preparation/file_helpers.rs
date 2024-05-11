@@ -1,4 +1,4 @@
-use crate::common::constants::RawGrid;
+use crate::common::constants::{RawGrid, SPRITE_SCALE, TILE_SIZE, TileSize};
 use crate::preparation::types::{
     AssetImagePath, AssetTile, AssetTileId, AssetTileSubType, AssetTileType,
 };
@@ -9,6 +9,7 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::str::FromStr;
 use std::{fmt, fs};
+use crate::common::player::Player;
 
 #[derive(Debug)]
 pub struct MainAssetInfo {
@@ -37,6 +38,10 @@ struct AssetRawTileProperty {
 struct AssetRawTile {
     id: AssetTileId,
     image: AssetImagePath,
+    #[serde(rename = "imageheight")]
+    image_height: usize,
+    #[serde(rename = "imagewidth")]
+    image_width: usize,
     properties: Vec<AssetRawTileProperty>,
 }
 
@@ -96,9 +101,15 @@ impl FileHelpers {
         let mut tiles_map: HashMap<AssetTileId, AssetTile> = HashMap::new();
         for tile in tile_set.tiles {
             let tile_id = tile.id;
+            let image_width = tile.image_width as f32;
+            let image_height = tile.image_height as f32;
+            let tile_width = image_width / TILE_SIZE / SPRITE_SCALE;
+            let tile_height = image_height / TILE_SIZE / SPRITE_SCALE;
+            let tile_size: TileSize = (tile_width.round() as usize, tile_height.round() as usize);
 
             let tile_type = tile.properties.iter().find(|p| p.name == "type");
             let tile_sub_type = tile.properties.iter().find(|p| p.name == "subtype");
+            let player = tile.properties.iter().find(|p| p.name == "player");
 
             let tile_type = tile_type
                 .ok_or_else(|| FileHelperErrors::TileTypeNotFound { tile_id })?
@@ -108,6 +119,10 @@ impl FileHelpers {
                 .ok_or_else(|| FileHelperErrors::TileSubTypeNotFound { tile_id })?
                 .value
                 .clone();
+            let player: Option<Player> = player
+                .map(|p| p.value.clone())
+                .map(|p| if p == "1" { Some(Player::P1) } else if p == "2" { Some(Player::P2) } else { None })
+                .flatten();
 
             let tile_type = AssetTileType::from_str(&tile_type)
                 .map_err(|_| FileHelperErrors::TileTypeParseFailed { tile_id })?;
@@ -116,7 +131,7 @@ impl FileHelpers {
 
             tiles_map.insert(
                 tile_id,
-                AssetTile::new(tile_id, tile.image, tile_type, tile_sub_type),
+                AssetTile::new(tile_id, tile.image, tile_size, tile_type, tile_sub_type, player),
             );
         }
 

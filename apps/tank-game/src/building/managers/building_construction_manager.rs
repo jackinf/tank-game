@@ -1,13 +1,13 @@
-use crate::building::building_type::BuildingType;
+use crate::building::building_tile::BuildingTile;
 use bevy::prelude::{Component, Query, Res, Time};
 
 pub struct BuildingQueueItem {
-    building_type: BuildingType,
+    building_type: BuildingTile,
     progress: f32,
 }
 
 impl BuildingQueueItem {
-    pub fn new(building_type: BuildingType) -> Self {
+    pub fn new(building_type: BuildingTile) -> Self {
         BuildingQueueItem {
             progress: 0.0,
             building_type,
@@ -26,7 +26,7 @@ impl BuildingQueueItem {
         self.progress
     }
 
-    pub fn get_building_type(&self) -> BuildingType {
+    pub fn get_building_type(&self) -> BuildingTile {
         self.building_type.clone()
     }
 }
@@ -41,7 +41,7 @@ impl BuildingQueue {
         BuildingQueue { items: Vec::new() }
     }
 
-    pub fn push(&mut self, building_type: BuildingType) {
+    pub fn push(&mut self, building_type: BuildingTile) {
         self.items.push(BuildingQueueItem::new(building_type));
     }
 

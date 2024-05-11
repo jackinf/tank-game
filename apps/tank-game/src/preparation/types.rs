@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 use std::cmp::PartialEq;
 use std::fmt;
 use std::str::FromStr;
+use crate::common::constants::TileSize;
+use crate::common::player::Player;
 
 #[derive(Debug, Clone)]
 pub struct ParseError {
@@ -17,6 +19,7 @@ impl fmt::Display for ParseError {
 pub type AssetTileId = usize;
 pub type AssetImagePath = String;
 
+// TODO: why do i need this?
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "lowercase")]
 pub enum AssetTileType {
@@ -63,6 +66,8 @@ pub enum AssetTileSubType {
     Invalid,
     Wall,
     Water,
+    Soldier,
+    Harvester,
 }
 
 impl PartialEq for AssetTileSubType {
@@ -107,26 +112,69 @@ impl FromStr for AssetTileSubType {
 pub struct AssetTile {
     id: AssetTileId,
     image: AssetImagePath,
+    tile_size: TileSize,
     tile_type: AssetTileType,
     tile_sub_type: AssetTileSubType,
+    player: Option<Player>,
 }
 
 impl AssetTile {
     pub fn new(
         id: AssetTileId,
         image: AssetImagePath,
+        tile_size: TileSize,
         tile_type: AssetTileType,
         tile_sub_type: AssetTileSubType,
+        player: Option<Player>
     ) -> Self {
         AssetTile {
             id,
             image,
+            tile_size,
             tile_type,
             tile_sub_type,
+            player,
         }
     }
 
     pub fn is_id_and_type(&self, id: AssetTileId, tile_type: AssetTileType) -> bool {
         self.id == id && self.tile_type == tile_type
     }
+
+    pub fn get_tile_size(&self) -> TileSize {
+        self.tile_size.clone()
+    }
+
+    pub fn get_tile_type(&self) -> AssetTileType {
+        self.tile_type.clone()
+    }
+
+    pub fn get_tile_sub_type(&self) -> AssetTileSubType {
+        self.tile_sub_type.clone()
+    }
+
+    pub fn get_image_path(&self) -> String {
+        self.image.clone()
+    }
+
+    pub fn get_player(&self) -> Option<Player> {
+        self.player.clone()
+    }
 }
+
+// TODO: i don't like this option
+// impl From<&AssetTile> for usize {
+//     fn from(asset_tile: &AssetTile) -> usize {
+//         match asset_tile.tile_sub_type {
+//             AssetTileSubType::Base => 0,
+//             AssetTileSubType::Factory => 1,
+//             AssetTileSubType::Powerplant => 2,
+//             AssetTileSubType::Tank => 3,
+//             AssetTileSubType::Gold => 4,
+//             AssetTileSubType::Ground => 5,
+//             AssetTileSubType::Invalid => 6,
+//             AssetTileSubType::Wall => 7,
+//             AssetTileSubType::Water => 8,
+//         }
+//     }
+// }

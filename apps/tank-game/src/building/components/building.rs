@@ -2,13 +2,13 @@ use std::collections::HashSet;
 
 use bevy::prelude::Component;
 
-use crate::building::building_type::BuildingType;
+use crate::building::building_tile::BuildingTile;
 use crate::common::constants::{TileCoord, TileSize};
 use crate::common::player::Player;
 
 #[derive(Component, Clone)]
 pub struct Building {
-    building_type: BuildingType,
+    building_type: BuildingTile,
     building_tile_coord: TileCoord,
     building_tiles: HashSet<TileCoord>,
     player: Player,
@@ -16,7 +16,7 @@ pub struct Building {
 
 impl Building {
     pub fn new(
-        building_type: BuildingType,
+        building_type: BuildingTile,
         building_tile_coord: TileCoord,
         player: Player,
     ) -> Self {
@@ -31,7 +31,7 @@ impl Building {
         }
     }
 
-    pub fn get_building_type(&self) -> BuildingType {
+    pub fn get_building_type(&self) -> BuildingTile {
         self.building_type.clone()
     }
 
@@ -48,7 +48,7 @@ impl Building {
     }
 
     pub fn is_power_plant(&self) -> bool {
-        self.building_type == BuildingType::PowerPlant
+        self.building_type == BuildingTile::PowerPlant
     }
 }
 

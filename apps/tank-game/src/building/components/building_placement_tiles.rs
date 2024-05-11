@@ -1,10 +1,10 @@
-use crate::building::building_type::BuildingType;
+use crate::building::building_tile::BuildingTile;
 use bevy::prelude::Component;
 
 #[derive(Component)]
 pub struct BuildingPlacementTiles {
     layout: (usize, usize),
-    building_type: Option<BuildingType>,
+    building_type: Option<BuildingTile>,
 }
 
 impl BuildingPlacementTiles {
@@ -19,7 +19,7 @@ impl BuildingPlacementTiles {
         self.layout
     }
 
-    pub fn set_ready(&mut self, building_type: Option<BuildingType>) {
+    pub fn set_ready(&mut self, building_type: Option<BuildingTile>) {
         self.building_type = building_type;
     }
 
@@ -27,7 +27,7 @@ impl BuildingPlacementTiles {
         self.building_type.is_some()
     }
 
-    pub fn get_building_type(&self) -> Option<BuildingType> {
+    pub fn get_building_type(&self) -> Option<BuildingTile> {
         self.building_type.clone()
     }
 }

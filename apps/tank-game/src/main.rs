@@ -16,7 +16,7 @@ fn main() {
     .insert_resource(UnitIdCounter(1))
     .insert_resource(Me::new(Player::P1))
     .insert_resource(GameMap::default())
-    .add_systems(PreStartup, (setup, load_map_from_files))
+    .add_systems(PreStartup, setup2)
     .add_plugins((
         ShapePlugin,
         DebugPlugin,
@@ -50,12 +50,14 @@ pub mod unit {
         pub mod unit_id_counter;
     }
     pub mod unit_selection_plugin;
-    pub mod unit_type;
+    pub mod unit_tile;
 }
 pub mod preparation {
     pub mod load_mission;
     pub mod types;
+    pub mod file_helpers;
 }
+
 pub mod tile {
     pub mod components {
         pub mod gold;
@@ -81,7 +83,6 @@ pub mod common {
     pub mod utils {
         pub mod astar;
         pub mod common_helpers;
-        pub mod file_helpers;
         pub mod logger;
     }
 }
@@ -156,7 +157,7 @@ pub mod building {
         pub mod building_spawn_manager;
     }
     pub mod building_plugin;
-    pub mod building_type;
+    pub mod building_tile;
 }
 pub mod harvester {
     pub mod components {
@@ -188,7 +189,7 @@ use crate::cursor::cursor_plugin::CursorPlugin;
 use crate::debug::debug_plugin::DebugPlugin;
 use crate::harvester::harvester_plugin::HarvesterPlugin;
 use crate::monitoring::monitoring_plugin::MonitoringPlugin;
-use crate::setup::{load_map_from_files, setup};
+use crate::setup::{setup2};
 use crate::tank::tank_plugin::TankPlugin;
 use crate::unit::resources::unit_id_counter::UnitIdCounter;
 use crate::unit::unit_selection_plugin::UnitSelectionPlugin;
