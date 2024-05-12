@@ -33,7 +33,7 @@ impl BuildingInteractionManager {
                 }
 
                 for building in q_buildings.iter() {
-                    let found_sub_menu_type = building.get_building_type().get_sub_menu_type();
+                    let found_sub_menu_type = building.get_building_tile().get_sub_menu_type();
                     if found_sub_menu_type.is_none() {
                         continue;
                     }

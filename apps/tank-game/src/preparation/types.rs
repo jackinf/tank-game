@@ -1,9 +1,10 @@
+use crate::common::constants::TileSize;
+use crate::common::player::Player;
 use serde::{Deserialize, Serialize};
 use std::cmp::PartialEq;
 use std::fmt;
+use std::fmt::{Display, Formatter};
 use std::str::FromStr;
-use crate::common::constants::TileSize;
-use crate::common::player::Player;
 
 #[derive(Debug, Clone)]
 pub struct ParseError {
@@ -26,6 +27,16 @@ pub enum AssetTileType {
     Building,
     Unit,
     Ground,
+}
+
+impl Display for AssetTileType {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            AssetTileType::Building => write!(f, "building"),
+            AssetTileType::Unit => write!(f, "unit"),
+            AssetTileType::Ground => write!(f, "ground"),
+        }
+    }
 }
 
 impl PartialEq for AssetTileType {
@@ -70,6 +81,24 @@ pub enum AssetTileSubType {
     Harvester,
 }
 
+impl Display for AssetTileSubType {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        match self {
+            AssetTileSubType::Base => write!(f, "base"),
+            AssetTileSubType::Factory => write!(f, "factory"),
+            AssetTileSubType::Powerplant => write!(f, "powerplant"),
+            AssetTileSubType::Tank => write!(f, "tank"),
+            AssetTileSubType::Gold => write!(f, "gold"),
+            AssetTileSubType::Ground => write!(f, "ground"),
+            AssetTileSubType::Invalid => write!(f, "invalid"),
+            AssetTileSubType::Wall => write!(f, "wall"),
+            AssetTileSubType::Water => write!(f, "water"),
+            AssetTileSubType::Soldier => write!(f, "soldier"),
+            AssetTileSubType::Harvester => write!(f, "harvester"),
+        }
+    }
+}
+
 impl PartialEq for AssetTileSubType {
     fn eq(&self, other: &Self) -> bool {
         match (self, other) {
@@ -108,7 +137,7 @@ impl FromStr for AssetTileSubType {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Debug, Clone)]
 pub struct AssetTile {
     id: AssetTileId,
     image: AssetImagePath,
@@ -125,7 +154,7 @@ impl AssetTile {
         tile_size: TileSize,
         tile_type: AssetTileType,
         tile_sub_type: AssetTileSubType,
-        player: Option<Player>
+        player: Option<Player>,
     ) -> Self {
         AssetTile {
             id,

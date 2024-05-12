@@ -1,4 +1,5 @@
 use crate::common::constants::{TileCoord, TileGrid, WorldCoord};
+use crate::tile::tile_type::GroundTileType;
 use bevy::prelude::Resource;
 use std::collections::HashMap;
 
@@ -20,7 +21,7 @@ impl GameMap {
         &self.grid
     }
 
-    pub fn get_tile_type_grid(&self) -> Vec<Vec<usize>> {
+    pub fn get_tile_type_grid(&self) -> Vec<Vec<GroundTileType>> {
         self.grid
             .iter()
             .map(|row| row.iter().map(|tile| tile.get_tile_type()).collect())
@@ -31,6 +32,17 @@ impl GameMap {
         self.grid
             .iter()
             .map(|row| row.iter().map(|tile| tile.get_tile_type() as i32).collect())
+            .collect()
+    }
+
+    pub fn get_tile_type_grid_usize(&self) -> Vec<Vec<usize>> {
+        self.grid
+            .iter()
+            .map(|row| {
+                row.iter()
+                    .map(|tile| tile.get_tile_type() as usize)
+                    .collect()
+            })
             .collect()
     }
 

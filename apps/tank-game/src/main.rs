@@ -16,7 +16,9 @@ fn main() {
     .insert_resource(UnitIdCounter(1))
     .insert_resource(Me::new(Player::P1))
     .insert_resource(GameMap::default())
-    .add_systems(PreStartup, setup2)
+    .insert_resource(MainAssetInfoResource::new())
+    .insert_resource(MissionInfoResource::new())
+    .add_systems(PreStartup, (setup1, setup2).chain())
     .add_plugins((
         ShapePlugin,
         DebugPlugin,
@@ -53,9 +55,11 @@ pub mod unit {
     pub mod unit_tile;
 }
 pub mod preparation {
-    pub mod load_mission;
-    pub mod types;
     pub mod file_helpers;
+    pub mod load_mission;
+    pub mod main_asset_info_resource;
+    pub mod mission_info_resource;
+    pub mod types;
 }
 
 pub mod tile {
@@ -189,7 +193,9 @@ use crate::cursor::cursor_plugin::CursorPlugin;
 use crate::debug::debug_plugin::DebugPlugin;
 use crate::harvester::harvester_plugin::HarvesterPlugin;
 use crate::monitoring::monitoring_plugin::MonitoringPlugin;
-use crate::setup::{setup2};
+use crate::preparation::main_asset_info_resource::MainAssetInfoResource;
+use crate::preparation::mission_info_resource::MissionInfoResource;
+use crate::setup::{setup1, setup2};
 use crate::tank::tank_plugin::TankPlugin;
 use crate::unit::resources::unit_id_counter::UnitIdCounter;
 use crate::unit::unit_selection_plugin::UnitSelectionPlugin;

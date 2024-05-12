@@ -2,13 +2,13 @@ use std::collections::HashSet;
 
 use bevy::prelude::Component;
 
-use crate::building::building_tile::BuildingTile;
+use crate::building::building_tile::{BuildingTile, BuildingTileType};
 use crate::common::constants::{TileCoord, TileSize};
 use crate::common::player::Player;
 
 #[derive(Component, Clone)]
 pub struct Building {
-    building_type: BuildingTile,
+    building_tile: BuildingTile,
     building_tile_coord: TileCoord,
     building_tiles: HashSet<TileCoord>,
     player: Player,
@@ -16,23 +16,29 @@ pub struct Building {
 
 impl Building {
     pub fn new(
-        building_type: BuildingTile,
+        building_tile: BuildingTile,
         building_tile_coord: TileCoord,
         player: Player,
     ) -> Self {
-        let building_tiles =
-            calculate_all_building_tiles(building_tile_coord, building_type.get_size());
+        let building_tiles: HashSet<TileCoord> = HashSet::new();
+
+        // TODO: fix this
+        // let building_tiles: HashSet<TileCoord> = calculate_all_building_tiles(building_tile_coord, building_tile.get_size());
 
         Building {
-            building_type,
+            building_tile,
             building_tile_coord,
             building_tiles,
             player,
         }
     }
 
-    pub fn get_building_type(&self) -> BuildingTile {
-        self.building_type.clone()
+    pub fn get_building_tile(&self) -> BuildingTile {
+        self.building_tile.clone()
+    }
+
+    pub fn get_building_tile_type(&self) -> BuildingTileType {
+        self.building_tile.get_building_type()
     }
 
     pub fn get_building_tile_coord(&self) -> TileCoord {
@@ -48,7 +54,7 @@ impl Building {
     }
 
     pub fn is_power_plant(&self) -> bool {
-        self.building_type == BuildingTile::PowerPlant
+        self.building_tile.get_building_type() == BuildingTileType::PowerPlant
     }
 }
 

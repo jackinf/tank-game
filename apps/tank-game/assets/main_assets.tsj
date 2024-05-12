@@ -19,6 +19,11 @@
          "imagewidth":256,
          "properties":[
                 {
+                 "name":"player",
+                 "type":"string",
+                 "value":"1"
+                }, 
+                {
                  "name":"subtype",
                  "type":"string",
                  "value":"base"
@@ -36,6 +41,11 @@
          "imageheight":256,
          "imagewidth":256,
          "properties":[
+                {
+                 "name":"player",
+                 "type":"string",
+                 "value":"1"
+                }, 
                 {
                  "name":"subtype",
                  "type":"string",
@@ -55,6 +65,11 @@
          "imagewidth":256,
          "properties":[
                 {
+                 "name":"player",
+                 "type":"string",
+                 "value":"1"
+                }, 
+                {
                  "name":"subtype",
                  "type":"string",
                  "value":"powerplant"
@@ -72,6 +87,11 @@
          "imageheight":128,
          "imagewidth":128,
          "properties":[
+                {
+                 "name":"player",
+                 "type":"string",
+                 "value":"1"
+                }, 
                 {
                  "name":"subtype",
                  "type":"string",

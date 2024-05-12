@@ -18,7 +18,7 @@ impl PowerMonitoringManager {
 
         let total_power: i32 = q_buildings
             .iter()
-            .map(|building| building.get_building_type().get_power_level())
+            .map(|building| building.get_building_tile().get_power_level())
             .sum::<i32>()
             .into();
 

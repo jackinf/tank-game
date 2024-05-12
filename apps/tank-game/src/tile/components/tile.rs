@@ -1,4 +1,5 @@
-use crate::tile::tile_type::GroundTile;
+use crate::common::constants::TileCoord;
+use crate::tile::tile_type::{GroundTile, GroundTileType};
 use bevy::prelude::*;
 use std::fmt::Formatter;
 
@@ -9,8 +10,8 @@ pub struct Tile {
     x2: f32,
     y1: f32,
     y2: f32,
-    tile_type: usize,
-    tile_coord: (usize, usize),
+    tile_type: GroundTileType,
+    tile_coord: TileCoord,
 }
 
 impl std::fmt::Display for Tile {
@@ -24,7 +25,7 @@ impl Tile {
         center: Vec2,
         width: f32,
         height: f32,
-        tile_type: usize,
+        ground_type: GroundTileType,
         map_coord: (usize, usize),
     ) -> Self {
         let x1 = center.x - width / 2.0;
@@ -37,13 +38,13 @@ impl Tile {
             x2,
             y1,
             y2,
-            tile_type,
+            tile_type: ground_type,
             tile_coord: map_coord,
         }
     }
 
     pub fn accessible(&self) -> bool {
-        self.tile_type == GroundTile::Grass as usize
+        self.tile_type == GroundTileType::Grass
     }
 
     pub fn in_range(&self, x: f32, y: f32) -> bool {
@@ -52,8 +53,8 @@ impl Tile {
         in_x && in_y
     }
 
-    pub fn get_tile_type(&self) -> usize {
-        self.tile_type
+    pub fn get_tile_type(&self) -> GroundTileType {
+        self.tile_type.clone()
     }
 
     pub fn get_tile_coord(&self) -> (usize, usize) {

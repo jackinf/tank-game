@@ -1,7 +1,9 @@
-use crate::common::constants::{RawGrid, SPRITE_SCALE, TILE_SIZE, TileSize};
+use crate::common::constants::{RawGrid, TileSize, SPRITE_SCALE, TILE_SIZE};
+use crate::common::player::Player;
 use crate::preparation::types::{
     AssetImagePath, AssetTile, AssetTileId, AssetTileSubType, AssetTileType,
 };
+use bevy::prelude::Resource;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fmt::Display;
@@ -9,7 +11,6 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::str::FromStr;
 use std::{fmt, fs};
-use crate::common::player::Player;
 
 #[derive(Debug)]
 pub struct MainAssetInfo {
@@ -121,7 +122,15 @@ impl FileHelpers {
                 .clone();
             let player: Option<Player> = player
                 .map(|p| p.value.clone())
-                .map(|p| if p == "1" { Some(Player::P1) } else if p == "2" { Some(Player::P2) } else { None })
+                .map(|p| {
+                    if p == "1" {
+                        Some(Player::P1)
+                    } else if p == "2" {
+                        Some(Player::P2)
+                    } else {
+                        None
+                    }
+                })
                 .flatten();
 
             let tile_type = AssetTileType::from_str(&tile_type)
@@ -131,7 +140,14 @@ impl FileHelpers {
 
             tiles_map.insert(
                 tile_id,
-                AssetTile::new(tile_id, tile.image, tile_size, tile_type, tile_sub_type, player),
+                AssetTile::new(
+                    tile_id,
+                    tile.image,
+                    tile_size,
+                    tile_type,
+                    tile_sub_type,
+                    player,
+                ),
             );
         }
 

@@ -4,14 +4,14 @@ use bevy::prelude::Component;
 #[derive(Component)]
 pub struct BuildingPlacementTiles {
     layout: (usize, usize),
-    building_type: Option<BuildingTile>,
+    building_tile: Option<BuildingTile>,
 }
 
 impl BuildingPlacementTiles {
     pub fn new() -> Self {
         Self {
             layout: (2, 2),
-            building_type: None,
+            building_tile: None,
         }
     }
 
@@ -20,14 +20,14 @@ impl BuildingPlacementTiles {
     }
 
     pub fn set_ready(&mut self, building_type: Option<BuildingTile>) {
-        self.building_type = building_type;
+        self.building_tile = building_type;
     }
 
     pub fn is_ready(&self) -> bool {
-        self.building_type.is_some()
+        self.building_tile.is_some()
     }
 
-    pub fn get_building_type(&self) -> Option<BuildingTile> {
-        self.building_type.clone()
+    pub fn get_building_tile(&self) -> Option<BuildingTile> {
+        self.building_tile.clone()
     }
 }

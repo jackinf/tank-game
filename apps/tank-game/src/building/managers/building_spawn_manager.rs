@@ -14,7 +14,7 @@ use crate::common::player::Player;
 use crate::common::resources::me::Me;
 use crate::common::utils::logger::Logger;
 use crate::cursor::resources::cursor_coordinates::CursorCoordinates;
-use crate::preparation::load_mission::{BuildingsLayer};
+use crate::preparation::load_mission::BuildingsLayer;
 use crate::tile::components::tile::Tile;
 use crate::tile::tile_queries::TileQueries;
 
@@ -32,22 +32,22 @@ impl BuildingSpawnManager {
             .into_iter()
             .enumerate()
             .for_each(|(row_index, row_on_row)| {
-                row_on_row.into_iter().enumerate().for_each(|(col_index, cell)| {
-                    let pos = calculate_world_position(row_index, col_index);
-                    let map_coord = (row_index, col_index);
+                row_on_row
+                    .into_iter()
+                    .enumerate()
+                    .for_each(|(col_index, cell)| {
+                        let pos = calculate_world_position(row_index, col_index);
+                        let map_coord = (row_index, col_index);
 
-                    if let Ok(building_type) = BuildingTile::try_from(cell) {
                         BuildingSpawnManager::spawn_single(
                             &mut commands,
                             &asset_server,
                             // I'm not sure why I need this hack but the building is not placed correctly
                             Vec2::new(pos.x - TILE_SIZE / 2.0, pos.y + TILE_SIZE / 2.0),
-                            building_type,
+                            cell,
                             map_coord,
-                            cell.get_player().clone(),
                         );
-                    }
-                });
+                    });
             });
     }
 
@@ -55,18 +55,18 @@ impl BuildingSpawnManager {
         commands: &mut Commands,
         asset_server: &Res<AssetServer>,
         translation: Vec2,
-        building_type: BuildingTile,
+        building_tile: BuildingTile,
         map_coord: (usize, usize),
-        player: Player,
     ) {
-        let sprite_path = building_type.get_image_path();
-        let layer = building_type.get_layer();
+        let sprite_path = building_tile.get_image_path();
+        let layer = building_tile.get_layer();
 
+        let player = building_tile.get_player();
         let color = match player {
             Player::P1 => crate::common::constants::P1_COLOR,
             Player::P2 => crate::common::constants::P2_COLOR,
         };
-        let building = Building::new(building_type, map_coord, player);
+        let building = Building::new(building_tile, map_coord, player);
 
         commands
             .spawn((SpriteBundle {
@@ -134,7 +134,7 @@ impl BuildingSpawnManager {
                         }
 
                         // is ready check makes sure that there's a building type
-                        let building_type = placement.get_building_type().unwrap().clone();
+                        let building_tile = placement.get_building_tile().unwrap().clone();
                         sprite.color.set_a(0.0);
                         placement.set_ready(None);
 
@@ -145,9 +145,8 @@ impl BuildingSpawnManager {
                             &asset_server,
                             // TODO: why -TILE_SIZE & +TILE_SIZE?
                             Vec2::new(world_x - TILE_SIZE, world_y + TILE_SIZE),
-                            building_type,
+                            building_tile,
                             (tile_x, tile_y),
-                            res_me.get_player(),
                         );
                     }
                 }

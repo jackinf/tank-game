@@ -22,21 +22,32 @@
             "scale": 0.2011328125,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1424.4319285298118,
-                "y": 1270.3049135754513
+                "x": 1242.9597980190329,
+                "y": 1265.333074383375
+            }
+        },
+        "mission02.tmj": {
+            "scale": 0.13408854166666667,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1924.1017673334627,
+                "y": 1286.4633909496988
             }
         }
     },
     "last.imagePath": "C:/Users/zekar/RustroverProjects/tank-game/apps/tank-game/assets/sprites/tiles",
+    "map.height": 10,
     "map.lastUsedFormat": "json",
     "map.tileHeight": 128,
     "map.tileWidth": 128,
+    "map.width": 10,
     "openFiles": [
         "mission01.tmj",
         "main_assets.tsj"
     ],
     "project": "main.tiled-project",
     "recentFiles": [
+        "mission02.tmj",
         "main_assets.tsj",
         "mission01.tmj",
         "main.tsx",

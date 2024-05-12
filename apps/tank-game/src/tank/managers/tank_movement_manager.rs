@@ -73,7 +73,7 @@ impl TankMovementManager {
                             // TODO: expensive! optimize this
                             // TODO: consider using use bevy::utils::petgraph::algo::astar;
                             let path_f32: VecDeque<(f32, f32)> =
-                                astar::find_path(&game_map.get_tile_type_grid(), start, goal)
+                                astar::find_path(&game_map.get_tile_type_grid_usize(), start, goal)
                                     .iter()
                                     .filter_map(|&key| {
                                         game_map.get_tile_to_world_coordinates().get(&key)

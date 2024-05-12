@@ -1,4 +1,4 @@
-use crate::building::building_tile::BuildingTile;
+use crate::building::building_tile::{BuildingTile, BuildingTileType};
 use crate::building::components::building::Building;
 use crate::common::constants::TileCoord;
 use crate::common::player::Player;
@@ -10,7 +10,7 @@ use crate::harvester::resources::harvester_timer::HarvesterTimer;
 use crate::tile::components::gold::Gold;
 use crate::tile::components::tile::Tile;
 use crate::tile::tile_queries::TileQueries;
-use crate::tile::tile_type::GroundTile;
+use crate::tile::tile_type::{GroundTile, GroundTileType};
 use bevy::prelude::{Query, Res, ResMut, Time, Transform, Vec2, Vec3Swizzles, With};
 use std::collections::VecDeque;
 
@@ -49,7 +49,7 @@ impl HarvesterStateManager {
                 let found_option = find_first_gold(&game_map.get_tile_type_grid_i32(), start);
 
                 if let Some(goal) = found_option {
-                    let path = find_path(&game_map.get_tile_type_grid(), start, goal);
+                    let path = find_path(&game_map.get_tile_type_grid_usize(), start, goal);
                     // dbg!(goal);
                     harvester.set_movement_path(path);
                     harvester.set_moving_to_gold(goal);
@@ -168,7 +168,7 @@ impl HarvesterStateManager {
     ) {
         let building_infos: Vec<(TileCoord, Player)> = q_buildings
             .iter()
-            .filter(|building| building.get_building_type() == BuildingTile::Base)
+            .filter(|building| building.get_building_tile_type() == BuildingTileType::Base)
             .map(|building| {
                 let tile_coord = building.get_building_tile_coord();
                 (tile_coord, building.get_player().clone())
@@ -186,7 +186,7 @@ impl HarvesterStateManager {
                 if let Some((base_tile, _)) = building_res {
                     let start = TileQueries::find_accessible(&q_tiles, &transform.translation.xy())
                         .unwrap();
-                    let path = find_path(&game_map.get_tile_type_grid(), start, *base_tile);
+                    let path = find_path(&game_map.get_tile_type_grid_usize(), start, *base_tile);
                     harvester.set_movement_path(path);
                     harvester.set_returning_to_base();
                 }
@@ -206,7 +206,7 @@ fn find_first_gold(grid: &Vec<Vec<i32>>, start: TileCoord) -> Option<TileCoord> 
 
     while let Some((x, y)) = queue.pop_front() {
         // Check if current cell contains gold
-        if grid[x][y] == GroundTile::Gold as i32 {
+        if grid[x][y] == GroundTileType::Gold as i32 {
             return Some((x, y));
         }
 
@@ -218,8 +218,8 @@ fn find_first_gold(grid: &Vec<Vec<i32>>, start: TileCoord) -> Option<TileCoord> 
                 let nx = nx as usize;
                 let ny = ny as usize;
                 if !visited[nx][ny]
-                    && grid[nx][ny] != GroundTile::Wall as i32
-                    && grid[nx][ny] != GroundTile::Water as i32
+                    && grid[nx][ny] != GroundTileType::Wall as i32
+                    && grid[nx][ny] != GroundTileType::Water as i32
                 {
                     visited[nx][ny] = true;
                     queue.push_back((nx, ny));

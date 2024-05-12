@@ -1,10 +1,10 @@
+use crate::building::building_tile::BuildingTile;
+use crate::preparation::main_asset_info_resource::MainAssetInfoResource;
 use crate::preparation::types::AssetTile;
+use crate::tile::tile_type::GroundTile;
+use crate::unit::unit_tile::UnitTile;
 use serde::Deserialize;
 use std::fs;
-use crate::building::building_tile::BuildingTile;
-use crate::preparation::file_helpers::MainAssetInfo;
-use crate::tile::tile_type::GroundTile;
-use crate::unit::unit_tile::{UnitTile};
 
 #[derive(Deserialize, Debug)]
 struct RawMission {
@@ -33,7 +33,7 @@ impl RawMissionLayer {
 }
 
 impl RawMissionLayer {
-    pub fn from(&self, tiles_info: &MainAssetInfo) -> MissionLayer {
+    pub fn from(&self, tiles_info: &MainAssetInfoResource) -> MissionLayer {
         let tiles = tiles_info.get_tiles();
         MissionLayer {
             id: self.id,
@@ -58,19 +58,37 @@ pub struct MissionInfo {
     pub units_layer: UnitsLayer,
 }
 
+impl MissionInfo {
+    pub fn new(
+        ground_layer: GroundLayer,
+        buildings_layer: BuildingsLayer,
+        units_layer: UnitsLayer,
+    ) -> Self {
+        MissionInfo {
+            ground_layer,
+            buildings_layer,
+            units_layer,
+        }
+    }
+}
+
 #[derive(Clone, Debug)]
 struct MissionLayer {
-    pub id: usize, // TODO: not relevant
+    pub id: usize,    // TODO: not relevant
     pub name: String, // TODO: not relevant
     pub data: Vec<Vec<AssetTile>>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct GroundLayer {
     grid: Vec<Vec<GroundTile>>,
 }
 
 impl GroundLayer {
+    pub fn new() -> Self {
+        GroundLayer { grid: vec![] }
+    }
+
     pub fn get_grid(&self) -> Vec<Vec<GroundTile>> {
         self.grid.clone()
     }
@@ -84,7 +102,7 @@ impl Into<GroundLayer> for MissionLayer {
                 .iter()
                 .map(|row| {
                     row.iter()
-                        .map(|tile| GroundTile::try_from(tile.clone()).unwrap())
+                        .filter_map(|tile| GroundTile::try_from(tile.clone()).ok())
                         .collect()
                 })
                 .collect(),
@@ -92,12 +110,16 @@ impl Into<GroundLayer> for MissionLayer {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct BuildingsLayer {
     grid: Vec<Vec<BuildingTile>>,
 }
 
 impl BuildingsLayer {
+    pub fn new() -> Self {
+        BuildingsLayer { grid: vec![] }
+    }
+
     pub fn get_grid(&self) -> Vec<Vec<BuildingTile>> {
         self.grid.clone()
     }
@@ -111,7 +133,8 @@ impl Into<BuildingsLayer> for MissionLayer {
                 .iter()
                 .map(|row| {
                     row.iter()
-                        .map(|tile| BuildingTile::try_from(tile.clone()).unwrap())
+                        .filter_map(|tile| BuildingTile::try_from(tile.clone()).ok())
+                        // .map(|tile| BuildingTile::try_from(tile.clone()).unwrap())
                         .collect()
                 })
                 .collect(),
@@ -119,12 +142,16 @@ impl Into<BuildingsLayer> for MissionLayer {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct UnitsLayer {
     grid: Vec<Vec<UnitTile>>,
 }
 
 impl UnitsLayer {
+    pub fn new() -> Self {
+        UnitsLayer { grid: vec![] }
+    }
+
     pub fn get_grid(&self) -> Vec<Vec<UnitTile>> {
         self.grid.clone()
     }
@@ -138,7 +165,7 @@ impl Into<UnitsLayer> for MissionLayer {
                 .iter()
                 .map(|row| {
                     row.iter()
-                        .map(|tile| UnitTile::try_from(tile.clone()).unwrap())
+                        .filter_map(|tile| UnitTile::try_from(tile.clone()).ok())
                         .collect()
                 })
                 .collect(),
@@ -156,7 +183,7 @@ pub enum LoadMissionError {
 }
 
 pub fn load_mission(
-    assets: &MainAssetInfo,
+    assets: &MainAssetInfoResource,
     mission_file_path: &str,
 ) -> Result<MissionInfo, LoadMissionError> {
     let content =
@@ -181,6 +208,7 @@ pub fn load_mission(
         .ok_or(LoadMissionError::NoBuildingsLayerError)?
         .from(&assets)
         .into();
+    dbg!(&buildings_layer);
 
     let units_layer: UnitsLayer = raw_mission
         .layers
@@ -190,11 +218,7 @@ pub fn load_mission(
         .from(&assets)
         .into();
 
-    let mission_info = MissionInfo {
-        ground_layer: ground_layer.clone(),
-        buildings_layer: buildings_layer.clone(),
-        units_layer: units_layer.clone(),
-    };
+    let mission_info = MissionInfo::new(ground_layer, buildings_layer, units_layer);
 
     Ok(mission_info)
 }

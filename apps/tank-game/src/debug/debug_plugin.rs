@@ -1,11 +1,15 @@
-use crate::building::building_tile::BuildingTile;
+use crate::building::building_tile::{BuildingTile, BuildingTileType};
 use crate::building::components::building_placement_tiles::BuildingPlacementTiles;
+use crate::common::player::Player;
 use crate::cursor::resources::cursor_coordinates::CursorCoordinates;
 use crate::debug::resources::tank_log_timer::TankLogTimer;
 use bevy::app::Plugin;
 use bevy::prelude::*;
 
 use crate::con_menu::components::menu_info::MenuInfo;
+use crate::preparation::main_asset_info_resource::MainAssetInfoResource;
+use crate::preparation::mission_info_resource::MissionInfoResource;
+use crate::preparation::types::AssetTileSubType;
 use crate::tank::components::tank::Tank;
 use crate::tile::components::tile::Tile;
 
@@ -22,12 +26,7 @@ impl Plugin for DebugPlugin {
     }
 }
 
-fn logger(
-    mut timer: ResMut<TankLogTimer>,
-    time: Res<Time>,
-    q_coords: Res<CursorCoordinates>,
-    q_tiles: Query<&Tile>,
-) {
+fn logger(mut timer: ResMut<TankLogTimer>, time: Res<Time>, q_coords: Res<CursorCoordinates>) {
     if timer.0.tick(time.delta()).just_finished() {
         println!(
             "Cursor coordinates: {:?}. Tile coordinates: {:?}",
@@ -38,6 +37,7 @@ fn logger(
 }
 
 fn construction_complete(
+    main_asset_info_resource: Res<MainAssetInfoResource>,
     mut q_placement_building: Query<&mut BuildingPlacementTiles>,
     keyboard: Res<ButtonInput<KeyCode>>,
 ) {
@@ -46,7 +46,13 @@ fn construction_complete(
     }
 
     let mut placement_building = q_placement_building.single_mut();
-    placement_building.set_ready(Some(BuildingTile::Base));
+    let building_tiles = main_asset_info_resource.get_building_tiles();
+    let building_tile = building_tiles.get(&BuildingTileType::Base);
+    if building_tile.is_none() {
+        return;
+    }
+    let building_tile = building_tile.unwrap().clone();
+    placement_building.set_ready(Some(building_tile));
 }
 
 fn inflate_all_tanks(

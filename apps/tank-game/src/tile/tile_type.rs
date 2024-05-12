@@ -1,16 +1,35 @@
-use std::convert::TryFrom;
 use crate::common::constants::TileSize;
 use crate::preparation::types::{AssetTile, AssetTileSubType, AssetTileType};
+use std::convert::TryFrom;
 
 // TODO: consider using trait like CommonTile or GeneralTile
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Hash, Eq)]
 pub struct GroundTile {
-    pub tile_type: GroundTileType,
+    pub ground_type: GroundTileType,
     pub tile_size: TileSize,
-    pub image_path: String
+    pub image_path: String,
 }
 
-#[derive(Clone, Debug, PartialEq)]
+impl GroundTile {
+    pub fn get_ground_type(&self) -> GroundTileType {
+        self.ground_type.clone()
+    }
+
+    pub fn get_tile_type_sprite(&self) -> String {
+        self.image_path.clone()
+    }
+
+    pub fn get_tile_type_layer(&self) -> f32 {
+        match self.ground_type {
+            GroundTileType::Grass => 0.,
+            GroundTileType::Gold => 5.,
+            GroundTileType::Wall => 5.,
+            GroundTileType::Water => 5.,
+        }
+    }
+}
+
+#[derive(Copy, Clone, Debug, PartialEq, Hash, Eq)]
 pub enum GroundTileType {
     Grass = 0,
     Gold = 1,
@@ -45,24 +64,9 @@ impl TryFrom<AssetTile> for GroundTile {
         let ground_tile_type = ground_tile_type.unwrap();
 
         Ok(GroundTile {
-            tile_type: ground_tile_type,
+            ground_type: ground_tile_type,
             tile_size: value.get_tile_size(),
             image_path: value.get_image_path(),
         })
-    }
-}
-
-impl GroundTile {
-    pub fn get_tile_type_sprite(&self) -> String {
-        self.image_path.clone()
-    }
-
-    pub fn get_tile_type_layer(&self) -> f32 {
-        match self {
-            GroundTile::Grass => 0.,
-            GroundTile::Gold => 5.,
-            GroundTile::Wall => 5.,
-            GroundTile::Water => 5.,
-        }
     }
 }

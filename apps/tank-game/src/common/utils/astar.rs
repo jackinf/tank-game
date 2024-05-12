@@ -1,4 +1,4 @@
-use crate::tile::tile_type::GroundTile;
+use crate::tile::tile_type::GroundTileType;
 use std::cmp::Ordering;
 use std::collections::{BinaryHeap, HashMap, VecDeque};
 
@@ -85,8 +85,8 @@ fn a_star(
         }
 
         for next in neighbors(current, bounds).iter() {
-            if grid[next.0][next.1] == GroundTile::Wall as usize
-                || grid[next.0][next.1] == GroundTile::Water as usize
+            if grid[next.0][next.1] == GroundTileType::Wall as usize
+                || grid[next.0][next.1] == GroundTileType::Water as usize
             {
                 continue;
             }

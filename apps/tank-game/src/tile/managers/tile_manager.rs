@@ -5,7 +5,7 @@ use bevy::prelude::{default, Commands, Res, SpriteBundle, Transform};
 use crate::common::constants::{SPRITE_SCALE, TILE_SIZE};
 use crate::tile::components::gold::Gold;
 use crate::tile::components::tile::Tile;
-use crate::tile::tile_type::GroundTile;
+use crate::tile::tile_type::{GroundTile, GroundTileType};
 
 pub struct TileManager;
 
@@ -14,17 +14,17 @@ impl TileManager {
         commands: &mut Commands,
         asset_server: &Res<AssetServer>,
         translation: Vec2,
-        tile_type: GroundTile,
+        ground: GroundTile,
         map_coord: (usize, usize),
     ) -> Tile {
-        let sprite_path = tile_type.get_tile_type_sprite();
-        let layer = tile_type.get_tile_type_layer();
+        let sprite_path = ground.get_tile_type_sprite();
+        let layer = ground.get_tile_type_layer();
 
         let tile = Tile::new(
             Vec2::new(translation.x, translation.y),
             TILE_SIZE,
             TILE_SIZE,
-            tile_type.clone() as usize,
+            ground.get_ground_type(),
             map_coord,
         );
 
@@ -37,7 +37,7 @@ impl TileManager {
         },));
         let builder = entity_commands.insert(tile.clone());
 
-        if matches!(tile_type, GroundTile::Gold) {
+        if ground.get_ground_type() == GroundTileType::Gold {
             builder.insert(Gold::new(100, map_coord));
         }
 
