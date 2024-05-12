@@ -6,7 +6,7 @@ use std::collections::HashMap;
 #[derive(Resource, Default)]
 pub struct GameMap {
     grid: TileGrid,
-    tile_to_world_coordinates: HashMap<(usize, usize), (f32, f32)>,
+    tile_to_world_coordinates: HashMap<TileCoord, WorldCoord>,
 }
 
 impl GameMap {
@@ -21,28 +21,17 @@ impl GameMap {
         &self.grid
     }
 
-    pub fn get_tile_type_grid(&self) -> Vec<Vec<GroundTileType>> {
-        self.grid
-            .iter()
-            .map(|row| row.iter().map(|tile| tile.get_tile_type()).collect())
-            .collect()
-    }
-
     pub fn get_tile_type_grid_i32(&self) -> Vec<Vec<i32>> {
         self.grid
             .iter()
-            .map(|row| row.iter().map(|tile| tile.get_tile_type() as i32).collect())
+            .map(|row| row.iter().map(|tile| *tile as i32).collect())
             .collect()
     }
 
     pub fn get_tile_type_grid_usize(&self) -> Vec<Vec<usize>> {
         self.grid
             .iter()
-            .map(|row| {
-                row.iter()
-                    .map(|tile| tile.get_tile_type() as usize)
-                    .collect()
-            })
+            .map(|row| row.iter().map(|tile| *tile as usize).collect())
             .collect()
     }
 
@@ -73,30 +62,6 @@ impl GameMap {
                     });
                 println!()
             });
-    }
-
-    pub fn get_min_max(&self) -> (f32, f32, f32, f32) {
-        let mut min_x = f32::MAX;
-        let mut min_y = f32::MAX;
-        let mut max_x = f32::MIN;
-        let mut max_y = f32::MIN;
-
-        for (_, value) in &self.tile_to_world_coordinates {
-            if value.0 < min_x {
-                min_x = value.0;
-            }
-            if value.0 > max_x {
-                max_x = value.0;
-            }
-            if value.1 < min_y {
-                min_y = value.1;
-            }
-            if value.1 > max_y {
-                max_y = value.1;
-            }
-        }
-
-        (min_x, max_x, min_y, max_y)
     }
 }
 

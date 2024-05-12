@@ -1,3 +1,4 @@
+use crate::common::constants::TileCoord;
 use crate::harvester::managers::harvester_spawn_manager::HarvesterSpawnManager;
 use crate::preparation::load_mission::UnitsLayer;
 use crate::tank::managers::tank_spawn_manager::TankSpawnManager;
@@ -15,41 +16,32 @@ impl UnitSpawnManager {
         asset_server: &Res<AssetServer>,
         mut unit_id_counter: &mut ResMut<UnitIdCounter>,
         layer: UnitsLayer,
-        calculate_world_position: fn(usize, usize) -> Vec2,
+        calculate_world_position: fn(&TileCoord) -> Vec2,
     ) {
-        layer
-            .get_grid()
-            .into_iter()
-            .enumerate()
-            .for_each(|(row_index, row_on_row)| {
-                row_on_row
-                    .into_iter()
-                    .enumerate()
-                    .for_each(|(col_index, cell)| {
-                        let pos = calculate_world_position(row_index, col_index);
+        layer.get_units().into_iter().for_each(|(coord, unit)| {
+            let pos = calculate_world_position(coord);
 
-                        match cell.get_unit_type() {
-                            UnitTileType::Tank => {
-                                TankSpawnManager::spawn_tank(
-                                    &mut commands,
-                                    &asset_server,
-                                    pos,
-                                    &mut unit_id_counter,
-                                    cell.get_player(),
-                                );
-                            }
-                            UnitTileType::Harvester => {
-                                HarvesterSpawnManager::spawn_harvester(
-                                    &mut commands,
-                                    &asset_server,
-                                    pos,
-                                    &mut unit_id_counter,
-                                    cell.get_player(),
-                                );
-                            }
-                            _ => {}
-                        }
-                    });
-            });
+            match unit.get_unit_type() {
+                UnitTileType::Tank => {
+                    TankSpawnManager::spawn_tank(
+                        &mut commands,
+                        &asset_server,
+                        pos,
+                        &mut unit_id_counter,
+                        unit.get_player(),
+                    );
+                }
+                UnitTileType::Harvester => {
+                    HarvesterSpawnManager::spawn_harvester(
+                        &mut commands,
+                        &asset_server,
+                        pos,
+                        &mut unit_id_counter,
+                        unit.get_player(),
+                    );
+                }
+                _ => {}
+            }
+        });
     }
 }

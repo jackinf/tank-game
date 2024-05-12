@@ -1,13 +1,12 @@
-use crate::common::constants::TileSize;
+use crate::common::constants::{TileCoord, TileSize};
 use crate::preparation::types::{AssetTile, AssetTileSubType, AssetTileType};
 use std::convert::TryFrom;
 
-// TODO: consider using trait like CommonTile or GeneralTile
 #[derive(Clone, Debug, PartialEq, Hash, Eq)]
 pub struct GroundTile {
-    pub ground_type: GroundTileType,
-    pub tile_size: TileSize,
-    pub image_path: String,
+    ground_type: GroundTileType,
+    tile_size: TileSize,
+    image_path: String,
 }
 
 impl GroundTile {

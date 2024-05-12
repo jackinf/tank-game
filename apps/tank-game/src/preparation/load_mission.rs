@@ -1,9 +1,11 @@
 use crate::building::building_tile::BuildingTile;
+use crate::common::constants::{TileCoord, TileGrid};
 use crate::preparation::main_asset_info_resource::MainAssetInfoResource;
-use crate::preparation::types::AssetTile;
-use crate::tile::tile_type::GroundTile;
+use crate::preparation::types::{AssetTile, AssetTileId};
+use crate::tile::tile_type::{GroundTile, GroundTileType};
 use crate::unit::unit_tile::UnitTile;
 use serde::Deserialize;
+use std::collections::HashMap;
 use std::fs;
 
 #[derive(Deserialize, Debug)]
@@ -21,12 +23,12 @@ struct RawMissionLayer {
 }
 
 impl RawMissionLayer {
-    pub fn get_data_2d(&self) -> Vec<Vec<usize>> {
+    pub fn get_data_2d(&self) -> Vec<Vec<AssetTileId>> {
         let mut data_2d = vec![vec![0; self.width]; self.height];
         for (index, tile_id) in self.data.iter().enumerate() {
             let row = index / self.width;
             let col = index % self.width;
-            data_2d[row][col] = *tile_id;
+            data_2d[row][col] = *tile_id as i32;
         }
         data_2d
     }
@@ -34,21 +36,28 @@ impl RawMissionLayer {
 
 impl RawMissionLayer {
     pub fn from(&self, tiles_info: &MainAssetInfoResource) -> MissionLayer {
-        let tiles = tiles_info.get_tiles();
+        let tiles: &HashMap<AssetTileId, AssetTile> = tiles_info.get_tiles();
+
+        let mut tiles_coords: HashMap<TileCoord, AssetTile> = HashMap::new();
+
+        self.get_data_2d()
+            .iter()
+            .enumerate()
+            .for_each(|(row_index, row)| {
+                row.iter().enumerate().for_each(|(col_index, tile_id)| {
+                    let res = tiles.get(&(*tile_id - 1));
+                    if let Some(tile) = res {
+                        tiles_coords.insert((row_index, col_index), tile.clone());
+                    }
+                });
+            });
+        let width = self.width;
+        let height = self.height;
+
         MissionLayer {
-            id: self.id,
-            name: self.name.clone(),
-            data: self
-                .get_data_2d()
-                .iter()
-                .map(|row| {
-                    row.iter()
-                        .filter(|tile_id| *tile_id != &0)
-                        .map(|tile_id| *tile_id - 1)
-                        .map(|tile_id| tiles.get(&tile_id).unwrap().clone())
-                        .collect()
-                })
-                .collect(),
+            tiles: tiles_coords,
+            width,
+            height,
         }
     }
 }
@@ -76,101 +85,139 @@ impl MissionInfo {
 
 #[derive(Clone, Debug)]
 struct MissionLayer {
-    pub id: usize,    // TODO: not relevant
-    pub name: String, // TODO: not relevant
-    pub data: Vec<Vec<AssetTile>>,
+    tiles: HashMap<TileCoord, AssetTile>,
+    width: usize,
+    height: usize,
 }
 
 #[derive(Debug, Clone)]
 pub struct GroundLayer {
-    grid: Vec<Vec<GroundTile>>,
+    tiles: HashMap<TileCoord, GroundTile>,
+    pub height: usize,
+    pub width: usize,
 }
 
 impl GroundLayer {
     pub fn new() -> Self {
-        GroundLayer { grid: vec![] }
+        GroundLayer {
+            tiles: HashMap::new(),
+            width: 0,
+            height: 0,
+        }
     }
 
-    pub fn get_grid(&self) -> Vec<Vec<GroundTile>> {
-        self.grid.clone()
+    pub fn get_tiles(&self) -> &HashMap<TileCoord, GroundTile> {
+        &self.tiles
+    }
+
+    pub fn get_width_height(&self) -> (usize, usize) {
+        (self.width, self.height)
+    }
+
+    pub fn to_2d_grid(&self) -> TileGrid {
+        let mut grid = vec![vec![GroundTileType::Grass; self.width]; self.height];
+        self.tiles.iter().for_each(|(coord, ground)| {
+            grid[coord.0][coord.1] = ground.get_ground_type().clone();
+        });
+        grid
     }
 }
 
 impl Into<GroundLayer> for MissionLayer {
     fn into(self) -> GroundLayer {
         GroundLayer {
-            grid: self
-                .data
+            tiles: self
+                .tiles
                 .iter()
-                .map(|row| {
-                    row.iter()
-                        .filter_map(|tile| GroundTile::try_from(tile.clone()).ok())
-                        .collect()
+                .filter_map(|(coord, tile)| {
+                    GroundTile::try_from(tile.clone())
+                        .ok()
+                        .map(|ground_tile| (*coord, ground_tile))
                 })
                 .collect(),
+            width: self.width,
+            height: self.height,
         }
     }
 }
 
 #[derive(Debug, Clone)]
 pub struct BuildingsLayer {
-    grid: Vec<Vec<BuildingTile>>,
+    buildings: HashMap<TileCoord, BuildingTile>,
+    pub width: usize,
+    pub height: usize,
 }
 
 impl BuildingsLayer {
     pub fn new() -> Self {
-        BuildingsLayer { grid: vec![] }
+        BuildingsLayer {
+            buildings: HashMap::new(),
+            width: 0,
+            height: 0,
+        }
     }
 
-    pub fn get_grid(&self) -> Vec<Vec<BuildingTile>> {
-        self.grid.clone()
+    pub fn enumerate(&self) -> Vec<(TileCoord, BuildingTile)> {
+        self.buildings
+            .iter()
+            .map(|(coord, tile)| (*coord, tile.clone()))
+            .collect()
     }
 }
 
 impl Into<BuildingsLayer> for MissionLayer {
     fn into(self) -> BuildingsLayer {
         BuildingsLayer {
-            grid: self
-                .data
+            buildings: self
+                .tiles
                 .iter()
-                .map(|row| {
-                    row.iter()
-                        .filter_map(|tile| BuildingTile::try_from(tile.clone()).ok())
-                        // .map(|tile| BuildingTile::try_from(tile.clone()).unwrap())
-                        .collect()
+                .filter_map(|(coord, tile)| {
+                    BuildingTile::try_from(tile.clone())
+                        .ok()
+                        .map(|ground_tile| (*coord, ground_tile))
                 })
                 .collect(),
+            width: self.width,
+            height: self.height,
         }
     }
 }
 
 #[derive(Debug, Clone)]
 pub struct UnitsLayer {
-    grid: Vec<Vec<UnitTile>>,
+    units: HashMap<TileCoord, UnitTile>,
+    pub width: usize,
+    pub height: usize,
 }
 
 impl UnitsLayer {
     pub fn new() -> Self {
-        UnitsLayer { grid: vec![] }
+        UnitsLayer {
+            units: HashMap::new(),
+            width: 0,
+            height: 0,
+        }
     }
 
-    pub fn get_grid(&self) -> Vec<Vec<UnitTile>> {
-        self.grid.clone()
+    pub fn get_units(&self) -> &HashMap<TileCoord, UnitTile> {
+        &self.units
     }
 }
 
 impl Into<UnitsLayer> for MissionLayer {
     fn into(self) -> UnitsLayer {
         UnitsLayer {
-            grid: self
-                .data
+            units: self
+                .tiles
                 .iter()
-                .map(|row| {
-                    row.iter()
-                        .filter_map(|tile| UnitTile::try_from(tile.clone()).ok())
-                        .collect()
+                .filter_map(|(coord, tile)| {
+                    UnitTile::try_from(tile.clone())
+                        .ok()
+                        .map(|ground_tile| (*coord, ground_tile))
                 })
                 .collect(),
+            width: self.width,
+            height: self.height,
         }
     }
 }
@@ -210,7 +257,7 @@ pub fn load_mission(
         .ok_or(LoadMissionError::NoBuildingsLayerError)?
         .from(&assets)
         .into();
-    dbg!(&buildings_layer);
+    // dbg!(&buildings_layer);
 
     let units_layer: UnitsLayer = raw_mission
         .layers

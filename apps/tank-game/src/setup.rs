@@ -1,12 +1,10 @@
-use std::collections::HashMap;
-
 use bevy::asset::AssetServer;
 use bevy::prelude::*;
 use bevy::prelude::{Commands, Res, ResMut};
 use iyes_perf_ui::PerfUiCompleteBundle;
 
 use crate::building::managers::building_spawn_manager::BuildingSpawnManager;
-use crate::common::constants::{OFFSET_X, OFFSET_Y, TILE_SIZE};
+use crate::common::constants::{TileCoord, TileGrid, OFFSET_X, OFFSET_Y, TILE_SIZE};
 use crate::common::resources::game_map::GameMap;
 use crate::preparation::file_helpers::{FileHelpers, MainAssetInfo};
 use crate::preparation::load_mission::{load_mission, MissionInfo};
@@ -49,26 +47,23 @@ pub fn setup2(
         panic!("Mission info is not loaded");
     }
 
-    let mut grid_to_tilemap = HashMap::new();
-
-    let calculate_world_position = |row_index: usize, col_index: usize| {
-        let x = row_index as f32 * TILE_SIZE + OFFSET_X;
-        let y = col_index as f32 * TILE_SIZE + OFFSET_Y;
+    let calculate_world_position = |coord: &TileCoord| {
+        let x = coord.0 as f32 * TILE_SIZE + OFFSET_X;
+        let y = coord.1 as f32 * TILE_SIZE + OFFSET_Y;
         Vec2::new(x, y)
     };
 
-    let tile_map = mission_info_resource.get_ground_layer();
-    let spawn_tiles_result = TileSpawnManager::spawn_tiles(
+    let ground_layer = mission_info_resource.get_ground_layer();
+    TileSpawnManager::spawn_tiles(
         &mut commands,
         &asset_server,
-        tile_map,
-        &mut grid_to_tilemap,
+        &ground_layer,
         calculate_world_position,
     );
-    if let Err(err) = spawn_tiles_result {
-        panic!("Failed to spawn tiles: {:?}", err);
-    }
-    let grid = spawn_tiles_result.unwrap();
+    let grid: TileGrid = ground_layer.to_2d_grid();
+    let tile_to_world =
+        TileSpawnManager::create_tile_to_world_coordinates(&ground_layer, calculate_world_position);
+    game_map.set_map(grid, tile_to_world);
 
     let units_layer = mission_info_resource.get_units_layer();
     UnitSpawnManager::spawn_units(
@@ -86,8 +81,6 @@ pub fn setup2(
         buildings_layer,
         calculate_world_position,
     );
-
-    game_map.set_map(grid, grid_to_tilemap);
 
     commands.spawn(PerfUiCompleteBundle::default());
 }

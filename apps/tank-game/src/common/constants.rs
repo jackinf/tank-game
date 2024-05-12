@@ -1,8 +1,9 @@
 use crate::tile::components::tile::Tile;
+use crate::tile::tile_type::GroundTileType;
 use bevy::math::Vec2;
 use bevy::prelude::Color;
 
-pub type TileGrid = Vec<Vec<Tile>>;
+pub type TileGrid = Vec<Vec<GroundTileType>>;
 pub type RawGrid = Vec<Vec<usize>>;
 pub type WorldCoord = (f32, f32);
 pub type TileCoord = (usize, usize);

@@ -9,7 +9,7 @@ use bevy::sprite::{Anchor, SpriteBundle};
 use crate::building::building_tile::BuildingTile;
 use crate::building::components::building::Building;
 use crate::building::components::building_placement_tiles::BuildingPlacementTiles;
-use crate::common::constants::{RawGrid, SPRITE_SCALE, TILE_SIZE};
+use crate::common::constants::{RawGrid, TileCoord, SPRITE_SCALE, TILE_SIZE};
 use crate::common::player::Player;
 use crate::common::resources::me::Me;
 use crate::common::utils::logger::Logger;
@@ -25,29 +25,22 @@ impl BuildingSpawnManager {
         mut commands: &mut Commands,
         asset_server: &Res<AssetServer>,
         layer: BuildingsLayer,
-        calculate_world_position: fn(usize, usize) -> Vec2,
+        calculate_world_position: fn(&TileCoord) -> Vec2,
     ) {
         layer
-            .get_grid()
-            .into_iter()
             .enumerate()
-            .for_each(|(row_index, row_on_row)| {
-                row_on_row
-                    .into_iter()
-                    .enumerate()
-                    .for_each(|(col_index, cell)| {
-                        let pos = calculate_world_position(row_index, col_index);
-                        let map_coord = (row_index, col_index);
+            .into_iter()
+            .for_each(|(coord, building_tile)| {
+                let pos = calculate_world_position(&coord);
 
-                        BuildingSpawnManager::spawn_single(
-                            &mut commands,
-                            &asset_server,
-                            // I'm not sure why I need this hack but the building is not placed correctly
-                            Vec2::new(pos.x - TILE_SIZE / 2.0, pos.y + TILE_SIZE / 2.0),
-                            cell,
-                            map_coord,
-                        );
-                    });
+                BuildingSpawnManager::spawn_single(
+                    &mut commands,
+                    &asset_server,
+                    // I'm not sure why I need this hack but the building is not placed correctly
+                    Vec2::new(pos.x - TILE_SIZE / 2.0, pos.y + TILE_SIZE / 2.0),
+                    building_tile,
+                    coord,
+                );
             });
     }
 

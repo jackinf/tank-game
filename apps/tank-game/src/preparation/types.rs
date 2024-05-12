@@ -1,4 +1,4 @@
-use crate::common::constants::TileSize;
+use crate::common::constants::{TileCoord, TileSize};
 use crate::common::player::Player;
 use serde::{Deserialize, Serialize};
 use std::cmp::PartialEq;
@@ -17,7 +17,7 @@ impl fmt::Display for ParseError {
     }
 }
 
-pub type AssetTileId = usize;
+pub type AssetTileId = i32;
 pub type AssetImagePath = String;
 
 // TODO: why do i need this?
@@ -166,6 +166,10 @@ impl AssetTile {
         }
     }
 
+    pub fn get_id(&self) -> AssetTileId {
+        self.id
+    }
+
     pub fn is_id_and_type(&self, id: AssetTileId, tile_type: AssetTileType) -> bool {
         self.id == id && self.tile_type == tile_type
     }
@@ -190,20 +194,3 @@ impl AssetTile {
         self.player.clone()
     }
 }
-
-// TODO: i don't like this option
-// impl From<&AssetTile> for usize {
-//     fn from(asset_tile: &AssetTile) -> usize {
-//         match asset_tile.tile_sub_type {
-//             AssetTileSubType::Base => 0,
-//             AssetTileSubType::Factory => 1,
-//             AssetTileSubType::Powerplant => 2,
-//             AssetTileSubType::Tank => 3,
-//             AssetTileSubType::Gold => 4,
-//             AssetTileSubType::Ground => 5,
-//             AssetTileSubType::Invalid => 6,
-//             AssetTileSubType::Wall => 7,
-//             AssetTileSubType::Water => 8,
-//         }
-//     }
-// }
