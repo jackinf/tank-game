@@ -43,6 +43,8 @@ impl RawMissionLayer {
                 .iter()
                 .map(|row| {
                     row.iter()
+                        .filter(|tile_id| *tile_id != &0)
+                        .map(|tile_id| *tile_id - 1)
                         .map(|tile_id| tiles.get(&tile_id).unwrap().clone())
                         .collect()
                 })

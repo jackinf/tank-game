@@ -22,8 +22,8 @@
             "scale": 0.2011328125,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1242.9597980190329,
-                "y": 1265.333074383375
+                "x": 1233.0161196348806,
+                "y": 1255.3893959992233
             }
         },
         "mission02.tmj": {
@@ -47,9 +47,9 @@
     ],
     "project": "main.tiled-project",
     "recentFiles": [
+        "mission01.tmj",
         "mission02.tmj",
         "main_assets.tsj",
-        "mission01.tmj",
         "main.tsx",
         "map1..tmx"
     ],

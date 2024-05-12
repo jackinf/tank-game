@@ -70,22 +70,22 @@ pub fn setup2(
     }
     let grid = spawn_tiles_result.unwrap();
 
-    // let units_layer = mission_info_resource.get_units_layer();
-    // UnitSpawnManager::spawn_units(
-    //     &mut commands,
-    //     &asset_server,
-    //     &mut tank_id_counter,
-    //     units_layer,
-    //     calculate_world_position,
-    // );
-    //
-    // let buildings_layer = mission_info_resource.get_buildings_layer();
-    // BuildingSpawnManager::spawn_buildings(
-    //     &mut commands,
-    //     &asset_server,
-    //     buildings_layer,
-    //     calculate_world_position,
-    // );
+    let units_layer = mission_info_resource.get_units_layer();
+    UnitSpawnManager::spawn_units(
+        &mut commands,
+        &asset_server,
+        &mut tank_id_counter,
+        units_layer,
+        calculate_world_position,
+    );
+
+    let buildings_layer = mission_info_resource.get_buildings_layer();
+    BuildingSpawnManager::spawn_buildings(
+        &mut commands,
+        &asset_server,
+        buildings_layer,
+        calculate_world_position,
+    );
 
     game_map.set_map(grid, grid_to_tilemap);
 

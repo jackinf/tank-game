@@ -33,9 +33,7 @@ impl TileSpawnManager {
                         let map_coord = (row_index, col_index);
                         grid_to_tilemap.insert(map_coord, (pos.x, pos.y));
 
-                        // TODO: Consider a more appropriate error message instead of unwrap
-                        let tile_type = GroundTile::try_from(cell).unwrap();
-                        TileManager::spawn_tile(&mut commands, &assets, pos, tile_type, map_coord)
+                        TileManager::spawn_tile(&mut commands, &assets, pos, cell, map_coord)
                     })
                     .collect()
             })

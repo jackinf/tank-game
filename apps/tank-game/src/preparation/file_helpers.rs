@@ -104,8 +104,8 @@ impl FileHelpers {
             let tile_id = tile.id;
             let image_width = tile.image_width as f32;
             let image_height = tile.image_height as f32;
-            let tile_width = image_width / TILE_SIZE / SPRITE_SCALE;
-            let tile_height = image_height / TILE_SIZE / SPRITE_SCALE;
+            let tile_width = image_width / TILE_SIZE * SPRITE_SCALE;
+            let tile_height = image_height / TILE_SIZE * SPRITE_SCALE;
             let tile_size: TileSize = (tile_width.round() as usize, tile_height.round() as usize);
 
             let tile_type = tile.properties.iter().find(|p| p.name == "type");
