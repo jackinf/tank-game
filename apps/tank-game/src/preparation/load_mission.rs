@@ -30,7 +30,17 @@ impl RawMissionLayer {
             let col = index % self.width;
             data_2d[row][col] = *tile_id as i32;
         }
-        data_2d
+
+        // rotate data_2d clockwise 90 degrees
+        let mut rotated_data = vec![vec![0; self.height]; self.width]; // flipped dimensions
+        for row in 0..self.height {
+            for col in 0..self.width {
+                // Transpose and then reverse rows to rotate counterclockwise
+                rotated_data[col][self.height - 1 - row] = data_2d[row][col];
+            }
+        }
+
+        rotated_data
     }
 }
 
@@ -115,7 +125,7 @@ impl GroundLayer {
     }
 
     pub fn to_2d_grid(&self) -> TileGrid {
-        let mut grid = vec![vec![GroundTileType::Grass; self.width]; self.height];
+        let mut grid = vec![vec![GroundTileType::Grass; self.height]; self.width];
         self.tiles.iter().for_each(|(coord, ground)| {
             grid[coord.0][coord.1] = ground.get_ground_type().clone();
         });
@@ -257,7 +267,6 @@ pub fn load_mission(
         .ok_or(LoadMissionError::NoBuildingsLayerError)?
         .from(&assets)
         .into();
-    // dbg!(&buildings_layer);
 
     let units_layer: UnitsLayer = raw_mission
         .layers

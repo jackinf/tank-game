@@ -37,7 +37,10 @@ impl BuildingSpawnManager {
                     &mut commands,
                     &asset_server,
                     // I'm not sure why I need this hack but the building is not placed correctly
-                    Vec2::new(pos.x - TILE_SIZE / 2.0, pos.y + TILE_SIZE / 2.0),
+                    Vec2::new(
+                        pos.x - TILE_SIZE / 2.0,
+                        (pos.y + TILE_SIZE) + TILE_SIZE / 2.0,
+                    ),
                     building_tile,
                     coord,
                 );

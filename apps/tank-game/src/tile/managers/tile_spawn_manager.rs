@@ -16,7 +16,6 @@ impl TileSpawnManager {
         mut commands: &mut Commands,
         assets: &Res<AssetServer>,
         ground_layer: &GroundLayer,
-        // grid_to_tilemap: &mut HashMap<TileCoord, (f32, f32)>,
         calculate_world_position: fn(&TileCoord) -> Vec2,
     ) {
         ground_layer

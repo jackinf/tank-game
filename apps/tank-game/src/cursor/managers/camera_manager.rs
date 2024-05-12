@@ -24,7 +24,6 @@ impl CameraManager {
         q_menu_info: Query<&MenuInfo>,
         mut mouse_button_events: EventReader<MouseButtonInput>,
         mut click_info: ResMut<ClickInfo>,
-        // game_map: Res<GameMap>,
     ) {
         let dt = time.delta_seconds();
 
