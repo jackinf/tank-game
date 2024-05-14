@@ -8,7 +8,7 @@
  "margin":0,
  "name":"main_assets",
  "spacing":0,
- "tilecount":11,
+ "tilecount":13,
  "tiledversion":"1.10.2",
  "tileheight":256,
  "tiles":[
@@ -229,6 +229,18 @@
                  "value":"ground"
                 }],
          "type":"ground"
+        }, 
+        {
+         "id":11,
+         "image":"sprites\/p2.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":12,
+         "image":"sprites\/p1.png",
+         "imageheight":128,
+         "imagewidth":128
         }],
  "tilewidth":256,
  "type":"tileset",

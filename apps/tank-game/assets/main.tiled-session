@@ -20,14 +20,22 @@
         },
         "mission01.tmj": {
             "scale": 0.2011328125,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 1218.1006020586522,
+                "y": 1255.3893959992233
+            }
+        },
+        "mission02.tmj": {
+            "scale": 0.13408854166666667,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1223.0724412507284,
-                "y": 1255.3893959992233
+                "x": 1924.1017673334627,
+                "y": 1286.4633909496988
             }
         }
     },
-    "last.imagePath": "C:/Users/zekar/RustroverProjects/tank-game/apps/tank-game/assets/sprites/tiles",
+    "last.imagePath": "C:/Users/zekar/RustroverProjects/tank-game/apps/tank-game/assets/sprites",
     "map.height": 10,
     "map.lastUsedFormat": "json",
     "map.tileHeight": 128,
@@ -39,9 +47,9 @@
     ],
     "project": "main.tiled-project",
     "recentFiles": [
+        "main_assets.tsj",
         "mission01.tmj",
         "mission02.tmj",
-        "main_assets.tsj",
         "main.tsx",
         "map1..tmx"
     ],
