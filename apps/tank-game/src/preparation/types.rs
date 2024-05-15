@@ -142,8 +142,8 @@ pub struct AssetTile {
     id: AssetTileId,
     image: AssetImagePath,
     tile_size: TileSize,
-    tile_type: AssetTileType,
-    tile_sub_type: AssetTileSubType,
+    tile_type: Option<AssetTileType>,
+    tile_sub_type: Option<AssetTileSubType>,
     player: Option<Player>,
 }
 
@@ -152,8 +152,8 @@ impl AssetTile {
         id: AssetTileId,
         image: AssetImagePath,
         tile_size: TileSize,
-        tile_type: AssetTileType,
-        tile_sub_type: AssetTileSubType,
+        tile_type: Option<AssetTileType>,
+        tile_sub_type: Option<AssetTileSubType>,
         player: Option<Player>,
     ) -> Self {
         AssetTile {
@@ -171,18 +171,21 @@ impl AssetTile {
     }
 
     pub fn is_id_and_type(&self, id: AssetTileId, tile_type: AssetTileType) -> bool {
-        self.id == id && self.tile_type == tile_type
+        if self.tile_type.is_none() {
+            return false;
+        }
+        self.id == id && self.tile_type.clone().unwrap() == tile_type
     }
 
     pub fn get_tile_size(&self) -> TileSize {
         self.tile_size.clone()
     }
 
-    pub fn get_tile_type(&self) -> AssetTileType {
+    pub fn get_tile_type(&self) -> Option<AssetTileType> {
         self.tile_type.clone()
     }
 
-    pub fn get_tile_sub_type(&self) -> AssetTileSubType {
+    pub fn get_tile_sub_type(&self) -> Option<AssetTileSubType> {
         self.tile_sub_type.clone()
     }
 

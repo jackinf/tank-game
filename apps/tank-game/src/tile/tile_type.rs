@@ -1,6 +1,7 @@
 use crate::common::constants::{TileCoord, TileSize};
 use crate::preparation::types::{AssetTile, AssetTileSubType, AssetTileType};
 use std::convert::TryFrom;
+use crate::building::building_tile::BuildingTileErrors;
 
 #[derive(Clone, Debug, PartialEq, Hash, Eq)]
 pub struct GroundTile {
@@ -38,27 +39,53 @@ pub enum GroundTileType {
 
 #[derive(Debug)]
 pub enum GroundTileErrors {
+    TileTypeIsRequired,
+    TileSubTypeIsRequired,
     InvalidTileType,
-    InvalidTileSubType,
+    InvalidTileSubType { message: String },
 }
 
 impl TryFrom<AssetTile> for GroundTile {
     type Error = GroundTileErrors;
 
     fn try_from(value: AssetTile) -> Result<Self, Self::Error> {
-        if value.get_tile_type() != AssetTileType::Ground {
+        let tile_type = value.get_tile_type();
+        let tile_sub_type = value.get_tile_sub_type();
+
+        if tile_type.is_none() {
+            return Err(GroundTileErrors::TileTypeIsRequired);
+        }
+
+        if tile_sub_type.is_none() {
+            return Err(GroundTileErrors::TileSubTypeIsRequired);
+        }
+
+        let tile_type = tile_type.unwrap();
+        let tile_sub_type = tile_sub_type.unwrap();
+
+        if tile_type != AssetTileType::Ground {
             return Err(GroundTileErrors::InvalidTileType);
         }
 
-        let ground_tile_type = match value.get_tile_sub_type() {
+        let ground_tile_type = match tile_sub_type {
             AssetTileSubType::Ground => Ok(GroundTileType::Grass),
             AssetTileSubType::Gold => Ok(GroundTileType::Gold),
             AssetTileSubType::Wall => Ok(GroundTileType::Wall),
             AssetTileSubType::Water => Ok(GroundTileType::Water),
-            _ => Err(GroundTileErrors::InvalidTileSubType),
+            _ => Err(GroundTileErrors::InvalidTileSubType {
+                message: format!(
+                    "'{}' is not a valid GroundTileType",
+                    tile_sub_type.to_string()
+                ),
+            }),
         };
         if ground_tile_type.is_err() {
-            return Err(GroundTileErrors::InvalidTileSubType);
+            return Err(GroundTileErrors::InvalidTileSubType {
+                message: format!(
+                    "'{}' is not a valid GroundTileType",
+                    tile_sub_type.to_string()
+                ),
+            });
         }
         let ground_tile_type = ground_tile_type.unwrap();
 

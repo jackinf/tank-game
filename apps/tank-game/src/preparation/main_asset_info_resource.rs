@@ -30,7 +30,7 @@ impl MainAssetInfoResource {
 
         for tile in self.tiles.values() {
             match tile.get_tile_type() {
-                AssetTileType::Building => {
+                Some(AssetTileType::Building) => {
                     let res: Result<BuildingTile, BuildingTileErrors> =
                         BuildingTile::try_from(tile.clone());
                     if let Ok(building_tile) = res {
@@ -38,19 +38,20 @@ impl MainAssetInfoResource {
                             .insert(building_tile.get_building_type(), building_tile);
                     }
                 }
-                AssetTileType::Unit => {
+                Some(AssetTileType::Unit) => {
                     let res = UnitTile::try_from(tile.clone());
                     if let Ok(unit_tile) = res {
                         self.unit_tiles.insert(unit_tile.get_unit_type(), unit_tile);
                     }
                 }
-                AssetTileType::Ground => {
+                Some(AssetTileType::Ground) => {
                     let res = GroundTile::try_from(tile.clone());
                     if let Ok(ground_tile) = res {
                         self.ground_tiles
                             .insert(ground_tile.get_ground_type(), ground_tile);
                     }
                 }
+                None => {}
             }
         }
 
@@ -76,6 +77,7 @@ impl MainAssetInfoResource {
     pub fn find_tile_by_sub_type(&self, sub_type: AssetTileSubType) -> Option<&AssetTile> {
         self.tiles
             .values()
-            .find(|tile| tile.get_tile_sub_type() == sub_type)
+            .filter(|tile| tile.get_tile_sub_type().is_some())
+            .find(|tile| tile.get_tile_sub_type().unwrap() == sub_type)
     }
 }

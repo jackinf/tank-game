@@ -43,6 +43,7 @@ struct AssetRawTile {
     image_height: usize,
     #[serde(rename = "imagewidth")]
     image_width: usize,
+    #[serde(default)]
     properties: Vec<AssetRawTileProperty>,
 }
 
@@ -108,19 +109,29 @@ impl FileHelpers {
             let tile_height = image_height / TILE_SIZE * SPRITE_SCALE;
             let tile_size: TileSize = (tile_width.round() as usize, tile_height.round() as usize);
 
-            let tile_type = tile.properties.iter().find(|p| p.name == "type");
-            let tile_sub_type = tile.properties.iter().find(|p| p.name == "subtype");
-            let player = tile.properties.iter().find(|p| p.name == "player");
+            let tile_type = tile.properties
+                .iter()
+                .find(|p| p.name == "type")
+                .map(|p| p.value.clone())
+                .map(|tt| {
+                    AssetTileType::from_str(&tt)
+                        .map_err(|_| FileHelperErrors::TileTypeParseFailed { tile_id })
+                })
+                .transpose()?;
 
-            let tile_type = tile_type
-                .ok_or_else(|| FileHelperErrors::TileTypeNotFound { tile_id })?
-                .value
-                .clone();
-            let tile_sub_type = tile_sub_type
-                .ok_or_else(|| FileHelperErrors::TileSubTypeNotFound { tile_id })?
-                .value
-                .clone();
-            let player: Option<Player> = player
+            let tile_sub_type = tile.properties
+                .iter()
+                .find(|p| p.name == "subtype")
+                .map(|p| p.value.clone())
+                .map(|tst| {
+                    AssetTileSubType::from_str(&tst)
+                        .map_err(|_| FileHelperErrors::TileSubTypeParseFailed { tile_id })
+                })
+                .transpose()?;
+
+            let player: Option<Player> = tile.properties
+                .iter()
+                .find(|p| p.name == "player")
                 .map(|p| p.value.clone())
                 .map(|p| {
                     if p == "1" {
@@ -132,11 +143,6 @@ impl FileHelpers {
                     }
                 })
                 .flatten();
-
-            let tile_type = AssetTileType::from_str(&tile_type)
-                .map_err(|_| FileHelperErrors::TileTypeParseFailed { tile_id })?;
-            let tile_sub_type = AssetTileSubType::from_str(&tile_sub_type)
-                .map_err(|_| FileHelperErrors::TileSubTypeParseFailed { tile_id })?;
 
             tiles_map.insert(
                 tile_id,

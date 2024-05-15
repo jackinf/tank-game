@@ -21,6 +21,8 @@ pub enum BuildingTileType {
 
 #[derive(Debug)]
 pub enum BuildingTileErrors {
+    TileTypeIsRequired,
+    TileSubTypeIsRequired,
     InvalidBuildingType { message: String },
     MissingPlayer,
 }
@@ -29,22 +31,33 @@ impl TryFrom<AssetTile> for BuildingTile {
     type Error = BuildingTileErrors;
 
     fn try_from(value: AssetTile) -> Result<Self, Self::Error> {
-        let tile_type_name = value.get_tile_type().to_string();
-        if value.get_tile_type() != AssetTileType::Building {
+        let tile_type = value.get_tile_type();
+        let tile_sub_type = value.get_tile_sub_type();
+
+        if tile_type.is_none() {
+            return Err(BuildingTileErrors::TileTypeIsRequired);
+        }
+
+        if tile_sub_type.is_none() {
+            return Err(BuildingTileErrors::TileSubTypeIsRequired);
+        }
+
+        let tile_type = tile_type.unwrap();
+        let tile_sub_type = tile_sub_type.unwrap();
+        if tile_type != AssetTileType::Building {
             return Err(BuildingTileErrors::InvalidBuildingType {
-                message: format!("'{}' is not a valid AssetTileType", tile_type_name),
+                message: format!("'{}' is not a valid AssetTileType", tile_sub_type.to_string()),
             });
         }
 
-        let get_tile_sub_type_name = value.get_tile_sub_type().to_string();
-        let building_tile_type = match value.get_tile_sub_type() {
+        let building_tile_type = match tile_sub_type {
             AssetTileSubType::Base => Ok(BuildingTileType::Base),
             AssetTileSubType::Factory => Ok(BuildingTileType::Factory),
             AssetTileSubType::Powerplant => Ok(BuildingTileType::PowerPlant),
             _ => Err(BuildingTileErrors::InvalidBuildingType {
                 message: format!(
                     "'{}' is not a valid BuildingTileType",
-                    get_tile_sub_type_name
+                    tile_sub_type.to_string()
                 ),
             }),
         };
