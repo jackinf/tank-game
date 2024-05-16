@@ -1,5 +1,5 @@
 use crate::constants::{TileCoord, TileGrid};
-use crate::features::building::building_tile::BuildingTile;
+use crate::features::building::types::BuildingTile;
 use crate::features::preparation::main_asset_info_resource::MainAssetInfoResource;
 use crate::features::preparation::types::{AssetTile, AssetTileId};
 use crate::features::tile::tile_type::{GroundTile, GroundTileType};

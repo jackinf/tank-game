@@ -1,6 +1,4 @@
-use crate::features::building::building_tile::{
-    BuildingTile, BuildingTileErrors, BuildingTileType,
-};
+use crate::features::building::types::{BuildingTile, BuildingTileType};
 use crate::features::preparation::types::{
     AssetTile, AssetTileId, AssetTileSubType, AssetTileType,
 };
@@ -35,8 +33,7 @@ impl MainAssetInfoResource {
         for tile in self.tiles.values() {
             match tile.get_tile_type() {
                 Some(AssetTileType::Building) => {
-                    let res: Result<BuildingTile, BuildingTileErrors> =
-                        BuildingTile::try_from(tile.clone());
+                    let res = BuildingTile::try_from(tile.clone());
                     if let Ok(building_tile) = res {
                         self.building_tiles
                             .insert(building_tile.get_building_type(), building_tile);

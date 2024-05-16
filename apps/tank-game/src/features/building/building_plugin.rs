@@ -1,43 +1,18 @@
 use bevy::app::{App, FixedUpdate, PreStartup};
-use bevy::asset::AssetServer;
-use bevy::math::{Vec2, Vec3};
-use bevy::prelude::{
-    default, Color, Commands, Plugin, Res, Sprite, SpriteBundle, Transform, Update,
-};
+use bevy::prelude::{Plugin, Update};
 
-use crate::constants::TILE_SIZE;
-use crate::features::building::components::building_placement_tiles::BuildingPlacementTiles;
-use crate::features::building::managers::building_construction_manager::BuildingConstructionManager;
-use crate::features::building::managers::building_interaction_manager::BuildingInteractionManager;
-use crate::features::building::managers::building_spawn_manager::BuildingSpawnManager;
+use crate::features::building::systems::draw_construction_tiles::draw_construction_tiles;
+use crate::features::building::systems::interact_with_building::interact_with_building;
+use crate::features::building::systems::setup::setup;
+use crate::features::building::systems::update_building_construction::update_building_construction;
 
 pub struct BuildingPlugin;
 
 impl Plugin for BuildingPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(PreStartup, setup)
-            .add_systems(
-                FixedUpdate,
-                BuildingConstructionManager::update_building_construction,
-            )
-            .add_systems(FixedUpdate, BuildingSpawnManager::draw_construction_tiles)
-            .add_systems(Update, BuildingInteractionManager::interact);
+            .add_systems(FixedUpdate, update_building_construction)
+            .add_systems(FixedUpdate, draw_construction_tiles)
+            .add_systems(Update, interact_with_building);
     }
-}
-
-fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
-    // selector entity for placing buildings
-    commands
-        .spawn((SpriteBundle {
-            texture: asset_server.load("pixels/white.png"),
-            transform: Transform::default()
-                .with_translation(Vec3::new(0., 0., 100.))
-                .with_scale(Vec2::new(2.0 * TILE_SIZE, 2.0 * TILE_SIZE).extend(1.0)),
-            sprite: Sprite {
-                color: Color::PINK.with_a(0.0), // hide by default
-                ..default()
-            },
-            ..default()
-        },))
-        .insert(BuildingPlacementTiles::new());
 }

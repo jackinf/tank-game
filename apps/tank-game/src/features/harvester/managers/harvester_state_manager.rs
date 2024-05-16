@@ -3,8 +3,8 @@ use std::collections::VecDeque;
 use bevy::prelude::{Query, Res, ResMut, Time, Transform, Vec2, Vec3Swizzles, With};
 
 use crate::constants::TileCoord;
-use crate::features::building::building_tile::BuildingTileType;
 use crate::features::building::components::building::Building;
+use crate::features::building::types::building_tile_type::BuildingTileType;
 use crate::features::con_menu::components::menu_info::MenuInfo;
 use crate::features::harvester::components::harvester::Harvester;
 use crate::features::harvester::resources::harvester_timer::HarvesterTimer;

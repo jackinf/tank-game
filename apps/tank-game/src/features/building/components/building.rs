@@ -3,7 +3,7 @@ use std::collections::HashSet;
 use bevy::prelude::Component;
 
 use crate::constants::{TileCoord, TileSize};
-use crate::features::building::building_tile::{BuildingTile, BuildingTileType};
+use crate::features::building::types::{BuildingTile, BuildingTileType};
 use crate::types::player::Player;
 
 #[derive(Component, Clone)]

@@ -1,7 +1,7 @@
-use crate::features::building::building_tile::BuildingTile;
-use bevy::prelude::{Component, Query, Res, Time};
+use crate::features::building::types::building_tile::BuildingTile;
+use bevy::prelude::Component;
 
-pub struct BuildingQueueItem {
+struct BuildingQueueItem {
     building_type: BuildingTile,
     progress: f32,
 }
@@ -53,20 +53,5 @@ impl BuildingQueue {
 
     pub fn pop(&mut self) -> Option<BuildingQueueItem> {
         self.items.pop()
-    }
-}
-
-pub struct BuildingConstructionManager;
-
-impl BuildingConstructionManager {
-    pub fn update_building_construction(
-        time: Res<Time>,
-        mut q_building_queues: Query<&mut BuildingQueue>,
-    ) {
-        let delta = time.delta_seconds();
-
-        q_building_queues.iter_mut().for_each(|mut building_queue| {
-            building_queue.update(delta);
-        });
     }
 }

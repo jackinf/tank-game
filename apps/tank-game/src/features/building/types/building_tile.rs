@@ -1,9 +1,9 @@
 use crate::constants::TileSize;
+use crate::features::building::types::building_tile_type::BuildingTileType;
 use crate::features::con_menu::components::submenu_info::SubMenuType;
 use crate::features::preparation::types::{AssetTile, AssetTileSubType, AssetTileType};
 use crate::types::player::Player;
 
-// TODO: consider using trait like CommonTile or GeneralTile
 #[derive(Clone, Debug, PartialEq)]
 pub struct BuildingTile {
     image_path: String,
@@ -12,76 +12,12 @@ pub struct BuildingTile {
     player: Player,
 }
 
-#[derive(Clone, Debug, PartialEq, Hash, Eq)]
-pub enum BuildingTileType {
-    Base = 10,
-    Factory = 20,
-    PowerPlant = 30,
-}
-
 #[derive(Debug)]
 pub enum BuildingTileErrors {
     TileTypeIsRequired,
     TileSubTypeIsRequired,
     InvalidBuildingType { message: String },
     MissingPlayer,
-}
-
-impl TryFrom<AssetTile> for BuildingTile {
-    type Error = BuildingTileErrors;
-
-    fn try_from(value: AssetTile) -> Result<Self, Self::Error> {
-        let tile_type = value.get_tile_type();
-        let tile_sub_type = value.get_tile_sub_type();
-
-        if tile_type.is_none() {
-            return Err(BuildingTileErrors::TileTypeIsRequired);
-        }
-
-        if tile_sub_type.is_none() {
-            return Err(BuildingTileErrors::TileSubTypeIsRequired);
-        }
-
-        let tile_type = tile_type.unwrap();
-        let tile_sub_type = tile_sub_type.unwrap();
-        if tile_type != AssetTileType::Building {
-            return Err(BuildingTileErrors::InvalidBuildingType {
-                message: format!(
-                    "'{}' is not a valid AssetTileType",
-                    tile_sub_type.to_string()
-                ),
-            });
-        }
-
-        let building_tile_type = match tile_sub_type {
-            AssetTileSubType::Base => Ok(BuildingTileType::Base),
-            AssetTileSubType::Factory => Ok(BuildingTileType::Factory),
-            AssetTileSubType::Powerplant => Ok(BuildingTileType::PowerPlant),
-            _ => Err(BuildingTileErrors::InvalidBuildingType {
-                message: format!(
-                    "'{}' is not a valid BuildingTileType",
-                    tile_sub_type.to_string()
-                ),
-            }),
-        };
-
-        if let Err(e) = building_tile_type {
-            return Err(e);
-        }
-        let building_tile_type = building_tile_type.unwrap();
-
-        if value.get_player().is_none() {
-            return Err(BuildingTileErrors::MissingPlayer);
-        }
-        let player = value.get_player().unwrap();
-
-        Ok(BuildingTile {
-            image_path: value.get_image_path(),
-            tile_size: value.get_tile_size(),
-            building_type: building_tile_type,
-            player,
-        })
-    }
 }
 
 impl BuildingTile {
@@ -138,5 +74,62 @@ impl BuildingTile {
             BuildingTileType::Factory => -20,
             BuildingTileType::PowerPlant => 100,
         }
+    }
+}
+
+impl TryFrom<AssetTile> for BuildingTile {
+    type Error = BuildingTileErrors;
+
+    fn try_from(value: AssetTile) -> Result<Self, Self::Error> {
+        let tile_type = value.get_tile_type();
+        let tile_sub_type = value.get_tile_sub_type();
+
+        if tile_type.is_none() {
+            return Err(BuildingTileErrors::TileTypeIsRequired);
+        }
+
+        if tile_sub_type.is_none() {
+            return Err(BuildingTileErrors::TileSubTypeIsRequired);
+        }
+
+        let tile_type = tile_type.unwrap();
+        let tile_sub_type = tile_sub_type.unwrap();
+        if tile_type != AssetTileType::Building {
+            return Err(BuildingTileErrors::InvalidBuildingType {
+                message: format!(
+                    "'{}' is not a valid AssetTileType",
+                    tile_sub_type.to_string()
+                ),
+            });
+        }
+
+        let building_tile_type = match tile_sub_type {
+            AssetTileSubType::Base => Ok(BuildingTileType::Base),
+            AssetTileSubType::Factory => Ok(BuildingTileType::Factory),
+            AssetTileSubType::Powerplant => Ok(BuildingTileType::PowerPlant),
+            _ => Err(BuildingTileErrors::InvalidBuildingType {
+                message: format!(
+                    "'{}' is not a valid BuildingTileType",
+                    tile_sub_type.to_string()
+                ),
+            }),
+        };
+
+        if let Err(e) = building_tile_type {
+            return Err(e);
+        }
+        let building_tile_type = building_tile_type.unwrap();
+
+        if value.get_player().is_none() {
+            return Err(BuildingTileErrors::MissingPlayer);
+        }
+        let player = value.get_player().unwrap();
+
+        Ok(BuildingTile {
+            image_path: value.get_image_path(),
+            tile_size: value.get_tile_size(),
+            building_type: building_tile_type,
+            player,
+        })
     }
 }

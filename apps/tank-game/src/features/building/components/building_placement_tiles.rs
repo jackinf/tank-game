@@ -1,4 +1,4 @@
-use crate::features::building::building_tile::BuildingTile;
+use crate::features::building::types::BuildingTile;
 use bevy::prelude::Component;
 
 #[derive(Component)]

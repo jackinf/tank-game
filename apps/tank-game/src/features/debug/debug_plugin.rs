@@ -1,8 +1,8 @@
 use bevy::app::Plugin;
 use bevy::prelude::*;
 
-use crate::features::building::building_tile::BuildingTileType;
 use crate::features::building::components::building_placement_tiles::BuildingPlacementTiles;
+use crate::features::building::types::building_tile_type::BuildingTileType;
 use crate::features::con_menu::components::menu_info::MenuInfo;
 use crate::features::cursor::resources::cursor_coordinates::CursorCoordinates;
 use crate::features::debug::resources::tank_log_timer::TankLogTimer;

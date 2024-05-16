@@ -4,7 +4,7 @@ use bevy::prelude::{Commands, Res, ResMut};
 use iyes_perf_ui::PerfUiCompleteBundle;
 
 use crate::constants::{TileCoord, TileGrid, OFFSET_X, OFFSET_Y, TILE_SIZE};
-use crate::features::building::managers::building_spawn_manager::BuildingSpawnManager;
+use crate::features::building::actions::spawn_buildings::spawn_buildings;
 use crate::features::preparation::mission_info_resource::MissionInfoResource;
 use crate::features::tile::managers::tile_spawn_manager::TileSpawnManager;
 use crate::features::unit::managers::unit_spawn_manager::UnitSpawnManager;
@@ -50,7 +50,7 @@ pub fn setup2(
     );
 
     let buildings_layer = mission_info_resource.get_buildings_layer();
-    BuildingSpawnManager::spawn_buildings(
+    spawn_buildings(
         &mut commands,
         &asset_server,
         buildings_layer,
