@@ -1,6 +1,7 @@
-use crate::features::preparation::load_mission::{
-    BuildingsLayer, GroundLayer, MissionInfo, UnitsLayer,
-};
+use crate::features::preparation::types::buildings_layer::BuildingsLayer;
+use crate::features::preparation::types::ground_layer::GroundLayer;
+use crate::features::preparation::types::mission_info::MissionInfo;
+use crate::features::preparation::types::units_layer::UnitsLayer;
 use bevy::prelude::Resource;
 
 #[derive(Resource)]

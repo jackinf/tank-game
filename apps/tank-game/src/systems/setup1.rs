@@ -1,16 +1,17 @@
+use crate::features::preparation::actions::load_mission::load_mission;
+use crate::features::preparation::actions::read_main_assets::read_main_assets;
+use crate::features::preparation::resources::mission_info_resource::MissionInfoResource;
 use bevy::prelude::ResMut;
 
-use crate::features::preparation::file_helpers::FileHelpers;
-use crate::features::preparation::load_mission::{load_mission, MissionInfo};
-use crate::features::preparation::main_asset_info::MainAssetInfo;
-use crate::features::preparation::main_asset_info_resource::MainAssetInfoResource;
-use crate::features::preparation::mission_info_resource::MissionInfoResource;
+use crate::features::preparation::types::main_asset_info::MainAssetInfo;
+use crate::features::preparation::types::main_asset_info_resource::MainAssetInfoResource;
+use crate::features::preparation::types::mission_info::MissionInfo;
 
 pub fn setup1(
     mut main_asset_info_resource: ResMut<MainAssetInfoResource>,
     mut mission_info_resource: ResMut<MissionInfoResource>,
 ) {
-    let assets_result = FileHelpers::read_assets("apps/tank-game/assets/main_assets.tsj");
+    let assets_result = read_main_assets("apps/tank-game/assets/main_assets.tsj");
     if let Err(err) = assets_result {
         panic!("Failed to read assets: {}", err);
     }

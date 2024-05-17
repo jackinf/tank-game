@@ -1,5 +1,5 @@
 use crate::constants::{TileCoord, WorldCoord};
-use crate::features::preparation::load_mission::GroundLayer;
+use crate::features::preparation::types::ground_layer::GroundLayer;
 use crate::features::tile::managers::tile_manager::TileManager;
 use bevy::prelude::{AssetServer, Commands, Res, Vec2};
 use std::collections::HashMap;

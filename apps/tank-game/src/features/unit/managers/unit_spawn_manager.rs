@@ -4,7 +4,7 @@ use bevy::prelude::{Commands, Res, ResMut};
 
 use crate::constants::TileCoord;
 use crate::features::harvester::managers::harvester_spawn_manager::HarvesterSpawnManager;
-use crate::features::preparation::load_mission::UnitsLayer;
+use crate::features::preparation::types::units_layer::UnitsLayer;
 use crate::features::tank::managers::tank_spawn_manager::TankSpawnManager;
 use crate::features::unit::resources::unit_id_counter::UnitIdCounter;
 use crate::features::unit::unit_tile::UnitTileType;

@@ -1,6 +1,6 @@
 use crate::constants::{TileCoord, TILE_SIZE};
 use crate::features::building::actions::spawn_building;
-use crate::features::preparation::load_mission::BuildingsLayer;
+use crate::features::preparation::types::buildings_layer::BuildingsLayer;
 use bevy::prelude::{AssetServer, Commands, Res, Vec2};
 
 pub fn spawn_buildings(
