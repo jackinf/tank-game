@@ -6,8 +6,8 @@ use crate::features::building::types::building_tile_type::BuildingTileType;
 use crate::features::con_menu::components::menu_info::MenuInfo;
 use crate::features::cursor::resources::cursor_coordinates::CursorCoordinates;
 use crate::features::debug::resources::tank_log_timer::TankLogTimer;
-use crate::features::preparation::types::main_asset_info_resource::MainAssetInfoResource;
 use crate::features::tank::components::tank::Tank;
+use crate::types::main_asset_info_resource::MainAssetInfoResource;
 
 pub struct DebugPlugin;
 

@@ -1,6 +1,6 @@
 use crate::constants::TileCoord;
 use crate::features::building::types::BuildingTile;
-use crate::features::preparation::types::mission_layer::MissionLayer;
+use crate::types::mission_layer::MissionLayer;
 use std::collections::HashMap;
 
 #[derive(Debug, Clone)]

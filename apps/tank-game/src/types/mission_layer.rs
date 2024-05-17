@@ -1,5 +1,5 @@
 use crate::constants::TileCoord;
-use crate::features::preparation::types::AssetTile;
+use crate::types::AssetTile;
 use std::collections::HashMap;
 
 #[derive(Clone, Debug)]

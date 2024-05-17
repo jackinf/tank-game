@@ -1,5 +1,5 @@
 use crate::constants::TileSize;
-use crate::features::preparation::types::{AssetTile, AssetTileSubType, AssetTileType};
+use crate::types::{AssetTile, AssetTileSubType, AssetTileType};
 use std::convert::TryFrom;
 
 #[derive(Clone, Debug, PartialEq, Hash, Eq)]

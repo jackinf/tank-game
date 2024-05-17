@@ -1,8 +1,8 @@
 use crate::constants::TileSize;
 use crate::features::building::types::building_tile_type::BuildingTileType;
 use crate::features::con_menu::components::submenu_info::SubMenuType;
-use crate::features::preparation::types::{AssetTile, AssetTileSubType, AssetTileType};
 use crate::types::player::Player;
+use crate::types::{AssetTile, AssetTileSubType, AssetTileType};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct BuildingTile {

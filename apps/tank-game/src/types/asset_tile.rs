@@ -1,6 +1,6 @@
 use crate::constants::TileSize;
-use crate::features::preparation::types::asset_tile_sub_type::AssetTileSubType;
-use crate::features::preparation::types::asset_tile_type::AssetTileType;
+use crate::types::asset_tile_sub_type::AssetTileSubType;
+use crate::types::asset_tile_type::AssetTileType;
 use crate::types::player::Player;
 
 pub type AssetTileId = i32;

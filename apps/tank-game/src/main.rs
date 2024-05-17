@@ -41,11 +41,12 @@ fn main() {
     app.run()
 }
 
+pub mod actions;
 pub mod constants;
 pub mod features;
 pub mod resources;
-mod systems;
-mod types;
+pub mod systems;
+pub mod types;
 pub mod utils;
 
 use crate::constants::{MAX_HEIGHT, MAX_WIDTH};
@@ -60,13 +61,13 @@ use crate::features::cursor::cursor_plugin::CursorPlugin;
 use crate::features::debug::debug_plugin::DebugPlugin;
 use crate::features::harvester::harvester_plugin::HarvesterPlugin;
 use crate::features::monitoring::monitoring_plugin::MonitoringPlugin;
-use crate::features::preparation::resources::mission_info_resource::MissionInfoResource;
 use crate::features::tank::tank_plugin::TankPlugin;
 use crate::features::unit::resources::unit_id_counter::UnitIdCounter;
 use crate::features::unit::unit_selection_plugin::UnitSelectionPlugin;
 use crate::resources::game_map::GameMap;
 use crate::resources::me::Me;
+use crate::resources::mission_info_resource::MissionInfoResource;
 use crate::systems::setup1::setup1;
 use crate::systems::setup2::setup2;
 use crate::types::player::Player;
-use features::preparation::types::main_asset_info_resource::MainAssetInfoResource;
+use types::main_asset_info_resource::MainAssetInfoResource;

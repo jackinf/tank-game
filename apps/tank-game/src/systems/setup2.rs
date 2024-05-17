@@ -5,11 +5,11 @@ use iyes_perf_ui::PerfUiCompleteBundle;
 
 use crate::constants::{TileCoord, TileGrid, OFFSET_X, OFFSET_Y, TILE_SIZE};
 use crate::features::building::actions::spawn_buildings::spawn_buildings;
-use crate::features::preparation::resources::mission_info_resource::MissionInfoResource;
 use crate::features::tile::managers::tile_spawn_manager::TileSpawnManager;
 use crate::features::unit::managers::unit_spawn_manager::UnitSpawnManager;
 use crate::features::unit::resources::unit_id_counter::UnitIdCounter;
 use crate::resources::game_map::GameMap;
+use crate::resources::mission_info_resource::MissionInfoResource;
 
 pub fn setup2(
     mission_info_resource: Res<MissionInfoResource>,

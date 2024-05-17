@@ -1,7 +1,7 @@
 use crate::constants::TileCoord;
-use crate::features::preparation::types::main_asset_info_resource::MainAssetInfoResource;
-use crate::features::preparation::types::mission_layer::MissionLayer;
-use crate::features::preparation::types::{AssetTile, AssetTileId};
+use crate::types::main_asset_info_resource::MainAssetInfoResource;
+use crate::types::mission_layer::MissionLayer;
+use crate::types::{AssetTile, AssetTileId};
 use serde::Deserialize;
 use std::collections::HashMap;
 

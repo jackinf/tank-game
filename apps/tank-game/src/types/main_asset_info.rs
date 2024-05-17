@@ -1,4 +1,4 @@
-use crate::features::preparation::types::{AssetTile, AssetTileId};
+use crate::types::{AssetTile, AssetTileId};
 use std::collections::HashMap;
 
 #[derive(Debug)]

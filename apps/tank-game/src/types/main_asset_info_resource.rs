@@ -1,9 +1,7 @@
 use crate::features::building::types::{BuildingTile, BuildingTileType};
-use crate::features::preparation::types::{
-    AssetTile, AssetTileId, AssetTileSubType, AssetTileType,
-};
 use crate::features::tile::tile_type::{GroundTile, GroundTileType};
 use crate::features::unit::unit_tile::{UnitTile, UnitTileType};
+use crate::types::{AssetTile, AssetTileId, AssetTileSubType, AssetTileType};
 use bevy::prelude::Resource;
 use std::collections::HashMap;
 

@@ -6,11 +6,9 @@ use std::{fmt, fs};
 use serde::{Deserialize, Serialize};
 
 use crate::constants::{TileSize, SPRITE_SCALE, TILE_SIZE};
-use crate::features::preparation::types::main_asset_info::MainAssetInfo;
-use crate::features::preparation::types::{
-    AssetImagePath, AssetTile, AssetTileId, AssetTileSubType, AssetTileType,
-};
+use crate::types::main_asset_info::MainAssetInfo;
 use crate::types::player::Player;
+use crate::types::{AssetImagePath, AssetTile, AssetTileId, AssetTileSubType, AssetTileType};
 
 #[derive(Serialize, Deserialize, Debug)]
 struct AssetRawTileProperty {

@@ -1,6 +1,6 @@
 use crate::constants::TileSize;
-use crate::features::preparation::types::{AssetTile, AssetTileSubType, AssetTileType};
 use crate::types::player::Player;
+use crate::types::{AssetTile, AssetTileSubType, AssetTileType};
 
 // TODO: consider using trait like CommonTile or GeneralTile
 #[derive(Clone, Debug, PartialEq)]
