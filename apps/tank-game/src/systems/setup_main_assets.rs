@@ -16,9 +16,7 @@ pub fn setup_main_assets(
         panic!("Failed to read assets: {}", err);
     }
     let assets: MainAssetInfo = assets_result.unwrap();
-
-    // TODO: initialize MainAssetInfoResource
-    // main_asset_info_resource.initialize(assets.get_tiles().clone());
+    main_asset_info_resource.initialize(assets.get_tiles().clone());
 
     let mission_info = load_mission(&assets.get_tiles(), "apps/tank-game/assets/mission01.tmj");
     if let Err(err) = mission_info {
