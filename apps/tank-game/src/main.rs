@@ -56,7 +56,7 @@ use bevy_prototype_lyon::prelude::ShapePlugin;
 use iyes_perf_ui::PerfUiPlugin;
 
 use crate::features::building::building_plugin::BuildingPlugin;
-use crate::features::con_menu::menu_plugin::MenuPlugin;
+use crate::features::con_menu::MenuPlugin;
 use crate::features::cursor::cursor_plugin::CursorPlugin;
 use crate::features::debug::debug_plugin::DebugPlugin;
 use crate::features::harvester::harvester_plugin::HarvesterPlugin;

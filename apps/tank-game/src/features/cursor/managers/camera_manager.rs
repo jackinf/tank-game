@@ -1,5 +1,5 @@
 use crate::constants::{CAMERA_SPEED_DYNAMIC, CAMERA_SPEED_STATIC, SIDE_MARGIN_PERCENTAGE};
-use crate::features::con_menu::components::menu_info::MenuInfo;
+use crate::features::con_menu::MenuInfo;
 use crate::features::cursor::resources::click_info::ClickInfo;
 use bevy::input::mouse::MouseButtonInput;
 use bevy::input::{ButtonInput, ButtonState};

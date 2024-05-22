@@ -1,13 +1,11 @@
-pub mod components {
-    pub mod menu_info;
-    pub mod money_text;
-    pub mod power_text;
-    pub mod submenu_info;
-}
-pub mod managers {
-    pub mod base_menu_manager;
-    pub mod factory_menu_manager;
-    pub mod menu_manager;
-}
-pub mod resources {}
-pub mod menu_plugin;
+mod resources {}
+mod actions;
+mod components;
+mod menu_plugin;
+mod systems;
+
+pub use components::MenuInfo;
+pub use components::MoneyText;
+pub use components::SubMenuInfo;
+pub use components::SubMenuType;
+pub use menu_plugin::MenuPlugin;

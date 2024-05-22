@@ -1,5 +1,5 @@
 use crate::features::building::components::Building;
-use crate::features::con_menu::components::submenu_info::SubMenuInfo;
+use crate::features::con_menu::SubMenuInfo;
 use crate::features::cursor::resources::cursor_coordinates::CursorCoordinates;
 use bevy::input::mouse::MouseButtonInput;
 use bevy::input::ButtonState;
