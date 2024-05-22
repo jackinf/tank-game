@@ -1,4 +1,4 @@
-use crate::features::cursor::resources::cursor_coordinates::CursorCoordinates;
+use crate::features::cursor::CursorCoordinates;
 use crate::features::tank::components::tank::Tank;
 use crate::features::tank::tank_queries::TankQueries;
 use crate::resources::me::Me;

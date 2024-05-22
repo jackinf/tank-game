@@ -1,7 +1,7 @@
 use crate::constants::TILE_SIZE;
 use crate::features::building::actions::spawn_building;
 use crate::features::building::components::BuildingPlacementTiles;
-use crate::features::cursor::resources::cursor_coordinates::CursorCoordinates;
+use crate::features::cursor::CursorCoordinates;
 use crate::features::tile::components::tile::Tile;
 use crate::features::tile::tile_queries::TileQueries;
 use crate::utils::logger::Logger;

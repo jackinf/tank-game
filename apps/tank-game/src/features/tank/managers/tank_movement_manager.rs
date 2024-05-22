@@ -7,7 +7,7 @@ use bevy::input::ButtonState;
 use bevy::prelude::*;
 use std::collections::{HashMap, VecDeque};
 
-use crate::features::cursor::resources::cursor_coordinates::CursorCoordinates;
+use crate::features::cursor::CursorCoordinates;
 use crate::features::tank::components::tank::Tank;
 use crate::features::tank::components::tank_gun::TankGun;
 use crate::features::tile::components::tile::Tile;

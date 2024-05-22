@@ -1,2 +1,2 @@
-pub mod setup1;
-pub mod setup2;
+pub mod setup_main_assets;
+pub mod setup_mission;

@@ -57,7 +57,7 @@ use iyes_perf_ui::PerfUiPlugin;
 
 use crate::features::building::building_plugin::BuildingPlugin;
 use crate::features::con_menu::MenuPlugin;
-use crate::features::cursor::cursor_plugin::CursorPlugin;
+use crate::features::cursor::CursorPlugin;
 use crate::features::debug::debug_plugin::DebugPlugin;
 use crate::features::harvester::harvester_plugin::HarvesterPlugin;
 use crate::features::monitoring::monitoring_plugin::MonitoringPlugin;
@@ -67,7 +67,7 @@ use crate::features::unit::unit_selection_plugin::UnitSelectionPlugin;
 use crate::resources::game_map::GameMap;
 use crate::resources::me::Me;
 use crate::resources::mission_info_resource::MissionInfoResource;
-use crate::systems::setup1::setup1;
-use crate::systems::setup2::setup2;
+use crate::systems::setup_main_assets::setup1;
+use crate::systems::setup_mission::setup2;
 use crate::types::player::Player;
 use types::main_asset_info_resource::MainAssetInfoResource;
