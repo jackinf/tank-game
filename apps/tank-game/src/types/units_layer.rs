@@ -1,6 +1,7 @@
 use crate::constants::TileCoord;
-use crate::features::unit::unit_tile::UnitTile;
+use crate::features::unit::unit_tile::{create_unit_tile, UnitTile};
 use crate::types::mission_layer::MissionLayer;
+use crate::types::PlayersLayer;
 use std::collections::HashMap;
 
 #[derive(Debug, Clone)]
@@ -24,20 +25,18 @@ impl UnitsLayer {
     }
 }
 
-impl Into<UnitsLayer> for MissionLayer {
-    fn into(self) -> UnitsLayer {
-        UnitsLayer {
-            units: self
-                .get_tiles()
-                .iter()
-                .filter_map(|(coord, tile)| {
-                    UnitTile::try_from(tile.clone())
-                        .ok()
-                        .map(|ground_tile| (*coord, ground_tile))
-                })
-                .collect(),
-            width: self.get_width(),
-            height: self.get_height(),
-        }
+pub fn create_units_layer(mission_layer: MissionLayer, players_layer: &PlayersLayer) -> UnitsLayer {
+    UnitsLayer {
+        units: mission_layer
+            .get_tiles()
+            .iter()
+            .filter_map(|(coord, tile)| {
+                create_unit_tile(tile.clone(), players_layer.get_by(coord))
+                    .ok()
+                    .map(|ground_tile| (*coord, ground_tile))
+            })
+            .collect(),
+        width: mission_layer.get_width(),
+        height: mission_layer.get_height(),
     }
 }

@@ -11,14 +11,14 @@ pub struct Building {
     building_tile: BuildingTile,
     building_tile_coord: TileCoord,
     building_tiles: HashSet<TileCoord>,
-    player: Player,
+    player: Option<Player>,
 }
 
 impl Building {
     pub fn new(
         building_tile: BuildingTile,
         building_tile_coord: TileCoord,
-        player: Player,
+        player: Option<Player>,
     ) -> Self {
         let building_tiles: HashSet<TileCoord> = HashSet::new();
 
@@ -45,7 +45,7 @@ impl Building {
         self.building_tile_coord
     }
 
-    pub fn get_player(&self) -> Player {
+    pub fn get_player(&self) -> Option<Player> {
         self.player.clone()
     }
 

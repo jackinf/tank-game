@@ -5,7 +5,7 @@ use bevy::prelude::{default, Commands, Res, SpriteBundle, Transform};
 
 use crate::features::tile::components::gold::Gold;
 use crate::features::tile::components::tile::Tile;
-use crate::features::tile::tile_type::{GroundTile, GroundTileType};
+use crate::features::tile::ground_tile::{GroundTile, GroundTileType};
 
 pub struct TileManager;
 

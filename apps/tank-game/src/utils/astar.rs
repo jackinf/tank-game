@@ -1,4 +1,4 @@
-use crate::features::tile::tile_type::GroundTileType;
+use crate::features::tile::ground_tile::GroundTileType;
 use std::cmp::Ordering;
 use std::collections::{BinaryHeap, HashMap, VecDeque};
 

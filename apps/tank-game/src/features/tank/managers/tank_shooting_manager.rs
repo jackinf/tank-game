@@ -24,7 +24,7 @@ impl TankShootingManager {
             return;
         }
 
-        let id_pos: Vec<(UnitId, Vec2, f32, Player)> = q_tanks
+        let id_pos: Vec<(UnitId, Vec2, f32, Option<Player>)> = q_tanks
             .iter()
             .filter(|(tank, _)| !tank.is_moving())
             .map(|(tank, transform)| {

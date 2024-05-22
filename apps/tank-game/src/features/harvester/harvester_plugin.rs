@@ -1,5 +1,7 @@
-use crate::features::harvester::managers::harvester_state_manager::HarvesterStateManager;
-use crate::features::harvester::resources::harvester_timer::HarvesterTimer;
+use crate::features::harvester::resources::HarvesterTimer;
+use crate::features::harvester::systems::{
+    begin, collect_gold, find_base_to_return, find_gold_for_hungry_harvester, move_harvester,
+};
 use bevy::app::App;
 use bevy::prelude::{FixedUpdate, Plugin, Timer, TimerMode, Update};
 
@@ -11,13 +13,10 @@ impl Plugin for HarvesterPlugin {
             1.0,
             TimerMode::Repeating,
         )))
-        .add_systems(Update, HarvesterStateManager::begin)
-        .add_systems(
-            Update,
-            HarvesterStateManager::find_gold_for_hungry_harvester,
-        )
-        .add_systems(FixedUpdate, HarvesterStateManager::move_harvester)
-        .add_systems(Update, HarvesterStateManager::collect_gold)
-        .add_systems(Update, HarvesterStateManager::find_base_to_return);
+        .add_systems(Update, begin)
+        .add_systems(Update, find_gold_for_hungry_harvester)
+        .add_systems(FixedUpdate, move_harvester)
+        .add_systems(Update, collect_gold)
+        .add_systems(Update, find_base_to_return);
     }
 }

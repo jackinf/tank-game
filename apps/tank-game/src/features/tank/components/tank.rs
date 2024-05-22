@@ -18,7 +18,7 @@ pub struct Tank {
     pub speed: f32,            // Units per second
     pub moving: bool,
     pub movement_path: VecDeque<(f32, f32)>,
-    pub player: Player,
+    pub player: Option<Player>,
     target: Option<UnitId>,
     cooldown_seconds: f64,
     last_shot_timestamp: f64,
@@ -26,7 +26,7 @@ pub struct Tank {
 }
 
 impl Tank {
-    pub fn new(id: usize, target_position: Vec2, player: Player) -> Self {
+    pub fn new(id: usize, target_position: Vec2, player: Option<Player>) -> Self {
         Tank {
             id: UnitId(id),
             selected: false,
@@ -51,14 +51,15 @@ impl Tank {
         250.0
     }
 
-    pub fn get_player(&self) -> Player {
+    pub fn get_player(&self) -> Option<Player> {
         self.player.clone()
     }
 
     pub fn get_default_color(&self) -> Color {
         match self.player {
-            Player::P1 => Color::rgb(0.3, 0.3, 0.7),
-            Player::P2 => Color::rgb(0.8, 0.2, 0.2),
+            Some(Player::P1) => Color::rgb(0.3, 0.3, 0.7),
+            Some(Player::P2) => Color::rgb(0.8, 0.2, 0.2),
+            _ => Color::rgb(0.5, 0.5, 0.5),
         }
     }
 
@@ -85,7 +86,11 @@ impl Tank {
     }
 
     pub fn is_mine(&self, me: &Me) -> bool {
-        self.player == me.get_player()
+        if let Some(player) = self.player.clone() {
+            player == me.get_player()
+        } else {
+            false
+        }
     }
 
     pub fn try_take_next_position_in_path(&mut self) {

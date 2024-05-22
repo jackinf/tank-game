@@ -19,8 +19,9 @@ pub fn spawn_building(
 
     let player = building_tile.get_player();
     let color = match player {
-        Player::P1 => crate::constants::P1_COLOR,
-        Player::P2 => crate::constants::P2_COLOR,
+        Some(Player::P1) => crate::constants::P1_COLOR,
+        Some(Player::P2) => crate::constants::P2_COLOR,
+        _ => crate::constants::NEUTRAL_COLOR,
     };
     let building = Building::new(building_tile, map_coord, player);
 

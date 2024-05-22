@@ -3,7 +3,7 @@ use bevy::math::Vec2;
 use bevy::prelude::{Commands, Res, ResMut};
 
 use crate::constants::TileCoord;
-use crate::features::harvester::managers::harvester_spawn_manager::HarvesterSpawnManager;
+use crate::features::harvester::spawn_harvester;
 use crate::features::tank::managers::tank_spawn_manager::TankSpawnManager;
 use crate::features::unit::resources::unit_id_counter::UnitIdCounter;
 use crate::features::unit::unit_tile::UnitTileType;
@@ -33,7 +33,7 @@ impl UnitSpawnManager {
                     );
                 }
                 UnitTileType::Harvester => {
-                    HarvesterSpawnManager::spawn_harvester(
+                    spawn_harvester(
                         &mut commands,
                         &asset_server,
                         pos,

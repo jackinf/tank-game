@@ -13,7 +13,6 @@ pub struct AssetTile {
     tile_size: TileSize,
     tile_type: Option<AssetTileType>,
     tile_sub_type: Option<AssetTileSubType>,
-    player: Option<Player>,
 }
 
 impl AssetTile {
@@ -23,7 +22,6 @@ impl AssetTile {
         tile_size: TileSize,
         tile_type: Option<AssetTileType>,
         tile_sub_type: Option<AssetTileSubType>,
-        player: Option<Player>,
     ) -> Self {
         AssetTile {
             id,
@@ -31,7 +29,6 @@ impl AssetTile {
             tile_size,
             tile_type,
             tile_sub_type,
-            player,
         }
     }
 
@@ -60,9 +57,5 @@ impl AssetTile {
 
     pub fn get_image_path(&self) -> String {
         self.image.clone()
-    }
-
-    pub fn get_player(&self) -> Option<Player> {
-        self.player.clone()
     }
 }

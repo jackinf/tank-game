@@ -1,5 +1,5 @@
 use crate::features::building::types::{BuildingTile, BuildingTileType};
-use crate::features::tile::tile_type::{GroundTile, GroundTileType};
+use crate::features::tile::ground_tile::{GroundTile, GroundTileType};
 use crate::features::unit::unit_tile::{UnitTile, UnitTileType};
 use crate::types::{AssetTile, AssetTileId, AssetTileSubType, AssetTileType};
 use bevy::prelude::Resource;
@@ -25,37 +25,40 @@ impl MainAssetInfoResource {
         }
     }
 
-    pub fn initialize(&mut self, tiles: HashMap<AssetTileId, AssetTile>) {
-        self.tiles = tiles;
-
-        for tile in self.tiles.values() {
-            match tile.get_tile_type() {
-                Some(AssetTileType::Building) => {
-                    let res = BuildingTile::try_from(tile.clone());
-                    if let Ok(building_tile) = res {
-                        self.building_tiles
-                            .insert(building_tile.get_building_type(), building_tile);
-                    }
-                }
-                Some(AssetTileType::Unit) => {
-                    let res = UnitTile::try_from(tile.clone());
-                    if let Ok(unit_tile) = res {
-                        self.unit_tiles.insert(unit_tile.get_unit_type(), unit_tile);
-                    }
-                }
-                Some(AssetTileType::Ground) => {
-                    let res = GroundTile::try_from(tile.clone());
-                    if let Ok(ground_tile) = res {
-                        self.ground_tiles
-                            .insert(ground_tile.get_ground_type(), ground_tile);
-                    }
-                }
-                None => {}
-            }
-        }
-
-        self.loaded = true;
-    }
+    // TODO: fix this
+    // pub fn initialize(&mut self, tiles: HashMap<AssetTileId, AssetTile>) {
+    //     self.tiles = tiles;
+    //
+    //     for tile in self.tiles.values() {
+    //         match tile.get_tile_type() {
+    //             Some(AssetTileType::Building) => {
+    //                 let res = BuildingTile::try_from(tile.clone());
+    //                 if let Ok(building_tile) = res {
+    //                     self.building_tiles
+    //                         .insert(building_tile.get_building_type(), building_tile);
+    //                 }
+    //             }
+    //             Some(AssetTileType::Unit) => {
+    //                 let res = UnitTile::try_from(tile.clone());
+    //                 if let Ok(unit_tile) = res {
+    //                     self.unit_tiles.insert(unit_tile.get_unit_type(), unit_tile);
+    //                 }
+    //             }
+    //             Some(AssetTileType::Ground) => {
+    //                 let res = GroundTile::try_from(tile.clone());
+    //                 if let Ok(ground_tile) = res {
+    //                     self.ground_tiles
+    //                         .insert(ground_tile.get_ground_type(), ground_tile);
+    //                 }
+    //             }
+    //             Some(AssetTileType::Resource) => {}
+    //             Some(AssetTileType::Player) => {}
+    //             None => {}
+    //         }
+    //     }
+    //
+    //     self.loaded = true;
+    // }
 
     pub fn get_tiles(&self) -> &HashMap<AssetTileId, AssetTile> {
         &self.tiles

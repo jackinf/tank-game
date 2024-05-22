@@ -11,7 +11,7 @@ use crate::features::unit::resources::unit_id_counter::UnitIdCounter;
 use crate::resources::game_map::GameMap;
 use crate::resources::mission_info_resource::MissionInfoResource;
 
-pub fn setup2(
+pub fn setup_mission(
     mission_info_resource: Res<MissionInfoResource>,
     mut commands: Commands,
     asset_server: Res<AssetServer>,
@@ -35,6 +35,15 @@ pub fn setup2(
         &ground_layer,
         calculate_world_position,
     );
+
+    let resource_layer = mission_info_resource.get_resource_layer();
+    TileSpawnManager::spawn_tiles(
+        &mut commands,
+        &asset_server,
+        &resource_layer,
+        calculate_world_position,
+    );
+
     let grid: TileGrid = ground_layer.to_2d_grid();
     let tile_to_world =
         TileSpawnManager::create_tile_to_world_coordinates(&ground_layer, calculate_world_position);

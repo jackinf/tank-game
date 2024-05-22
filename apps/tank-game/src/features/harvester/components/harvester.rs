@@ -27,7 +27,7 @@ impl HarvesterState {
 #[derive(Component, Clone, Debug)]
 pub struct Harvester {
     id: usize,
-    player: Player,
+    player: Option<Player>,
     state: HarvesterState,
     return_to_tile: Option<TileCoord>,
     gold_current_capacity: u32,
@@ -43,7 +43,7 @@ pub struct Harvester {
 }
 
 impl Harvester {
-    pub fn new(player: Player, id: usize) -> Self {
+    pub fn new(player: Option<Player>, id: usize) -> Self {
         println!("Creating new Harvester with id: {}", id);
         Self {
             id,
@@ -68,7 +68,7 @@ impl Harvester {
         self.id
     }
 
-    pub fn get_player(&self) -> Player {
+    pub fn get_player(&self) -> Option<Player> {
         self.player.clone()
     }
 

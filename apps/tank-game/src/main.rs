@@ -18,7 +18,7 @@ fn main() {
     .insert_resource(GameMap::default())
     .insert_resource(MainAssetInfoResource::new())
     .insert_resource(MissionInfoResource::new())
-    .add_systems(PreStartup, (setup1, setup2).chain())
+    .add_systems(PreStartup, (setup_main_assets, setup_mission).chain())
     .add_plugins((
         ShapePlugin,
         DebugPlugin,
@@ -59,7 +59,7 @@ use crate::features::building::building_plugin::BuildingPlugin;
 use crate::features::con_menu::MenuPlugin;
 use crate::features::cursor::CursorPlugin;
 use crate::features::debug::debug_plugin::DebugPlugin;
-use crate::features::harvester::harvester_plugin::HarvesterPlugin;
+use crate::features::harvester::HarvesterPlugin;
 use crate::features::monitoring::monitoring_plugin::MonitoringPlugin;
 use crate::features::tank::tank_plugin::TankPlugin;
 use crate::features::unit::resources::unit_id_counter::UnitIdCounter;
@@ -67,7 +67,7 @@ use crate::features::unit::unit_selection_plugin::UnitSelectionPlugin;
 use crate::resources::game_map::GameMap;
 use crate::resources::me::Me;
 use crate::resources::mission_info_resource::MissionInfoResource;
-use crate::systems::setup_main_assets::setup1;
-use crate::systems::setup_mission::setup2;
+use crate::systems::setup_main_assets;
+use crate::systems::setup_mission;
 use crate::types::player::Player;
 use types::main_asset_info_resource::MainAssetInfoResource;

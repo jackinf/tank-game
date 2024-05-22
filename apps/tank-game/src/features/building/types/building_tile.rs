@@ -9,7 +9,7 @@ pub struct BuildingTile {
     image_path: String,
     tile_size: TileSize,
     building_type: BuildingTileType,
-    player: Player,
+    player: Option<Player>,
 }
 
 #[derive(Debug)]
@@ -17,7 +17,6 @@ pub enum BuildingTileErrors {
     TileTypeIsRequired,
     TileSubTypeIsRequired,
     InvalidBuildingType { message: String },
-    MissingPlayer,
 }
 
 impl BuildingTile {
@@ -51,7 +50,7 @@ impl BuildingTile {
         self.tile_size
     }
 
-    pub fn get_player(&self) -> Player {
+    pub fn get_player(&self) -> Option<Player> {
         self.player.clone()
     }
 
@@ -77,59 +76,53 @@ impl BuildingTile {
     }
 }
 
-impl TryFrom<AssetTile> for BuildingTile {
-    type Error = BuildingTileErrors;
+pub fn create_building_tile(
+    value: AssetTile,
+    player: Option<Player>,
+) -> Result<BuildingTile, BuildingTileErrors> {
+    let tile_type = value.get_tile_type();
+    let tile_sub_type = value.get_tile_sub_type();
 
-    fn try_from(value: AssetTile) -> Result<Self, Self::Error> {
-        let tile_type = value.get_tile_type();
-        let tile_sub_type = value.get_tile_sub_type();
-
-        if tile_type.is_none() {
-            return Err(BuildingTileErrors::TileTypeIsRequired);
-        }
-
-        if tile_sub_type.is_none() {
-            return Err(BuildingTileErrors::TileSubTypeIsRequired);
-        }
-
-        let tile_type = tile_type.unwrap();
-        let tile_sub_type = tile_sub_type.unwrap();
-        if tile_type != AssetTileType::Building {
-            return Err(BuildingTileErrors::InvalidBuildingType {
-                message: format!(
-                    "'{}' is not a valid AssetTileType",
-                    tile_sub_type.to_string()
-                ),
-            });
-        }
-
-        let building_tile_type = match tile_sub_type {
-            AssetTileSubType::Base => Ok(BuildingTileType::Base),
-            AssetTileSubType::Factory => Ok(BuildingTileType::Factory),
-            AssetTileSubType::Powerplant => Ok(BuildingTileType::PowerPlant),
-            _ => Err(BuildingTileErrors::InvalidBuildingType {
-                message: format!(
-                    "'{}' is not a valid BuildingTileType",
-                    tile_sub_type.to_string()
-                ),
-            }),
-        };
-
-        if let Err(e) = building_tile_type {
-            return Err(e);
-        }
-        let building_tile_type = building_tile_type.unwrap();
-
-        if value.get_player().is_none() {
-            return Err(BuildingTileErrors::MissingPlayer);
-        }
-        let player = value.get_player().unwrap();
-
-        Ok(BuildingTile {
-            image_path: value.get_image_path(),
-            tile_size: value.get_tile_size(),
-            building_type: building_tile_type,
-            player,
-        })
+    if tile_type.is_none() {
+        return Err(BuildingTileErrors::TileTypeIsRequired);
     }
+
+    if tile_sub_type.is_none() {
+        return Err(BuildingTileErrors::TileSubTypeIsRequired);
+    }
+
+    let tile_type = tile_type.unwrap();
+    let tile_sub_type = tile_sub_type.unwrap();
+    if tile_type != AssetTileType::Building {
+        return Err(BuildingTileErrors::InvalidBuildingType {
+            message: format!(
+                "'{}' is not a valid AssetTileType",
+                tile_sub_type.to_string()
+            ),
+        });
+    }
+
+    let building_tile_type = match tile_sub_type {
+        AssetTileSubType::Base => Ok(BuildingTileType::Base),
+        AssetTileSubType::Factory => Ok(BuildingTileType::Factory),
+        AssetTileSubType::Powerplant => Ok(BuildingTileType::PowerPlant),
+        _ => Err(BuildingTileErrors::InvalidBuildingType {
+            message: format!(
+                "'{}' is not a valid BuildingTileType",
+                tile_sub_type.to_string()
+            ),
+        }),
+    };
+
+    if let Err(e) = building_tile_type {
+        return Err(e);
+    }
+    let building_tile_type = building_tile_type.unwrap();
+
+    Ok(BuildingTile {
+        image_path: value.get_image_path(),
+        tile_size: value.get_tile_size(),
+        building_type: building_tile_type,
+        player,
+    })
 }

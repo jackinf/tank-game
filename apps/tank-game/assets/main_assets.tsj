@@ -8,7 +8,7 @@
  "margin":0,
  "name":"main_assets",
  "spacing":0,
- "tilecount":13,
+ "tilecount":15,
  "tiledversion":"1.10.2",
  "tileheight":256,
  "tiles":[
@@ -18,11 +18,6 @@
          "imageheight":256,
          "imagewidth":256,
          "properties":[
-                {
-                 "name":"player",
-                 "type":"string",
-                 "value":"1"
-                }, 
                 {
                  "name":"subtype",
                  "type":"string",
@@ -42,11 +37,6 @@
          "imagewidth":256,
          "properties":[
                 {
-                 "name":"player",
-                 "type":"string",
-                 "value":"1"
-                }, 
-                {
                  "name":"subtype",
                  "type":"string",
                  "value":"factory"
@@ -65,11 +55,6 @@
          "imagewidth":256,
          "properties":[
                 {
-                 "name":"player",
-                 "type":"string",
-                 "value":"1"
-                }, 
-                {
                  "name":"subtype",
                  "type":"string",
                  "value":"powerplant"
@@ -87,11 +72,6 @@
          "imageheight":128,
          "imagewidth":128,
          "properties":[
-                {
-                 "name":"player",
-                 "type":"string",
-                 "value":"1"
-                }, 
                 {
                  "name":"subtype",
                  "type":"string",
@@ -234,13 +214,59 @@
          "id":11,
          "image":"sprites\/p2.png",
          "imageheight":128,
-         "imagewidth":128
+         "imagewidth":128,
+         "properties":[
+                {
+                 "name":"tile_type",
+                 "type":"string",
+                 "value":"p2"
+                }]
         }, 
         {
          "id":12,
          "image":"sprites\/p1.png",
          "imageheight":128,
-         "imagewidth":128
+         "imagewidth":128,
+         "properties":[
+                {
+                 "name":"tile_type",
+                 "type":"string",
+                 "value":"p1"
+                }]
+        }, 
+        {
+         "id":13,
+         "image":"sprites\/resources\/gold_hq.png",
+         "imageheight":128,
+         "imagewidth":128,
+         "properties":[
+                {
+                 "name":"subtype",
+                 "type":"string",
+                 "value":"gold"
+                }, 
+                {
+                 "name":"type",
+                 "type":"string",
+                 "value":"ground"
+                }]
+        }, 
+        {
+         "id":15,
+         "image":"sprites\/resources\/harvester.png",
+         "imageheight":128,
+         "imagewidth":128,
+         "properties":[
+                {
+                 "name":"subtype",
+                 "type":"string",
+                 "value":"tank"
+                }, 
+                {
+                 "name":"type",
+                 "type":"string",
+                 "value":"unit"
+                }]
         }],
  "tilewidth":256,
  "type":"tileset",

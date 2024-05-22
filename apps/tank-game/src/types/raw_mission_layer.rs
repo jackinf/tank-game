@@ -1,6 +1,7 @@
 use crate::constants::TileCoord;
 use crate::types::main_asset_info_resource::MainAssetInfoResource;
 use crate::types::mission_layer::MissionLayer;
+use crate::types::player::Player;
 use crate::types::{AssetTile, AssetTileId};
 use serde::Deserialize;
 use std::collections::HashMap;
@@ -50,6 +51,14 @@ impl RawMissionLayer {
         self.name == "ground"
     }
 
+    pub fn is_resource(&self) -> bool {
+        self.name == "resources"
+    }
+
+    pub fn is_players(&self) -> bool {
+        self.name == "players"
+    }
+
     pub fn is_buildings(&self) -> bool {
         self.name == "buildings"
     }
@@ -60,9 +69,7 @@ impl RawMissionLayer {
 }
 
 impl RawMissionLayer {
-    pub fn from(&self, tiles_info: &MainAssetInfoResource) -> MissionLayer {
-        let tiles: &HashMap<AssetTileId, AssetTile> = tiles_info.get_tiles();
-
+    pub fn from(&self, tiles: &HashMap<AssetTileId, AssetTile>) -> MissionLayer {
         let mut tiles_coords: HashMap<TileCoord, AssetTile> = HashMap::new();
 
         self.get_data_2d()

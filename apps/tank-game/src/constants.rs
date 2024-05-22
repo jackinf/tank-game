@@ -1,4 +1,4 @@
-use crate::features::tile::tile_type::GroundTileType;
+use crate::features::tile::ground_tile::GroundTileType;
 use bevy::math::Vec2;
 use bevy::prelude::Color;
 
@@ -29,3 +29,4 @@ pub const SIDE_MARGIN_PERCENTAGE: f32 = 0.1;
 
 pub const P1_COLOR: Color = Color::rgba(0.7, 0.7, 1.0, 1.);
 pub const P2_COLOR: Color = Color::rgba(1.0, 0.7, 0.7, 1.);
+pub const NEUTRAL_COLOR: Color = Color::rgba(0.7, 0.7, 0.7, 1.);

@@ -1,5 +1,5 @@
 use crate::constants::{TileCoord, TileGrid};
-use crate::features::tile::tile_type::{GroundTile, GroundTileType};
+use crate::features::tile::ground_tile::{GroundTile, GroundTileType};
 use crate::types::mission_layer::MissionLayer;
 use std::collections::HashMap;
 

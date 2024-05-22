@@ -6,5 +6,5 @@ pub mod managers {
     pub mod tile_manager;
     pub mod tile_spawn_manager;
 }
+pub mod ground_tile;
 pub mod tile_queries;
-pub mod tile_type;

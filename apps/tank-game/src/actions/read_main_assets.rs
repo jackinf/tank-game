@@ -88,32 +88,9 @@ pub fn read_main_assets(asset_path: &str) -> Result<MainAssetInfo, FileHelperErr
             })
             .transpose()?;
 
-        let player: Option<Player> = tile
-            .properties
-            .iter()
-            .find(|p| p.name == "player")
-            .map(|p| p.value.clone())
-            .map(|p| {
-                if p == "1" {
-                    Some(Player::P1)
-                } else if p == "2" {
-                    Some(Player::P2)
-                } else {
-                    None
-                }
-            })
-            .flatten();
-
         tiles_map.insert(
             tile_id,
-            AssetTile::new(
-                tile_id,
-                tile.image,
-                tile_size,
-                tile_type,
-                tile_sub_type,
-                player,
-            ),
+            AssetTile::new(tile_id, tile.image, tile_size, tile_type, tile_sub_type),
         );
     }
 

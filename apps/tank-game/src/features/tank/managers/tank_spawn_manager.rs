@@ -48,7 +48,7 @@ impl TankSpawnManager {
         asset_server: &Res<AssetServer>,
         translation: Vec2,
         tank_id_counter: &mut ResMut<UnitIdCounter>,
-        player: Player,
+        player: Option<Player>,
     ) {
         let tank_id = tank_id_counter.0;
         tank_id_counter.0 += 1;

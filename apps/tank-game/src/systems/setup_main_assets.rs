@@ -7,7 +7,7 @@ use crate::types::main_asset_info::MainAssetInfo;
 use crate::types::main_asset_info_resource::MainAssetInfoResource;
 use crate::types::mission_info::MissionInfo;
 
-pub fn setup1(
+pub fn setup_main_assets(
     mut main_asset_info_resource: ResMut<MainAssetInfoResource>,
     mut mission_info_resource: ResMut<MissionInfoResource>,
 ) {
@@ -16,12 +16,11 @@ pub fn setup1(
         panic!("Failed to read assets: {}", err);
     }
     let assets: MainAssetInfo = assets_result.unwrap();
-    main_asset_info_resource.initialize(assets.get_tiles().clone());
 
-    let mission_info = load_mission(
-        &main_asset_info_resource,
-        "apps/tank-game/assets/mission01.tmj",
-    );
+    // TODO: initialize MainAssetInfoResource
+    // main_asset_info_resource.initialize(assets.get_tiles().clone());
+
+    let mission_info = load_mission(&assets.get_tiles(), "apps/tank-game/assets/mission01.tmj");
     if let Err(err) = mission_info {
         panic!("Failed to load mission: {:?}", err);
     }

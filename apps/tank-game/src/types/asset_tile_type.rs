@@ -9,6 +9,8 @@ pub enum AssetTileType {
     Building,
     Unit,
     Ground,
+    Resource,
+    Player,
 }
 
 #[derive(Debug, Clone)]
@@ -28,6 +30,8 @@ impl Display for AssetTileType {
             AssetTileType::Building => write!(f, "building"),
             AssetTileType::Unit => write!(f, "unit"),
             AssetTileType::Ground => write!(f, "ground"),
+            AssetTileType::Resource => write!(f, "resource"),
+            AssetTileType::Player => write!(f, "player"),
         }
     }
 }
@@ -38,6 +42,8 @@ impl PartialEq for AssetTileType {
             (AssetTileType::Building, AssetTileType::Building) => true,
             (AssetTileType::Unit, AssetTileType::Unit) => true,
             (AssetTileType::Ground, AssetTileType::Ground) => true,
+            (AssetTileType::Resource, AssetTileType::Resource) => true,
+            (AssetTileType::Player, AssetTileType::Player) => true,
             _ => false,
         }
     }
@@ -51,6 +57,8 @@ impl FromStr for AssetTileType {
             "building" => Ok(AssetTileType::Building),
             "unit" => Ok(AssetTileType::Unit),
             "ground" => Ok(AssetTileType::Ground),
+            "resource" => Ok(AssetTileType::Resource),
+            "player" => Ok(AssetTileType::Player),
             _ => Err(AssetTileTypeParseError {
                 message: format!("'{}' is not a valid AssetTileType", s),
             }),

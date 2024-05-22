@@ -3,7 +3,7 @@ use std::fmt::Formatter;
 use bevy::prelude::*;
 
 use crate::constants::TileCoord;
-use crate::features::tile::tile_type::GroundTileType;
+use crate::features::tile::ground_tile::GroundTileType;
 
 #[derive(Component, Debug, Clone)]
 pub struct Tile {
