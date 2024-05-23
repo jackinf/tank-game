@@ -10,9 +10,8 @@ use std::collections::{HashMap, VecDeque};
 use crate::features::cursor::CursorCoordinates;
 use crate::features::tank::components::tank::Tank;
 use crate::features::tank::components::tank_gun::TankGun;
-use crate::features::tile::components::tile::Tile;
-use crate::features::tile::tile_queries::TileQueries;
-use crate::features::unit::components::unit_id::UnitId;
+use crate::features::tile::{find_accessible_tile_coord, Tile};
+use crate::features::unit::UnitId;
 use crate::utils::astar;
 
 // TODO: rename to: TankActionManager
@@ -59,7 +58,7 @@ impl TankMovementManager {
                     .find(|(tank, _)| tank.is_clicked_on(wx, wy) && !tank.is_mine(&me))
                     .map(|(tank, _)| tank.get_id().clone());
 
-                if let Some(goal) = TileQueries::find_accessible(&tile_query, &world_coords) {
+                if let Some(goal) = find_accessible_tile_coord(&tile_query, &world_coords) {
                     let selected_tanks = &mut tank_query
                         .iter_mut()
                         .filter(|(tank, _)| tank.selected)
@@ -68,7 +67,7 @@ impl TankMovementManager {
                     for mut tank in selected_tanks {
                         if let Some(start) =
                             // TODO: why not use translation instead of target_position?
-                            TileQueries::find_accessible(&tile_query, &tank.target_position)
+                            find_accessible_tile_coord(&tile_query, &tank.target_position)
                         {
                             // TODO: expensive! optimize this
                             // TODO: consider using use bevy::utils::petgraph::algo::astar;

@@ -1,6 +1,6 @@
-use crate::types::buildings_layer::BuildingsLayer;
-use crate::types::ground_layer::GroundLayer;
-use crate::types::units_layer::UnitsLayer;
+use crate::features::building::types::buildings_layer::BuildingsLayer;
+use crate::features::tile::GroundLayer;
+use crate::features::unit::UnitsLayer;
 
 #[derive(Debug)]
 pub struct MissionInfo {

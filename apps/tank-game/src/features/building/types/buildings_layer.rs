@@ -2,7 +2,6 @@ use crate::constants::TileCoord;
 use crate::features::building::types::building_tile::create_building_tile;
 use crate::features::building::types::BuildingTile;
 use crate::types::mission_layer::MissionLayer;
-use crate::types::player::Player;
 use crate::types::PlayersLayer;
 use std::collections::HashMap;
 
@@ -14,7 +13,7 @@ pub struct BuildingsLayer {
 }
 
 impl BuildingsLayer {
-    pub fn new() -> Self {
+    pub fn empty() -> Self {
         BuildingsLayer {
             buildings: HashMap::new(),
             width: 0,

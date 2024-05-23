@@ -1,4 +1,4 @@
-use crate::features::unit::components::unit_id::UnitId;
+use crate::features::unit::UnitId;
 use bevy::prelude::Component;
 
 #[derive(Component)]

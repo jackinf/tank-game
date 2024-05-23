@@ -1,40 +1,6 @@
-use crate::constants::TileSize;
+use crate::features::unit::{UnitTile, UnitTileType};
 use crate::types::player::Player;
 use crate::types::{AssetTile, AssetTileSubType, AssetTileType};
-
-// TODO: consider using trait like CommonTile or GeneralTile
-#[derive(Clone, Debug, PartialEq)]
-pub struct UnitTile {
-    image_path: String,
-    tile_size: TileSize,
-    unit_type: UnitTileType,
-    player: Option<Player>,
-}
-
-impl UnitTile {
-    pub fn get_image_path(&self) -> String {
-        self.image_path.clone()
-    }
-
-    pub fn get_tile_size(&self) -> TileSize {
-        self.tile_size.clone()
-    }
-
-    pub fn get_unit_type(&self) -> UnitTileType {
-        self.unit_type.clone()
-    }
-
-    pub fn get_player(&self) -> Option<Player> {
-        self.player.clone()
-    }
-}
-
-#[derive(Clone, Debug, PartialEq, Hash, Eq)]
-pub enum UnitTileType {
-    Tank = 1,
-    Soldier = 2,
-    Harvester = 3,
-}
 
 #[derive(Debug)]
 pub enum UnitTileErrors {
@@ -89,10 +55,8 @@ pub fn create_unit_tile(
     }
     let unit_tile_type = unit_tile_type.unwrap();
 
-    Ok(UnitTile {
-        image_path: value.get_image_path(),
-        tile_size: value.get_tile_size(),
-        unit_type: unit_tile_type,
-        player,
-    })
+    let image_path = value.get_image_path();
+    let tile_size = value.get_tile_size();
+
+    Ok(UnitTile::new(image_path, tile_size, unit_tile_type, player))
 }

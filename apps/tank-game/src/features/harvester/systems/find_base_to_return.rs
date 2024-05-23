@@ -2,8 +2,7 @@ use crate::constants::TileCoord;
 use crate::features::building::components::Building;
 use crate::features::building::types::BuildingTileType;
 use crate::features::harvester::components::Harvester;
-use crate::features::tile::components::tile::Tile;
-use crate::features::tile::tile_queries::TileQueries;
+use crate::features::tile::{find_accessible_tile_coord, Tile};
 use crate::resources::game_map::GameMap;
 use crate::types::player::Player;
 use crate::utils::astar::find_path;
@@ -34,7 +33,7 @@ pub fn find_base_to_return(
 
             if let Some((base_tile, _)) = building_res {
                 let start =
-                    TileQueries::find_accessible(&q_tiles, &transform.translation.xy()).unwrap();
+                    find_accessible_tile_coord(&q_tiles, &transform.translation.xy()).unwrap();
                 let path = find_path(&game_map.get_tile_type_grid_usize(), start, *base_tile);
                 harvester.set_movement_path(path);
                 harvester.set_returning_to_base();

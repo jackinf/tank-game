@@ -1,8 +1,6 @@
 use crate::features::con_menu::actions::{
     show_con_base_menu_grid, show_factory_menu_grid, spawn_money_text, spawn_power_text,
 };
-use crate::features::con_menu::components::MoneyText;
-use crate::features::con_menu::components::PowerText;
 use crate::features::con_menu::MenuInfo;
 use bevy::asset::AssetServer;
 use bevy::prelude::{

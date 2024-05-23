@@ -1,4 +1,4 @@
-use crate::features::tile::ground_tile::GroundTileType;
+use crate::features::tile::GroundTileType;
 use bevy::math::Vec2;
 use bevy::prelude::Color;
 

@@ -4,7 +4,7 @@ use bevy::math::Vec2;
 use bevy::prelude::{Color, Component, Mut, Sprite};
 
 use crate::constants::TILE_SIZE;
-use crate::features::unit::components::unit_id::UnitId;
+use crate::features::unit::UnitId;
 use crate::resources::me::Me;
 use crate::types::player::Player;
 

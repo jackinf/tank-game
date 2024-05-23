@@ -1,5 +1,6 @@
 use crate::constants::{TileCoord, TileGrid};
-use crate::features::tile::ground_tile::{GroundTile, GroundTileType};
+use crate::features::tile::types::GroundTile;
+use crate::features::tile::GroundTileType;
 use crate::types::mission_layer::MissionLayer;
 use std::collections::HashMap;
 
@@ -11,7 +12,7 @@ pub struct GroundLayer {
 }
 
 impl GroundLayer {
-    pub fn new() -> Self {
+    pub fn empty() -> Self {
         GroundLayer {
             tiles: HashMap::new(),
             width: 0,

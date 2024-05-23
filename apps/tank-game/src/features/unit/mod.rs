@@ -1,11 +1,16 @@
-pub mod components {
-    pub mod unit_id;
-}
-pub mod managers {
-    pub mod unit_spawn_manager;
-}
-pub mod resources {
-    pub mod unit_id_counter;
-}
-pub mod unit_selection_plugin;
-pub mod unit_tile;
+mod actions;
+mod components;
+mod resources;
+mod systems;
+mod types;
+mod unit_selection_plugin;
+
+pub use actions::create_unit_tile;
+pub use actions::create_units_layer;
+pub use components::UnitId;
+pub use resources::UnitIdCounter;
+pub use systems::spawn_units;
+pub use types::UnitTile;
+pub use types::UnitTileType;
+pub use types::UnitsLayer;
+pub use unit_selection_plugin::UnitSelectionPlugin;

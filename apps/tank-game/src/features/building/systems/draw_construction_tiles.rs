@@ -2,8 +2,7 @@ use crate::constants::TILE_SIZE;
 use crate::features::building::actions::spawn_building;
 use crate::features::building::components::BuildingPlacementTiles;
 use crate::features::cursor::CursorCoordinates;
-use crate::features::tile::components::tile::Tile;
-use crate::features::tile::tile_queries::TileQueries;
+use crate::features::tile::{find_accessible_tile, find_tile, Tile};
 use crate::utils::logger::Logger;
 use bevy::input::mouse::MouseButtonInput;
 use bevy::input::ButtonState;
@@ -25,7 +24,7 @@ pub fn draw_construction_tiles(
 ) {
     match (
         q_placement.single_mut(),
-        TileQueries::find_accessible_tile(&q_tiles, &cursor.get_world()),
+        find_accessible_tile(&q_tiles, &cursor.get_world()),
     ) {
         ((mut transform, mut sprite, mut placement), Some(tile)) => {
             if !placement.is_ready() {
@@ -48,7 +47,7 @@ pub fn draw_construction_tiles(
                         for j in 0..layout_y {
                             let map_coord = (tile_x + i, tile_y + j);
                             // TODO: tile might not have info on other objects placed there. Create a map of free & occupied cells
-                            let tile = TileQueries::find_tile(&q_tiles, map_coord);
+                            let tile = find_tile(&q_tiles, map_coord);
                             if tile.is_none() || !tile.unwrap().accessible() {
                                 all_accessible = false;
                                 break;

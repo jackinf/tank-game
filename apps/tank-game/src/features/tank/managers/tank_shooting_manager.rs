@@ -3,7 +3,7 @@ use crate::features::tank::components::tank::Tank;
 use crate::features::tank::components::tank_bullet::TankBullet;
 use crate::features::tank::managers::tank_spawn_manager::TankSpawnManager;
 use crate::features::tank::resources::tank_monitoring_timer::TankMonitoringTimer;
-use crate::features::unit::components::unit_id::UnitId;
+use crate::features::unit::UnitId;
 use crate::types::player::Player;
 use bevy::asset::AssetServer;
 use bevy::prelude::{

@@ -1,6 +1,6 @@
 use crate::constants::SPRITE_SCALE;
 use crate::features::harvester::components::Harvester;
-use crate::features::unit::resources::unit_id_counter::UnitIdCounter;
+use crate::features::unit::UnitIdCounter;
 use crate::types::player::Player;
 use bevy::asset::AssetServer;
 use bevy::math::Vec2;

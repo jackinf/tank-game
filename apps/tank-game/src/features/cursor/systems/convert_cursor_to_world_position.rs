@@ -1,6 +1,5 @@
 use crate::features::cursor::resources::CursorCoordinates;
-use crate::features::tile::components::tile::Tile;
-use crate::features::tile::tile_queries::TileQueries;
+use crate::features::tile::{find_accessible_tile_coord, Tile};
 use bevy::prelude::{Camera, GlobalTransform, Query, ResMut, Vec3Swizzles, Window, With};
 use bevy::window::PrimaryWindow;
 
@@ -20,7 +19,7 @@ pub fn convert_cursor_to_world_position(
     {
         my_world_coords.set_world(world_position);
 
-        TileQueries::find_accessible(&q_tiles, &world_position)
+        find_accessible_tile_coord(&q_tiles, &world_position)
             .map(|tile_coord| {
                 my_world_coords.set_tile(Some(tile_coord));
             })

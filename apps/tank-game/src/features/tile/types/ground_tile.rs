@@ -1,4 +1,5 @@
 use crate::constants::TileSize;
+use crate::features::tile::types::ground_tile_type::GroundTileType;
 use crate::types::{AssetTile, AssetTileSubType, AssetTileType};
 use std::convert::TryFrom;
 
@@ -26,14 +27,6 @@ impl GroundTile {
             GroundTileType::Water => 5.,
         }
     }
-}
-
-#[derive(Copy, Clone, Debug, PartialEq, Hash, Eq)]
-pub enum GroundTileType {
-    Grass = 0,
-    Gold = 1,
-    Wall = 2,
-    Water = 3,
 }
 
 #[derive(Debug)]

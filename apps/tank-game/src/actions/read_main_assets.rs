@@ -7,7 +7,6 @@ use serde::{Deserialize, Serialize};
 
 use crate::constants::{TileSize, SPRITE_SCALE, TILE_SIZE};
 use crate::types::main_asset_info::MainAssetInfo;
-use crate::types::player::Player;
 use crate::types::{AssetImagePath, AssetTile, AssetTileId, AssetTileSubType, AssetTileType};
 
 #[derive(Serialize, Deserialize, Debug)]

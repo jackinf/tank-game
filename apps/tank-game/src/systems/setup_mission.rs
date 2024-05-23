@@ -5,9 +5,8 @@ use iyes_perf_ui::PerfUiCompleteBundle;
 
 use crate::constants::{TileCoord, TileGrid, OFFSET_X, OFFSET_Y, TILE_SIZE};
 use crate::features::building::actions::spawn_buildings::spawn_buildings;
-use crate::features::tile::managers::tile_spawn_manager::TileSpawnManager;
-use crate::features::unit::managers::unit_spawn_manager::UnitSpawnManager;
-use crate::features::unit::resources::unit_id_counter::UnitIdCounter;
+use crate::features::tile::{create_tile_to_world_coordinates, spawn_tiles};
+use crate::features::unit::{spawn_units, UnitIdCounter};
 use crate::resources::game_map::GameMap;
 use crate::resources::mission_info_resource::MissionInfoResource;
 
@@ -29,7 +28,7 @@ pub fn setup_mission(
     };
 
     let ground_layer = mission_info_resource.get_ground_layer();
-    TileSpawnManager::spawn_tiles(
+    spawn_tiles(
         &mut commands,
         &asset_server,
         &ground_layer,
@@ -37,7 +36,7 @@ pub fn setup_mission(
     );
 
     let resource_layer = mission_info_resource.get_resource_layer();
-    TileSpawnManager::spawn_tiles(
+    spawn_tiles(
         &mut commands,
         &asset_server,
         &resource_layer,
@@ -45,12 +44,11 @@ pub fn setup_mission(
     );
 
     let grid: TileGrid = ground_layer.to_2d_grid();
-    let tile_to_world =
-        TileSpawnManager::create_tile_to_world_coordinates(&ground_layer, calculate_world_position);
+    let tile_to_world = create_tile_to_world_coordinates(&ground_layer, calculate_world_position);
     game_map.set_map(grid, tile_to_world);
 
     let units_layer = mission_info_resource.get_units_layer();
-    UnitSpawnManager::spawn_units(
+    spawn_units(
         &mut commands,
         &asset_server,
         &mut tank_id_counter,

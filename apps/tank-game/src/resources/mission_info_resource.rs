@@ -1,7 +1,7 @@
-use crate::types::buildings_layer::BuildingsLayer;
-use crate::types::ground_layer::GroundLayer;
+use crate::features::building::types::buildings_layer::BuildingsLayer;
+use crate::features::tile::GroundLayer;
+use crate::features::unit::UnitsLayer;
 use crate::types::mission_info::MissionInfo;
-use crate::types::units_layer::UnitsLayer;
 use bevy::prelude::Resource;
 
 #[derive(Resource)]
@@ -17,10 +17,10 @@ impl MissionInfoResource {
     pub fn new() -> Self {
         MissionInfoResource {
             loaded: false,
-            ground_layer: GroundLayer::new(),
-            resource_layer: GroundLayer::new(),
-            buildings_layer: BuildingsLayer::new(),
-            units_layer: UnitsLayer::new(),
+            ground_layer: GroundLayer::empty(),
+            resource_layer: GroundLayer::empty(),
+            buildings_layer: BuildingsLayer::empty(),
+            units_layer: UnitsLayer::empty(),
         }
     }
 

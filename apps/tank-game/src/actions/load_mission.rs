@@ -1,9 +1,9 @@
-use crate::types::buildings_layer::{create_buildings_layer, BuildingsLayer};
-use crate::types::ground_layer::GroundLayer;
+use crate::features::building::types::buildings_layer::{create_buildings_layer, BuildingsLayer};
+use crate::features::tile::GroundLayer;
+use crate::features::unit::{create_units_layer, UnitsLayer};
 use crate::types::mission_info::MissionInfo;
 use crate::types::mission_layer::MissionLayer;
 use crate::types::raw_mission_layer::RawMission;
-use crate::types::units_layer::{create_units_layer, UnitsLayer};
 use crate::types::{AssetTile, AssetTileId, PlayersLayer};
 use std::collections::HashMap;
 use std::fs;

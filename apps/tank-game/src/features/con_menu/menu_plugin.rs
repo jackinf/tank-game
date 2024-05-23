@@ -1,7 +1,5 @@
 use bevy::prelude::*;
 
-use crate::features::con_menu::components::MoneyText;
-use crate::features::con_menu::components::PowerText;
 use crate::features::con_menu::components::SubMenuInfo;
 use crate::features::con_menu::systems::{
     detect_mouse_over_container, setup, update_money_text, update_power_text,

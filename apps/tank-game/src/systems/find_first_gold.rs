@@ -1,5 +1,5 @@
 use crate::constants::TileCoord;
-use crate::features::tile::ground_tile::GroundTileType;
+use crate::features::tile::GroundTileType;
 use std::collections::VecDeque;
 
 pub fn find_first_gold(grid: &Vec<Vec<i32>>, start: TileCoord) -> Option<TileCoord> {

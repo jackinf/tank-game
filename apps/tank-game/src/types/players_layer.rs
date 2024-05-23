@@ -1,9 +1,7 @@
 use crate::constants::TileCoord;
-use crate::features::tile::ground_tile::GroundTile;
-use crate::types::ground_layer::GroundLayer;
 use crate::types::mission_layer::MissionLayer;
 use crate::types::player::Player;
-use crate::types::{AssetTileSubType, AssetTileType};
+use crate::types::AssetTileSubType;
 use std::collections::HashMap;
 
 pub struct PlayersLayer {

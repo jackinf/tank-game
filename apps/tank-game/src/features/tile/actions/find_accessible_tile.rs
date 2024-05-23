@@ -1,0 +1,10 @@
+use crate::features::tile::Tile;
+use bevy::math::Vec2;
+use bevy::prelude::Query;
+
+pub fn find_accessible_tile(q_tiles: &Query<&Tile>, pos: &Vec2) -> Option<Tile> {
+    q_tiles
+        .iter()
+        .find(|tile| tile.in_range(pos.x, pos.y) && tile.accessible())
+        .map(|tile| tile.clone())
+}
