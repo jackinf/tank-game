@@ -4,6 +4,7 @@ use crate::types::player::Player;
 use crate::types::AssetTileSubType;
 use std::collections::HashMap;
 
+#[derive(Debug)]
 pub struct PlayersLayer {
     tiles: HashMap<TileCoord, Option<Player>>,
 }

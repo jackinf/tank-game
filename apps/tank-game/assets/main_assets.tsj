@@ -217,9 +217,14 @@
          "imagewidth":128,
          "properties":[
                 {
-                 "name":"tile_type",
+                 "name":"subtype",
                  "type":"string",
                  "value":"p2"
+                }, 
+                {
+                 "name":"type",
+                 "type":"string",
+                 "value":"player"
                 }]
         }, 
         {
@@ -229,9 +234,14 @@
          "imagewidth":128,
          "properties":[
                 {
-                 "name":"tile_type",
+                 "name":"subtype",
                  "type":"string",
                  "value":"p1"
+                }, 
+                {
+                 "name":"type",
+                 "type":"string",
+                 "value":"player"
                 }]
         }, 
         {
