@@ -1,8 +1,8 @@
-use crate::features::tank::managers::tank_health_manager::TankHealthManager;
-use crate::features::tank::managers::tank_movement_manager::TankMovementManager;
-use crate::features::tank::managers::tank_shooting_manager::TankShootingManager;
-use crate::features::tank::managers::tank_spawn_manager::TankSpawnManager;
-use crate::features::tank::resources::tank_monitoring_timer::TankMonitoringTimer;
+use crate::features::tank::resources::TankMonitoringTimer;
+use crate::features::tank::systems::{
+    despawn_tanks_with_zero_health, monitor_for_enemies, move_bullets, move_tanks_towards_target,
+    periodic_shooting, set_tank_target_position_to_move, update_health_bar,
+};
 use bevy::prelude::*;
 
 pub struct TankPlugin;
@@ -13,15 +13,12 @@ impl Plugin for TankPlugin {
             1.0,
             TimerMode::Repeating,
         )))
-        .add_systems(Update, TankHealthManager::update_health_bar)
-        .add_systems(Update, TankSpawnManager::despawn_tanks_with_zero_health)
-        .add_systems(
-            Update,
-            TankMovementManager::set_tank_target_position_to_move,
-        )
-        .add_systems(FixedUpdate, TankMovementManager::move_tanks_towards_target)
-        .add_systems(FixedUpdate, TankShootingManager::move_bullets)
-        .add_systems(Update, TankShootingManager::periodic_shooting)
-        .add_systems(Update, TankShootingManager::monitor_for_enemies);
+        .add_systems(Update, update_health_bar)
+        .add_systems(Update, despawn_tanks_with_zero_health)
+        .add_systems(Update, set_tank_target_position_to_move)
+        .add_systems(FixedUpdate, move_tanks_towards_target)
+        .add_systems(FixedUpdate, move_bullets)
+        .add_systems(Update, periodic_shooting)
+        .add_systems(Update, monitor_for_enemies);
     }
 }

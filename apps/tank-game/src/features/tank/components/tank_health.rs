@@ -18,6 +18,3 @@ impl TankHealth {
         full_health_bar_width * health_percentage
     }
 }
-
-#[derive(Component)]
-pub struct HealthBar;

@@ -1,6 +1,5 @@
 use crate::features::cursor::CursorCoordinates;
-use crate::features::tank::components::tank::Tank;
-use crate::features::tank::tank_queries::TankQueries;
+use crate::features::tank::{deselect_all_my_units, Tank};
 use crate::features::unit::components::UnitSelectionRect;
 use crate::resources::me::Me;
 use bevy::input::mouse::MouseButtonInput;
@@ -36,7 +35,7 @@ pub fn calculate_selection_rect_coordinates(
                 }
             }
             (MouseButton::Left, ButtonState::Pressed, None) => {
-                TankQueries::deselect_all_my_units(&mut tank_query, &me);
+                deselect_all_my_units(&mut tank_query, &me);
 
                 q_unit_selection_rect
                     .single_mut()

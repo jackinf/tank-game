@@ -1,7 +1,7 @@
 use crate::constants::TILE_SIZE;
 use crate::features::building::components::Building;
 use crate::features::cursor::resources::CursorCoordinates;
-use crate::features::tank::components::tank::Tank;
+use crate::features::tank::Tank;
 use bevy::prelude::{CursorIcon, Query, Res, Transform, Window, With};
 use bevy::window::PrimaryWindow;
 
