@@ -21,7 +21,7 @@ pub fn move_tanks_towards_target(
         let current_pos = transform.translation.xy();
 
         if tank.get_stop_when_target_in_range() {
-            println!("STOP WHEN TARGET IN RANGE");
+            // println!("STOP WHEN TARGET IN RANGE");
 
             // if tank has target, check if it's close enough to stop
             if let Some(target) = tank

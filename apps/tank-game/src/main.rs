@@ -16,6 +16,7 @@ fn main() {
     .insert_resource(UnitIdCounter(1))
     .insert_resource(Me::new(Player::P1))
     .insert_resource(GameMap::default())
+    .insert_resource(GoldMap::default())
     .insert_resource(MainAssetInfoResource::new())
     .insert_resource(MissionInfoResource::new())
     .add_systems(PreStartup, (setup_main_assets, setup_mission).chain())
@@ -65,6 +66,7 @@ use crate::features::tank::TankPlugin;
 use crate::features::unit::UnitIdCounter;
 use crate::features::unit::UnitSelectionPlugin;
 use crate::resources::game_map::GameMap;
+use crate::resources::gold_map::GoldMap;
 use crate::resources::me::Me;
 use crate::resources::mission_info_resource::MissionInfoResource;
 use crate::systems::setup_main_assets;

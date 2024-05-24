@@ -8,6 +8,7 @@ use crate::features::building::actions::spawn_buildings::spawn_buildings;
 use crate::features::tile::{create_tile_to_world_coordinates, spawn_tiles};
 use crate::features::unit::{spawn_units, UnitIdCounter};
 use crate::resources::game_map::GameMap;
+use crate::resources::gold_map::GoldMap;
 use crate::resources::mission_info_resource::MissionInfoResource;
 
 pub fn setup_mission(
@@ -16,6 +17,7 @@ pub fn setup_mission(
     asset_server: Res<AssetServer>,
     mut tank_id_counter: ResMut<UnitIdCounter>,
     mut game_map: ResMut<GameMap>,
+    mut gold_map: ResMut<GoldMap>,
 ) {
     if mission_info_resource.is_empty() {
         panic!("Mission info is not loaded");
@@ -46,6 +48,11 @@ pub fn setup_mission(
     let grid: TileGrid = ground_layer.to_2d_grid();
     let tile_to_world = create_tile_to_world_coordinates(&ground_layer, calculate_world_position);
     game_map.set_map(grid, tile_to_world);
+
+    let gold_grid: TileGrid = resource_layer.to_2d_grid();
+    let gold_tile_to_world =
+        create_tile_to_world_coordinates(&resource_layer, calculate_world_position);
+    gold_map.set_map(gold_grid, gold_tile_to_world);
 
     let units_layer = mission_info_resource.get_units_layer();
     spawn_units(

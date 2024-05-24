@@ -3,14 +3,14 @@ use bevy::prelude::Resource;
 use std::collections::HashMap;
 
 #[derive(Resource, Default)]
-pub struct GameMap {
+pub struct GoldMap {
     grid: TileGrid,
     tile_to_world_coordinates: HashMap<TileCoord, WorldCoord>,
 }
 
-impl GameMap {
+impl GoldMap {
     pub fn new() -> Self {
-        GameMap {
+        GoldMap {
             grid: vec![],
             tile_to_world_coordinates: HashMap::new(),
         }
@@ -102,7 +102,7 @@ mod tests {
             })
             .collect();
 
-        let game_map = GameMap {
+        let game_map = GoldMap {
             grid: tiles,
             tile_to_world_coordinates: HashMap::new(),
         };

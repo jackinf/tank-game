@@ -270,7 +270,7 @@
                 {
                  "name":"subtype",
                  "type":"string",
-                 "value":"tank"
+                 "value":"harvester"
                 }, 
                 {
                  "name":"type",
