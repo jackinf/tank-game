@@ -1,4 +1,5 @@
-pub mod managers {
-    pub mod power_monitoring_manager;
-}
-pub mod monitoring_plugin;
+mod monitoring_plugin;
+mod resources;
+mod systems;
+
+pub use monitoring_plugin::MonitoringPlugin;

@@ -60,7 +60,7 @@ use crate::features::con_menu::MenuPlugin;
 use crate::features::cursor::CursorPlugin;
 use crate::features::debug::debug_plugin::DebugPlugin;
 use crate::features::harvester::HarvesterPlugin;
-use crate::features::monitoring::monitoring_plugin::MonitoringPlugin;
+use crate::features::monitoring::MonitoringPlugin;
 use crate::features::tank::TankPlugin;
 use crate::features::unit::UnitIdCounter;
 use crate::features::unit::UnitSelectionPlugin;
