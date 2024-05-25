@@ -20,10 +20,8 @@ impl Building {
         building_tile_coord: TileCoord,
         player: Option<Player>,
     ) -> Self {
-        let building_tiles: HashSet<TileCoord> = HashSet::new();
-
-        // TODO: fix this
-        // let building_tiles: HashSet<TileCoord> = calculate_all_building_tiles(building_tile_coord, building_tile.get_size());
+        let building_tiles: HashSet<TileCoord> =
+            calculate_all_building_tiles(building_tile_coord, building_tile.get_size());
 
         Building {
             building_tile,
@@ -64,7 +62,7 @@ fn calculate_all_building_tiles(start: TileCoord, size: TileSize) -> HashSet<Til
 
     let mut building_tiles = HashSet::new();
     for x in start_x..start_x + width {
-        for y in start_y - height + 1..start_y + 1 {
+        for y in start_y..start_y + height {
             building_tiles.insert((x, y));
         }
     }

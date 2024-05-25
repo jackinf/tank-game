@@ -29,6 +29,7 @@ pub fn spawn_units(
                 spawn_harvester(
                     &mut commands,
                     &asset_server,
+                    unit.get_image_path(),
                     pos,
                     &mut unit_id_counter,
                     unit.get_player(),

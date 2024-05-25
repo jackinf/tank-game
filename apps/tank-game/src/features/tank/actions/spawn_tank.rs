@@ -4,6 +4,7 @@ use crate::features::unit::{UnitId, UnitIdCounter};
 use crate::types::player::Player;
 use crate::utils::common_helpers::CommonHelpers;
 use bevy::asset::ErasedAssetLoader;
+use bevy::math::Quat;
 use bevy::prelude::{
     default, AssetServer, BuildChildren, Color, Commands, Rect, Res, ResMut, Sprite, SpriteBundle,
     Transform, Vec2, Vec3,
@@ -11,6 +12,7 @@ use bevy::prelude::{
 use bevy::sprite::Anchor;
 use bevy_prototype_lyon::prelude::{GeometryBuilder, ShapeBundle, Stroke};
 use bevy_prototype_lyon::shapes;
+use std::f32::consts::PI;
 
 pub fn spawn_tank(
     commands: &mut Commands,
@@ -22,13 +24,14 @@ pub fn spawn_tank(
     let tank_id = tank_id_counter.0;
     tank_id_counter.0 += 1;
 
-    let tank_texture = asset_server.load("sprites/tank_base.png");
-    let gun_texture = asset_server.load("sprites/tank3gun.png");
+    let tank_texture = asset_server.load("sprites/tank_base2_bw.png");
+    let gun_texture = asset_server.load("sprites/tank_head_bw.png");
     let tank = Tank::new(tank_id, translation, player.clone());
     let layer = CommonHelpers::calculate_random_layer(5.0);
 
     let tank_radius = tank.get_radius().clone();
 
+    let color = tank.get_default_color().clone();
     commands
         .spawn((SpriteBundle {
             transform: Transform::default()
@@ -36,7 +39,7 @@ pub fn spawn_tank(
                 .with_scale(Vec3::splat(SPRITE_SCALE)),
             texture: tank_texture,
             sprite: Sprite {
-                color: tank.get_default_color(),
+                color: color.clone(),
                 ..default()
             },
             ..default()
@@ -48,8 +51,13 @@ pub fn spawn_tank(
             parent
                 .spawn(SpriteBundle {
                     transform: Transform::from_xyz(0.0, 0.0, 0.1)
+                        .with_rotation(Quat::from_rotation_z(PI))
                         .with_scale(Vec3::splat(SPRITE_SCALE)), // Ensure it's positioned correctly relative to the base
                     texture: gun_texture,
+                    sprite: Sprite {
+                        color: color * 2.0,
+                        ..default()
+                    },
                     ..default()
                 })
                 .insert(TankGun::new(UnitId(tank_id)));

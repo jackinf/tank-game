@@ -9,6 +9,7 @@ use bevy::prelude::{default, Commands, Res, ResMut, Sprite, SpriteBundle, Transf
 pub fn spawn_harvester(
     commands: &mut Commands,
     asset_server: &Res<AssetServer>,
+    image_path: String,
     pos: Vec2,
     unit_id_counter: &mut ResMut<UnitIdCounter>,
     player: Option<Player>,
@@ -22,7 +23,7 @@ pub fn spawn_harvester(
     let unit_id = unit_id_counter.0;
     unit_id_counter.0 += 1;
 
-    let texture = asset_server.load("sprites/harvester.png");
+    let texture = asset_server.load(image_path);
     let layer = 10.0;
 
     let harvester = Harvester::new(player, unit_id);

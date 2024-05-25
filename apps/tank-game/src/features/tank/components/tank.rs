@@ -56,10 +56,11 @@ impl Tank {
     }
 
     pub fn get_default_color(&self) -> Color {
+        let brightness = 2.;
         match self.player {
-            Some(Player::P1) => Color::rgb(0.3, 0.3, 0.7),
-            Some(Player::P2) => Color::rgb(0.8, 0.2, 0.2),
-            _ => Color::rgb(0.5, 0.5, 0.5),
+            Some(Player::P1) => Color::rgb(0.3, 0.3, 0.7) * brightness,
+            Some(Player::P2) => Color::rgb(0.8, 0.2, 0.2) * brightness,
+            _ => Color::rgb(0.5, 0.5, 0.5) * brightness,
         }
     }
 
