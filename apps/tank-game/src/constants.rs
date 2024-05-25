@@ -21,7 +21,7 @@ pub const TANK_HEALTH_BAR_SIZE: Vec2 =
     Vec2::new(TANK_FULL_HEALTH_BAR_WIDTH, TANK_HEALTH_BAR_HEIGHT);
 pub const TANK_MAX_HEALTH: u32 = 100;
 pub const TANK_ROTATION_SPEED: f32 = 10.0;
-pub const BULLET_RADIUS: f32 = 10.0;
+pub const BULLET_RADIUS: f32 = 40.0;
 
 pub const CAMERA_SPEED_STATIC: f32 = 0.0; // TODO: make 500.0
 pub const CAMERA_SPEED_DYNAMIC: f32 = 10.0;

@@ -1,7 +1,9 @@
 use crate::constants::BULLET_RADIUS;
+use crate::features::explosion::TriggerExplosionAnimationEvent;
 use crate::features::tank::components::{Tank, TankBullet};
 use bevy::prelude::{
-    Commands, Entity, Query, Res, Time, Transform, Vec2, Vec3, Vec3Swizzles, With, Without,
+    Commands, Entity, EventWriter, Query, Res, Time, Transform, Vec2, Vec3, Vec3Swizzles, With,
+    Without,
 };
 
 pub fn move_bullets(
@@ -9,6 +11,7 @@ pub fn move_bullets(
     time: Res<Time>,
     mut q_bullets: Query<(Entity, &mut Transform, &TankBullet), (With<TankBullet>, Without<Tank>)>,
     mut q_tanks: Query<(&mut Tank, &Transform), (With<Tank>, Without<TankBullet>)>,
+    mut trigger_explosion_animation_event_writer: EventWriter<TriggerExplosionAnimationEvent>,
 ) {
     let dt = time.delta_seconds(); // Get the delta time for frame-rate independent movement
 
@@ -26,9 +29,13 @@ pub fn move_bullets(
                 transform.translation.y + velocity.y * dt,
                 transform.translation.z,
             );
+
             if distance.abs() < 10.0 {
                 commands.entity(entity).despawn();
-                Some((transform.translation.xy(), bullet.get_damage()))
+                let target = transform.translation.xy();
+                trigger_explosion_animation_event_writer
+                    .send(TriggerExplosionAnimationEvent::new(target.clone()));
+                Some((target, bullet.get_damage()))
             } else {
                 None
             }

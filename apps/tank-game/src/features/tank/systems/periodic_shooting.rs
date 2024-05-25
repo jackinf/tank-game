@@ -1,7 +1,11 @@
 use crate::features::tank::actions::spawn_tank_bullet;
 use crate::features::tank::components::Tank;
 use crate::features::unit::UnitId;
-use bevy::prelude::{AssetServer, Commands, Query, Res, Time, Transform, Vec2, Vec3Swizzles, With};
+use bevy::audio::AudioBundle;
+use bevy::prelude::{
+    default, AssetServer, Commands, EventWriter, Query, Res, Time, Transform, Vec2, Vec3Swizzles,
+    With,
+};
 use std::collections::HashMap;
 
 pub fn periodic_shooting(
@@ -28,6 +32,11 @@ pub fn periodic_shooting(
 
                 tank.start_cooling_down(time.elapsed_seconds_f64());
                 spawn_tank_bullet(&mut commands, &asset_server, source.clone(), target.clone());
+
+                commands.spawn(AudioBundle {
+                    source: asset_server.load("sounds/explosion.ogg"),
+                    ..default()
+                });
             }
         });
 }

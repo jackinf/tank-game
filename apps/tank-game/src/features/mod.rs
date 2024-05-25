@@ -2,6 +2,7 @@ pub mod building;
 pub mod con_menu;
 pub mod cursor;
 pub mod debug;
+pub mod explosion;
 pub mod harvester;
 pub mod monitoring;
 pub mod tank;

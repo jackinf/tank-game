@@ -21,6 +21,7 @@ fn main() {
     .insert_resource(MissionInfoResource::new())
     .add_systems(PreStartup, (setup_main_assets, setup_mission).chain())
     .add_plugins((
+        ExplosionPlugin,
         ShapePlugin,
         DebugPlugin,
         CursorPlugin,
@@ -60,6 +61,7 @@ use crate::features::building::building_plugin::BuildingPlugin;
 use crate::features::con_menu::MenuPlugin;
 use crate::features::cursor::CursorPlugin;
 use crate::features::debug::debug_plugin::DebugPlugin;
+use crate::features::explosion::ExplosionPlugin;
 use crate::features::harvester::HarvesterPlugin;
 use crate::features::monitoring::MonitoringPlugin;
 use crate::features::tank::TankPlugin;
