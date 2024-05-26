@@ -2,6 +2,7 @@ use crate::features::harvester::components::Harvester;
 use crate::features::tile::{find_accessible_tile_coord, Tile};
 use crate::resources::game_map::GameMap;
 use crate::resources::gold_map::GoldMap;
+use crate::resources::map_trait::MapTrait;
 use crate::systems::find_first_gold;
 use crate::utils::astar::find_path;
 use bevy::prelude::{Query, Res, Transform, Vec3Swizzles, With};

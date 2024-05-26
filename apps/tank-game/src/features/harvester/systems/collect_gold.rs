@@ -1,6 +1,7 @@
 use crate::features::harvester::components::Harvester;
 use crate::features::tile::Gold;
 use crate::resources::game_map::GameMap;
+use crate::resources::map_trait::MapTrait;
 use bevy::math::Vec2;
 use bevy::prelude::{Query, Res, Time, Transform, Vec3Swizzles, With};
 

@@ -3,6 +3,7 @@ use crate::features::tank::components::Tank;
 use crate::features::tile::{find_accessible_tile_coord, Tile};
 use crate::features::unit::UnitId;
 use crate::resources::game_map::GameMap;
+use crate::resources::map_trait::MapTrait;
 use crate::resources::me::Me;
 use crate::utils::astar;
 use bevy::input::keyboard::KeyboardInput;

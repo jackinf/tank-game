@@ -9,6 +9,7 @@ use crate::features::tile::{create_tile_to_world_coordinates, spawn_tiles};
 use crate::features::unit::{spawn_units, UnitIdCounter};
 use crate::resources::game_map::GameMap;
 use crate::resources::gold_map::GoldMap;
+use crate::resources::map_trait::MapTrait;
 use crate::resources::mission_info_resource::MissionInfoResource;
 
 pub fn setup_mission(
