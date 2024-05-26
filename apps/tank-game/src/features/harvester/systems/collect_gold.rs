@@ -1,6 +1,6 @@
 use crate::features::harvester::components::Harvester;
 use crate::features::tile::Gold;
-use crate::resources::game_map::GameMap;
+use crate::resources::ground_map::GroundMap;
 use crate::resources::map_trait::MapTrait;
 use bevy::math::Vec2;
 use bevy::prelude::{Query, Res, Time, Transform, Vec3Swizzles, With};
@@ -9,7 +9,7 @@ pub fn collect_gold(
     time: Res<Time>,
     mut q_harvesters: Query<(&mut Harvester, &Transform), With<Harvester>>,
     mut q_gold: Query<&Gold>,
-    game_map: Res<GameMap>,
+    game_map: Res<GroundMap>,
 ) {
     let timestamp = time.elapsed_seconds_f64();
 

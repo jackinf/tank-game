@@ -1,15 +1,13 @@
-use crate::constants::TileCoord;
+use crate::actions::calculate_world_position::calculate_world_position;
 use crate::features::tile::systems::spawn_tile;
 use crate::features::tile::GroundLayer;
 use bevy::asset::AssetServer;
-use bevy::math::Vec2;
 use bevy::prelude::{Commands, Res};
 
 pub fn spawn_tiles(
     mut commands: &mut Commands,
     assets: &Res<AssetServer>,
     ground_layer: &GroundLayer,
-    calculate_world_position: fn(&TileCoord) -> Vec2,
 ) {
     ground_layer
         .get_tiles()

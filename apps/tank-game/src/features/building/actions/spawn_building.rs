@@ -23,7 +23,6 @@ pub fn spawn_building(
         Some(Player::P2) => crate::constants::P2_COLOR,
         _ => crate::constants::NEUTRAL_COLOR,
     };
-    let building = Building::new(building_tile, map_coord, player);
 
     commands
         .spawn((SpriteBundle {
@@ -38,5 +37,5 @@ pub fn spawn_building(
             },
             ..default()
         },))
-        .insert(building.clone());
+        .insert(Building::new(building_tile, map_coord, player));
 }

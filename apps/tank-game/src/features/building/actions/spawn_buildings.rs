@@ -1,4 +1,5 @@
-use crate::constants::{TileCoord, TILE_SIZE};
+use crate::actions::calculate_world_position::calculate_world_position;
+use crate::constants::TILE_SIZE;
 use crate::features::building::actions::spawn_building;
 use crate::features::building::types::buildings_layer::BuildingsLayer;
 use bevy::prelude::{AssetServer, Commands, Res, Vec2};
@@ -7,7 +8,6 @@ pub fn spawn_buildings(
     mut commands: &mut Commands,
     asset_server: &Res<AssetServer>,
     layer: BuildingsLayer,
-    calculate_world_position: fn(&TileCoord) -> Vec2,
 ) {
     layer
         .enumerate()

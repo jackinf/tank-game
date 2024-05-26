@@ -1,15 +1,15 @@
 use crate::constants::{TileCoord, TileGrid, WorldCoord};
 use crate::resources::map_trait::MapTrait;
 use bevy::prelude::Resource;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 #[derive(Resource, Default)]
-pub struct GoldMap {
+pub struct BuildingMap {
     grid: TileGrid,
     tile_to_world_coordinates: HashMap<TileCoord, WorldCoord>,
 }
 
-impl MapTrait for GoldMap {
+impl MapTrait for BuildingMap {
     fn get_grid(&self) -> &TileGrid {
         &self.grid
     }
@@ -25,5 +25,13 @@ impl MapTrait for GoldMap {
     ) {
         self.grid = grid;
         self.tile_to_world_coordinates = tile_to_world_coordinates;
+    }
+
+    fn get_blocking_cells(&self) -> HashSet<TileCoord> {
+        let mut blocking_cells: HashSet<TileCoord> = HashSet::new();
+
+        // TODO: implement
+
+        blocking_cells
     }
 }

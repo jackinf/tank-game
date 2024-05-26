@@ -7,6 +7,7 @@ pub type RawGrid = Vec<Vec<usize>>;
 pub type WorldCoord = (f32, f32);
 pub type TileCoord = (usize, usize);
 pub type TileSize = (usize, usize);
+pub type GridSize = (usize, usize);
 
 pub const MAX_WIDTH: u16 = 1600;
 pub const MAX_HEIGHT: u16 = 1000;

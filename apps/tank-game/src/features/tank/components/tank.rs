@@ -3,7 +3,7 @@ use std::collections::VecDeque;
 use bevy::math::Vec2;
 use bevy::prelude::{Color, Component, Mut, Sprite};
 
-use crate::constants::TILE_SIZE;
+use crate::constants::{WorldCoord, TILE_SIZE};
 use crate::features::unit::UnitId;
 use crate::resources::me::Me;
 use crate::types::player::Player;
@@ -77,7 +77,7 @@ impl Tank {
         self.moving = true;
     }
 
-    pub fn set_movement_path(&mut self, path: VecDeque<(f32, f32)>) {
+    pub fn set_movement_path(&mut self, path: VecDeque<WorldCoord>) {
         self.movement_path = path;
         self.moving = true;
     }

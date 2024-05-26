@@ -1,6 +1,6 @@
 use crate::features::con_menu::MenuInfo;
 use crate::features::harvester::components::Harvester;
-use crate::resources::game_map::GameMap;
+use crate::resources::ground_map::GroundMap;
 use crate::resources::map_trait::MapTrait;
 use bevy::math::Vec2;
 use bevy::prelude::{Query, Res, Time, Transform, Vec3Swizzles, With};
@@ -8,7 +8,7 @@ use bevy::prelude::{Query, Res, Time, Transform, Vec3Swizzles, With};
 pub fn move_harvester(
     time: Res<Time>,
     mut q_harvesters: Query<(&mut Harvester, &mut Transform), With<Harvester>>,
-    game_map: Res<GameMap>,
+    game_map: Res<GroundMap>,
     mut q_menu_info: Query<&mut MenuInfo>,
 ) {
     let dt = time.delta_seconds();

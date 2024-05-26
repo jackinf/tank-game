@@ -1,8 +1,8 @@
 use crate::features::harvester::components::Harvester;
 use crate::features::tile::{find_accessible_tile_coord, Tile};
-use crate::resources::game_map::GameMap;
-use crate::resources::gold_map::GoldMap;
+use crate::resources::ground_map::GroundMap;
 use crate::resources::map_trait::MapTrait;
+use crate::resources::resource_map::ResourceMap;
 use crate::systems::find_first_gold;
 use crate::utils::astar::find_path;
 use bevy::prelude::{Query, Res, Transform, Vec3Swizzles, With};
@@ -10,8 +10,8 @@ use bevy::prelude::{Query, Res, Transform, Vec3Swizzles, With};
 pub fn find_gold_for_hungry_harvester(
     mut q_harvesters: Query<(&mut Harvester, &Transform), With<Harvester>>,
     tile_query: Query<&Tile>,
-    gold_map: Res<GoldMap>,
-    game_map: Res<GameMap>,
+    gold_map: Res<ResourceMap>,
+    game_map: Res<GroundMap>,
 ) {
     q_harvesters
         .iter_mut()

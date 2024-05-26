@@ -39,8 +39,12 @@ impl Building {
         self.building_tile.get_building_type()
     }
 
-    pub fn get_building_tile_coord(&self) -> TileCoord {
+    pub fn get_door(&self) -> TileCoord {
         self.building_tile_coord
+    }
+
+    pub fn get_building_tiles(&self) -> HashSet<TileCoord> {
+        self.building_tiles.clone()
     }
 
     pub fn get_player(&self) -> Option<Player> {

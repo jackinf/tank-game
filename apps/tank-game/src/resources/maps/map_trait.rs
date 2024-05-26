@@ -1,5 +1,5 @@
-use crate::constants::{TileCoord, TileGrid, WorldCoord};
-use std::collections::HashMap;
+use crate::constants::{GridSize, TileCoord, TileGrid, WorldCoord};
+use std::collections::{HashMap, HashSet};
 
 pub trait MapTrait {
     fn get_grid(&self) -> &TileGrid;
@@ -39,5 +39,24 @@ pub trait MapTrait {
                     });
                 println!()
             });
+    }
+
+    fn get_blocking_cells(&self) -> HashSet<TileCoord>;
+
+    fn get_grid_size(&self) -> GridSize {
+        (self.get_width(), self.get_height())
+    }
+
+    fn get_width(&self) -> usize {
+        self.get_grid().len()
+    }
+
+    fn get_height(&self) -> usize {
+        let grid = self.get_grid();
+        if grid.len() > 0 {
+            grid[0].len()
+        } else {
+            0
+        }
     }
 }

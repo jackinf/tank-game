@@ -1,3 +1,4 @@
+use crate::actions::calculate_world_position::calculate_world_position;
 use crate::constants::TileCoord;
 use crate::features::harvester::spawn_harvester;
 use crate::features::tank::spawn_tank;
@@ -10,7 +11,6 @@ pub fn spawn_units(
     asset_server: &Res<AssetServer>,
     mut unit_id_counter: &mut ResMut<UnitIdCounter>,
     layer: UnitsLayer,
-    calculate_world_position: fn(&TileCoord) -> Vec2,
 ) {
     layer.get_units().into_iter().for_each(|(coord, unit)| {
         let pos = calculate_world_position(coord);

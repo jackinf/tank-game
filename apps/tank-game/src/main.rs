@@ -15,8 +15,10 @@ fn main() {
     .insert_resource(Msaa::Sample4)
     .insert_resource(UnitIdCounter(1))
     .insert_resource(Me::new(Player::P1))
-    .insert_resource(GameMap::default())
-    .insert_resource(GoldMap::default())
+    .insert_resource(GroundMap::default())
+    .insert_resource(ResourceMap::default())
+    .insert_resource(UnitMap::default())
+    .insert_resource(BuildingMap::default())
     .insert_resource(MainAssetInfoResource::new())
     .insert_resource(MissionInfoResource::new())
     .add_systems(PreStartup, (setup_main_assets, setup_mission).chain())
@@ -67,10 +69,12 @@ use crate::features::monitoring::MonitoringPlugin;
 use crate::features::tank::TankPlugin;
 use crate::features::unit::UnitIdCounter;
 use crate::features::unit::UnitSelectionPlugin;
-use crate::resources::game_map::GameMap;
-use crate::resources::gold_map::GoldMap;
+use crate::resources::building_map::BuildingMap;
+use crate::resources::ground_map::GroundMap;
 use crate::resources::me::Me;
 use crate::resources::mission_info_resource::MissionInfoResource;
+use crate::resources::resource_map::ResourceMap;
+use crate::resources::unit_map::UnitMap;
 use crate::systems::setup_main_assets;
 use crate::systems::setup_mission;
 use crate::types::main_asset_info_resource::MainAssetInfoResource;
