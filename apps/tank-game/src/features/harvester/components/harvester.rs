@@ -51,7 +51,7 @@ impl Harvester {
             state: HarvesterState::Idle,
             return_to_tile: None,
             gold_current_capacity: 0,
-            gold_max_capacity: 100,
+            gold_max_capacity: 30,
             harvesting_speed: 100,
             harvesting_cooldown_seconds: 1.0,
             last_harvest_timestamp: 0.0,

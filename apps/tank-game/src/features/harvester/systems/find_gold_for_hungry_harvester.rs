@@ -1,31 +1,40 @@
+use crate::actions::calculate_bfs::calculate_bfs;
+use crate::actions::calculate_tile_world_position::calculate_world_tile_position;
+use crate::actions::get_all_blocking_cells::get_all_blocking_cells;
+use crate::constants::TileCoord;
+use crate::features::building::components::Building;
 use crate::features::harvester::components::Harvester;
-use crate::features::tile::{find_accessible_tile_coord, Tile};
-use crate::resources::ground_map::GroundMap;
-use crate::resources::map_trait::MapTrait;
-use crate::resources::resource_map::ResourceMap;
-use crate::systems::find_first_gold;
-use crate::utils::astar::find_path;
+use crate::features::tile::{Gold, Tile};
+use crate::resources::mission_info_resource::MissionInfoResource;
 use bevy::prelude::{Query, Res, Transform, Vec3Swizzles, With};
+use std::collections::{HashSet, VecDeque};
 
 pub fn find_gold_for_hungry_harvester(
+    mission_info_resource: Res<MissionInfoResource>,
     mut q_harvesters: Query<(&mut Harvester, &Transform), With<Harvester>>,
-    tile_query: Query<&Tile>,
-    gold_map: Res<ResourceMap>,
-    game_map: Res<GroundMap>,
+    q_golds: Query<&Gold>,
+    q_tiles: Query<&Tile>,
+    q_buildings: Query<&Building>,
 ) {
+    let grid_size = mission_info_resource.get_grid_size();
+    let blocking = get_all_blocking_cells(&q_tiles, &q_buildings);
+    let golds = q_golds
+        .iter()
+        .map(|gold| gold.at())
+        .collect::<HashSet<TileCoord>>();
+
     q_harvesters
         .iter_mut()
         .filter(|(harvester, _)| harvester.is_searching_for_gold())
         .for_each(|(mut harvester, transform)| {
-            let start =
-                find_accessible_tile_coord(&tile_query, &transform.translation.xy()).unwrap();
-            let found_option = find_first_gold(&gold_map.get_tile_type_grid_i32(), start);
+            let start = calculate_world_tile_position(&transform.translation.xy());
+            dbg!(start);
 
-            if let Some(goal) = found_option {
-                let path = find_path(&game_map.get_tile_type_grid_usize(), start, goal);
-                // dbg!(goal);
-                harvester.set_movement_path(path);
+            if let Some(path) = calculate_bfs(grid_size, start, &golds, &blocking) {
+                harvester.set_movement_path(VecDeque::from(path));
                 harvester.set_moving_to_gold();
+            } else {
+                println!("Cannot find gold for harvester");
             }
         });
 }

@@ -17,7 +17,7 @@ pub struct Tank {
     pub target_position: Vec2, // TODO: Option
     pub speed: f32,            // Units per second
     pub moving: bool,
-    pub movement_path: VecDeque<(f32, f32)>,
+    pub movement_path: VecDeque<Vec2>,
     pub player: Option<Player>,
     target: Option<UnitId>,
     cooldown_seconds: f64,
@@ -77,7 +77,7 @@ impl Tank {
         self.moving = true;
     }
 
-    pub fn set_movement_path(&mut self, path: VecDeque<WorldCoord>) {
+    pub fn set_movement_path(&mut self, path: VecDeque<Vec2>) {
         self.movement_path = path;
         self.moving = true;
     }
@@ -96,8 +96,7 @@ impl Tank {
 
     pub fn try_take_next_position_in_path(&mut self) {
         if self.movement_path.len() > 0 {
-            let (x, y) = self.movement_path.pop_front().unwrap();
-            self.target_position = Vec2::new(x, y);
+            self.target_position = self.movement_path.pop_front().unwrap();
         } else {
             self.stop();
         }

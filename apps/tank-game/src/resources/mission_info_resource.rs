@@ -1,3 +1,4 @@
+use crate::constants::GridSize;
 use crate::features::building::types::buildings_layer::BuildingsLayer;
 use crate::features::tile::GroundLayer;
 use crate::features::unit::UnitsLayer;
@@ -50,5 +51,10 @@ impl MissionInfoResource {
 
     pub fn get_units_layer(&self) -> UnitsLayer {
         self.units_layer.clone()
+    }
+
+    /// let ground layer decide the grid size
+    pub fn get_grid_size(&self) -> GridSize {
+        self.ground_layer.get_grid_size()
     }
 }

@@ -1,4 +1,4 @@
-use crate::constants::{TileCoord, TileGrid};
+use crate::constants::{GridSize, TileCoord, TileGrid};
 use crate::features::tile::types::GroundTile;
 use crate::features::tile::GroundTileType;
 use crate::types::mission_layer::MissionLayer;
@@ -24,7 +24,7 @@ impl GroundLayer {
         &self.tiles
     }
 
-    pub fn get_width_height(&self) -> (usize, usize) {
+    pub fn get_grid_size(&self) -> GridSize {
         (self.width, self.height)
     }
 

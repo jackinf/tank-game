@@ -2,7 +2,7 @@ use crate::constants::{GridSize, TileCoord};
 use bevy::utils::petgraph::Graph;
 use std::collections::HashSet;
 
-pub fn compute_astar_path(
+pub fn calculate_astar_path(
     grid_size: GridSize,
     start: TileCoord,
     goal: TileCoord,
@@ -17,7 +17,7 @@ pub fn compute_astar_path(
     // Add nodes to the graph
     for y in 0..grid_height {
         for x in 0..grid_width {
-            if !blocking_cells.contains(&(x, y)) {
+            if !blocking_cells.contains(&(x, y)) || (x, y) == start || (x, y) == goal {
                 let node = graph.add_node((x, y));
                 node_indices[y][x] = Some(node);
             }

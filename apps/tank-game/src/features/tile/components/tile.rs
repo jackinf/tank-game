@@ -69,4 +69,8 @@ impl Tile {
     pub fn get_center(&self) -> Vec2 {
         self.center
     }
+
+    pub fn is_blocking(&self) -> bool {
+        self.tile_type == GroundTileType::Wall || self.tile_type == GroundTileType::Water
+    }
 }
