@@ -28,7 +28,6 @@ pub fn find_gold_for_hungry_harvester(
         .filter(|(harvester, _)| harvester.is_searching_for_gold())
         .for_each(|(mut harvester, transform)| {
             let start = calculate_world_tile_position(&transform.translation.xy());
-            dbg!(start);
 
             if let Some(path) = calculate_bfs(grid_size, start, &golds, &blocking) {
                 harvester.set_movement_path(VecDeque::from(path));

@@ -21,10 +21,15 @@ fn build_graph(
     blocking_cells: &HashSet<TileCoord>,
 ) -> (Graph<(), ()>, HashMap<TileCoord, NodeIndex>) {
     let mut graph = Graph::<(), ()>::new();
-
     let (width, height) = grid_size;
-
     let mut nodes = HashMap::new();
+
+    nodes.insert(start, graph.add_node(()));
+
+    for goal in goals {
+        let node = graph.add_node(());
+        nodes.insert(*goal, node);
+    }
 
     for y in 0..height {
         for x in 0..width {
