@@ -1,4 +1,4 @@
-use crate::actions::calculate_tile_world_position::calculate_tile_world_position;
+use crate::actions::calculate_tile_world_position::calculate_tile_to_world_position;
 use crate::constants::{HARVESTER_GOLD_PER_COOLDOWN, HARVESTER_TO_GOLD_MIN_DISTANCE};
 use crate::features::harvester::components::Harvester;
 use crate::features::tile::Gold;
@@ -20,7 +20,7 @@ pub fn collect_gold(
             // TODO: check if harvester is close enough to gold
             let harvester_pos = transform.translation.xy();
             let gold_res = q_gold.iter_mut().find(|gold| {
-                let gold_pos = calculate_tile_world_position(&gold.at());
+                let gold_pos = calculate_tile_to_world_position(&gold.at());
                 let distance = (harvester_pos - gold_pos).length();
                 distance < HARVESTER_TO_GOLD_MIN_DISTANCE
             });

@@ -1,5 +1,5 @@
 use crate::actions::calculate_bfs::calculate_bfs;
-use crate::actions::calculate_tile_world_position::calculate_world_tile_position;
+use crate::actions::calculate_tile_world_position::calculate_world_to_tile_position;
 use crate::actions::get_all_blocking_cells::get_all_blocking_cells;
 use crate::constants::TileCoord;
 use crate::features::building::components::Building;
@@ -27,7 +27,7 @@ pub fn find_gold_for_hungry_harvester(
         .iter_mut()
         .filter(|(harvester, _)| harvester.is_searching_for_gold())
         .for_each(|(mut harvester, transform)| {
-            let start = calculate_world_tile_position(&transform.translation.xy());
+            let start = calculate_world_to_tile_position(&transform.translation.xy());
 
             if let Some(path) = calculate_bfs(grid_size, start, &golds, &blocking) {
                 harvester.set_movement_path(VecDeque::from(path));

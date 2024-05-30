@@ -103,8 +103,6 @@ impl Tank {
     }
 
     pub fn stop(&mut self) {
-        println!("STOP!");
-
         self.moving = false;
         self.set_stop_when_target_in_range(false);
     }

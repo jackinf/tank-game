@@ -1,5 +1,5 @@
 use crate::actions::calculate_astar_path::calculate_astar_path;
-use crate::actions::calculate_tile_world_position::calculate_tile_world_position;
+use crate::actions::calculate_tile_world_position::calculate_tile_to_world_position;
 use crate::actions::get_all_blocking_cells::get_all_blocking_cells;
 use crate::features::building::components::Building;
 use crate::features::cursor::CursorCoordinates;
@@ -74,7 +74,7 @@ pub fn set_tank_target_position_to_move(
                             // TODO: might be expensive; optimize this
                             calculate_astar_path(grid_size, start, goal, &all_blocking_cells)
                                 .iter()
-                                .map(|&key| calculate_tile_world_position(&key))
+                                .map(|&key| calculate_tile_to_world_position(&key))
                                 .collect();
 
                         tank.set_movement_path(world_path);

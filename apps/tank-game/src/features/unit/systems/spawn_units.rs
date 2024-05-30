@@ -1,4 +1,4 @@
-use crate::actions::calculate_tile_world_position::calculate_tile_world_position;
+use crate::actions::calculate_tile_world_position::calculate_tile_to_world_position;
 use crate::constants::TileCoord;
 use crate::features::harvester::spawn_harvester;
 use crate::features::tank::spawn_tank;
@@ -13,7 +13,7 @@ pub fn spawn_units(
     layer: UnitsLayer,
 ) {
     layer.get_units().into_iter().for_each(|(coord, unit)| {
-        let pos = calculate_tile_world_position(coord);
+        let pos = calculate_tile_to_world_position(coord);
 
         match unit.get_unit_type() {
             UnitTileType::Tank => {

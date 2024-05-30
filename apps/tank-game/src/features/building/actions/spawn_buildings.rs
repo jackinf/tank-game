@@ -1,4 +1,4 @@
-use crate::actions::calculate_tile_world_position::calculate_tile_world_position;
+use crate::actions::calculate_tile_world_position::calculate_tile_to_world_position;
 use crate::constants::TILE_SIZE;
 use crate::features::building::actions::spawn_building;
 use crate::features::building::types::buildings_layer::BuildingsLayer;
@@ -13,7 +13,7 @@ pub fn spawn_buildings(
         .enumerate()
         .into_iter()
         .for_each(|(coord, building_tile)| {
-            let pos = calculate_tile_world_position(&coord);
+            let pos = calculate_tile_to_world_position(&coord);
 
             spawn_building(
                 &mut commands,

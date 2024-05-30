@@ -20,10 +20,10 @@
         },
         "mission01.tmj": {
             "scale": 0.33,
-            "selectedLayer": 0,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 818.1818181818182,
-                "y": 1589.3939393939393
+                "x": 815.1515151515152,
+                "y": 1586.3636363636363
             }
         },
         "mission02.tmj": {

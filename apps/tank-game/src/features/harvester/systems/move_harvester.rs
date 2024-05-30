@@ -1,4 +1,4 @@
-use crate::actions::calculate_tile_world_position::calculate_tile_world_position;
+use crate::actions::calculate_tile_world_position::calculate_tile_to_world_position;
 use crate::features::con_menu::MenuInfo;
 use crate::features::harvester::components::Harvester;
 use bevy::math::Vec2;
@@ -18,7 +18,7 @@ pub fn move_harvester(
         // .filter(|(harvester, _)| harvester.is_moving_to_gold() || harvester.is_returning_to_base() || harvester.is_forced_by_player())
         .for_each(|(mut harvester, mut transform)| {
             let next_tile = harvester.get_movement_path().into_iter().next().unwrap();
-            let last_world_pos = calculate_tile_world_position(&next_tile);
+            let last_world_pos = calculate_tile_to_world_position(&next_tile);
 
             let current_pos = transform.translation.xy();
             let direction_vector = last_world_pos - current_pos;

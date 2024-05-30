@@ -7,11 +7,11 @@ use std::collections::HashMap;
 
 pub fn monitor_for_enemies(
     mut q_tanks: Query<(&mut Tank, &Transform), With<Tank>>,
-    mut timer: ResMut<TankMonitoringTimer>,
+    mut tank_monitoring_timer: ResMut<TankMonitoringTimer>,
     time: Res<Time>,
 ) {
     // finding pairs is O(N^2), so, use timer to do it less frequently
-    if !timer.0.tick(time.delta()).just_finished() {
+    if !tank_monitoring_timer.0.tick(time.delta()).just_finished() {
         return;
     }
 
