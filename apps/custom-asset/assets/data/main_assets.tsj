@@ -1,0 +1,1451 @@
+{
+  "columns": 0,
+  "grid": {
+    "height": 1,
+    "orientation": "orthogonal",
+    "width": 1
+  },
+  "margin": 0,
+  "name": "main_assets",
+  "spacing": 0,
+  "tilecount": 79,
+  "tiledversion": "1.10.2",
+  "tileheight": 256,
+  "tiles": [
+    {
+      "id": 0,
+      "image": "sprites\/building_b_tr.png",
+      "imageheight": 256,
+      "imagewidth": 256,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "base"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "building"
+        }
+      ],
+      "type": "building"
+    },
+    {
+      "id": 1,
+      "image": "sprites\/building_c_tr.png",
+      "imageheight": 256,
+      "imagewidth": 256,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "factory"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "building"
+        }
+      ],
+      "type": "building"
+    },
+    {
+      "id": 2,
+      "image": "sprites\/building_d_tr.png",
+      "imageheight": 256,
+      "imagewidth": 256,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "powerplant"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "building"
+        }
+      ],
+      "type": "building"
+    },
+    {
+      "id": 3,
+      "image": "sprites\/tank3base.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "tank"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "unit"
+        }
+      ],
+      "type": "unit"
+    },
+    {
+      "id": 5,
+      "image": "sprites\/tiles\/grass_b.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ],
+      "type": "ground"
+    },
+    {
+      "id": 6,
+      "image": "sprites\/tiles\/invalid.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ],
+      "type": "ground"
+    },
+    {
+      "id": 7,
+      "image": "sprites\/tiles\/wall.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ],
+      "type": "ground"
+    },
+    {
+      "id": 8,
+      "image": "sprites\/tiles\/wall_b.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "wall"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ],
+      "type": "ground"
+    },
+    {
+      "id": 9,
+      "image": "sprites\/tiles\/water.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "water"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ],
+      "type": "ground"
+    },
+    {
+      "id": 10,
+      "image": "sprites\/tiles\/water_b.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "water"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ],
+      "type": "ground"
+    },
+    {
+      "id": 11,
+      "image": "sprites\/p2.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "p2"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "player"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "image": "sprites\/p1.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "p1"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "player"
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "image": "sprites\/resources\/gold_hq.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "gold"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "image": "sprites\/resources\/harvester.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "harvester"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "unit"
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "image": "sprites\/tank_base2_bw.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "tank"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "unit"
+        }
+      ]
+    },
+    {
+      "id": 26,
+      "image": "sprites\/tiles\/grass\/grass_01.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 27,
+      "image": "sprites\/tiles\/grass\/grass_02.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 28,
+      "image": "sprites\/tiles\/grass\/grass_03.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 29,
+      "image": "sprites\/tiles\/grass\/grass_04.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 30,
+      "image": "sprites\/tiles\/grass\/grass_05.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 31,
+      "image": "sprites\/tiles\/grass\/grass_06.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 32,
+      "image": "sprites\/tiles\/grass\/grass_07.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 33,
+      "image": "sprites\/tiles\/grass\/grass_08.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 34,
+      "image": "sprites\/tiles\/grass\/grass_09.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 35,
+      "image": "sprites\/tiles\/grass\/grass_10.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 36,
+      "image": "sprites\/tiles\/grass\/grass_11.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 37,
+      "image": "sprites\/tiles\/grass\/grass_12.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 38,
+      "image": "sprites\/tiles\/grass\/grass_13.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 39,
+      "image": "sprites\/tiles\/grass\/grass_14.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 40,
+      "image": "sprites\/tiles\/grass\/grass_15.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 41,
+      "image": "sprites\/tiles\/grass\/grass_16.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 42,
+      "image": "sprites\/tiles\/grass\/grass_17.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 43,
+      "image": "sprites\/tiles\/grass\/grass_18.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 44,
+      "image": "sprites\/tiles\/grass\/grass_19.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 45,
+      "image": "sprites\/tiles\/grass\/grass_20.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 46,
+      "image": "sprites\/tiles\/grass\/grass_21.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 47,
+      "image": "sprites\/tiles\/grass\/grass_22.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 48,
+      "image": "sprites\/tiles\/grass\/grass_23.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 49,
+      "image": "sprites\/tiles\/grass\/grass_24.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 50,
+      "image": "sprites\/tiles\/grass\/grass_25.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 51,
+      "image": "sprites\/tiles\/grass\/grass_26.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 52,
+      "image": "sprites\/tiles\/grass\/grass_27.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 53,
+      "image": "sprites\/tiles\/grass\/grass_28.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 54,
+      "image": "sprites\/tiles\/grass\/grass_29.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 55,
+      "image": "sprites\/tiles\/grass\/grass_30.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 56,
+      "image": "sprites\/tiles\/grass\/grass_31.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 57,
+      "image": "sprites\/tiles\/grass\/grass_32.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 58,
+      "image": "sprites\/tiles\/grass\/grass_33.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 59,
+      "image": "sprites\/tiles\/grass\/grass_34.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 60,
+      "image": "sprites\/tiles\/grass\/grass_35.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 61,
+      "image": "sprites\/tiles\/grass\/grass_36.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 62,
+      "image": "sprites\/tiles\/grass\/grass_37.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 63,
+      "image": "sprites\/tiles\/grass\/grass_38.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 64,
+      "image": "sprites\/tiles\/grass\/grass_39.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 65,
+      "image": "sprites\/tiles\/grass\/grass_40.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 66,
+      "image": "sprites\/tiles\/grass\/grass_41.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 67,
+      "image": "sprites\/tiles\/grass\/grass_42.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 68,
+      "image": "sprites\/tiles\/grass\/grass_43.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 69,
+      "image": "sprites\/tiles\/grass\/grass_44.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 70,
+      "image": "sprites\/tiles\/grass\/grass_45.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 71,
+      "image": "sprites\/tiles\/grass\/grass_46.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 72,
+      "image": "sprites\/tiles\/grass\/grass_47.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 73,
+      "image": "sprites\/tiles\/grass\/grass_48.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 74,
+      "image": "sprites\/tiles\/grass\/grass_49.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 75,
+      "image": "sprites\/tiles\/grass\/grass_50.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 76,
+      "image": "sprites\/tiles\/grass\/grass_51.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 77,
+      "image": "sprites\/tiles\/grass\/grass_52.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 78,
+      "image": "sprites\/tiles\/grass\/grass_53.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 79,
+      "image": "sprites\/tiles\/grass\/grass_54.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 80,
+      "image": "sprites\/tiles\/grass\/grass_55.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 81,
+      "image": "sprites\/tiles\/grass\/grass_56.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 82,
+      "image": "sprites\/tiles\/grass\/grass_57.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 83,
+      "image": "sprites\/tiles\/grass\/grass_58.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 84,
+      "image": "sprites\/tiles\/grass\/grass_59.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 85,
+      "image": "sprites\/tiles\/grass\/grass_60.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 86,
+      "image": "sprites\/tiles\/grass\/grass_61.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 87,
+      "image": "sprites\/tiles\/grass\/grass_62.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 88,
+      "image": "sprites\/tiles\/grass\/grass_63.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    },
+    {
+      "id": 89,
+      "image": "sprites\/tiles\/grass\/grass_64.png",
+      "imageheight": 128,
+      "imagewidth": 128,
+      "properties": [
+        {
+          "name": "subtype",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "value": "ground"
+        }
+      ]
+    }
+  ],
+  "tilewidth": 256,
+  "type": "tileset",
+  "version": "1.10"
+}

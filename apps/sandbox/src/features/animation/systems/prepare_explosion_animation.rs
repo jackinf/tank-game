@@ -6,7 +6,7 @@ use bevy::prelude::{
     TextureAtlasLayout, Timer, TimerMode, Transform,
 };
 
-pub fn prepare_explosion_animation(
+pub fn explosion_animation_setup(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
@@ -16,7 +16,6 @@ pub fn prepare_explosion_animation(
     let texture_atlas_layout = texture_atlas_layouts.add(layout);
     // Use only the subset of sprites in the sheet that make up the run animation
     let animation_indices = AnimationIndices::new(0, 4);
-    commands.spawn(Camera2dBundle::default());
     commands.spawn((
         SpriteSheetBundle {
             texture,
