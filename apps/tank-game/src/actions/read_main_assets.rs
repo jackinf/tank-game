@@ -50,9 +50,9 @@ impl Display for FileHelperErrors {
     }
 }
 
-pub fn read_main_assets(asset_path: &str) -> Result<MainAssetInfo, FileHelperErrors> {
-    let file_content =
-        fs::read_to_string(asset_path).map_err(|_| FileHelperErrors::FileReadError)?;
+pub fn read_main_assets(file_content: String) -> Result<MainAssetInfo, FileHelperErrors> {
+    // let file_content =
+    //     fs::read_to_string(asset_path).map_err(|_| FileHelperErrors::FileReadError)?;
     let tile_set: AssetRawTileSet =
         serde_json::from_str(&file_content).map_err(|_| FileHelperErrors::JsonParseError)?;
 

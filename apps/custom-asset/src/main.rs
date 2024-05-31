@@ -103,7 +103,7 @@ fn main() {
         .init_asset_loader::<CustomAssetLoader>()
         .init_asset_loader::<TsjAssetLoader>()
         .add_systems(Startup, setup)
-        .add_systems(Update, print_on_load)
+        // .add_systems(Update, print_on_load)
         .run();
 }
 
@@ -117,14 +117,25 @@ struct State {
     printed: bool,
 }
 
-fn setup(mut state: ResMut<State>, asset_server: Res<AssetServer>) {
+fn setup(
+    mut state: ResMut<State>,
+    asset_server: Res<AssetServer>,
+    main_assets: Res<Assets<Tileset>>,
+) {
     // Recommended way to load an asset
     state.handle = asset_server.load("data/asset.custom");
 
     // File extensions are optional, but are recommended for project management and last-resort inference
     state.other_handle = asset_server.load("data/asset_no_extension");
 
-    state.main_assets = asset_server.load("data/main_assets.tsj");
+    let main_assets_handler: Handle<Tileset> = asset_server.load("data/main_assets.tsj");
+    let main_assets = main_assets.get(main_assets_handler);
+
+    if main_assets.is_none() {
+        info!("Main Assets Not Ready");
+        return;
+    }
+    info!("Main assets loaded: {:?}", main_assets.unwrap());
 }
 
 fn print_on_load(
@@ -134,7 +145,7 @@ fn print_on_load(
 ) {
     let custom_asset = custom_assets.get(&state.handle);
     let other_custom_asset = custom_assets.get(&state.other_handle);
-    let main_assets = main_assets.get(&state.main_assets);
+    // let main_assets = main_assets.get(&state.main_assets);
 
     // Can't print results if the assets aren't ready
     if state.printed {
@@ -151,14 +162,8 @@ fn print_on_load(
         return;
     }
 
-    if main_assets.is_none() {
-        info!("Main Assets Not Ready");
-        return;
-    }
-
     info!("Custom asset loaded: {:?}", custom_asset.unwrap());
     info!("Custom asset loaded: {:?}", other_custom_asset.unwrap());
-    info!("Main assets loaded: {:?}", main_assets.unwrap());
 
     // Once printed, we won't print again
     state.printed = true;

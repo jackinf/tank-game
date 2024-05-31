@@ -19,10 +19,10 @@ pub enum LoadMissionError {
 
 pub fn load_mission(
     assets: &HashMap<AssetTileId, AssetTile>,
-    mission_file_path: &str,
+    content: String,
 ) -> Result<MissionInfo, LoadMissionError> {
-    let content =
-        fs::read_to_string(mission_file_path).map_err(|_| LoadMissionError::FileReadError)?;
+    // let content =
+    //     fs::read_to_string(mission_file_path).map_err(|_| LoadMissionError::FileReadError)?;
     let raw_mission: RawMission =
         serde_json::from_str(&content).map_err(|e| LoadMissionError::JsonParseError {
             message: e.to_string(),

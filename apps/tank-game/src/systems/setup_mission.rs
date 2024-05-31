@@ -7,15 +7,22 @@ use crate::features::building::actions::spawn_buildings::spawn_buildings;
 use crate::features::tile::spawn_tiles;
 use crate::features::unit::{spawn_units, UnitIdCounter};
 use crate::resources::mission_info_resource::MissionInfoResource;
+use crate::SimpleState;
 
 pub fn setup_mission(
     mission_info_resource: Res<MissionInfoResource>,
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut unit_id_counter: ResMut<UnitIdCounter>,
+    mut simple_state: ResMut<SimpleState>,
 ) {
+    println!("once 2");
     if mission_info_resource.is_empty() {
-        panic!("Mission info is not loaded");
+        return;
+    }
+
+    if simple_state.ready {
+        return;
     }
 
     /*
@@ -52,4 +59,5 @@ pub fn setup_mission(
     spawn_buildings(&mut commands, &asset_server, buildings_layer);
 
     commands.spawn(PerfUiCompleteBundle::default());
+    simple_state.ready = true;
 }
