@@ -68,7 +68,7 @@ pub fn move_bullets(
             );
 
             if distance.abs() < 10.0 {
-                commands.entity(entity).despawn();
+                commands.entity(entity).despawn_recursive();
                 let target = transform.translation.xy();
                 trigger_explosion_animation_event_writer
                     .send(TriggerExplosionAnimationEvent::new(target.clone(), 1.0));
