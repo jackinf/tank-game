@@ -23,10 +23,10 @@ impl Building {
         building_tile: BuildingTile,
         building_tile_coord: TileCoord,
         player: Option<Player>,
-        health: u32,
     ) -> Self {
         let building_tiles: HashSet<TileCoord> =
             calculate_all_building_tiles(building_tile_coord, building_tile.get_size());
+        let health = building_tile.get_max_health();
 
         Building {
             id: UnitId(id),
@@ -91,7 +91,7 @@ impl Building {
     }
 
     pub fn is_destroyed(&self) -> bool {
-        self.health < 0
+        self.health <= 0
     }
 }
 

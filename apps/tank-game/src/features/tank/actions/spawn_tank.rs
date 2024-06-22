@@ -1,4 +1,5 @@
-use crate::constants::{SPRITE_SCALE, HEALTH_BAR_SIZE, TANK_MAX_HEALTH};
+use crate::components::HealthBar;
+use crate::constants::{HEALTH_BAR_SIZE, SPRITE_SCALE, TANK_MAX_HEALTH};
 use crate::features::tank::components::{Tank, TankGun, TankHealth};
 use crate::features::unit::{UnitId, UnitIdCounter};
 use crate::types::player::Player;
@@ -13,7 +14,6 @@ use bevy::sprite::Anchor;
 use bevy_prototype_lyon::prelude::{GeometryBuilder, ShapeBundle, Stroke};
 use bevy_prototype_lyon::shapes;
 use std::f32::consts::PI;
-use crate::components::HealthBar;
 
 pub fn spawn_tank(
     commands: &mut Commands,

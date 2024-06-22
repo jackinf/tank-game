@@ -16,11 +16,10 @@ pub const SPRITE_SCALE: f32 = 0.5;
 
 pub const FULL_HEALTH_BAR_WIDTH: f32 = 100.0;
 pub const HEALTH_BAR_HEIGHT: f32 = 20.0;
-pub const HEALTH_BAR_SIZE: Vec2 =
-    Vec2::new(FULL_HEALTH_BAR_WIDTH, HEALTH_BAR_HEIGHT);
+pub const HEALTH_BAR_SIZE: Vec2 = Vec2::new(FULL_HEALTH_BAR_WIDTH, HEALTH_BAR_HEIGHT);
 pub const TANK_MAX_HEALTH: u32 = 100;
 pub const TANK_ROTATION_SPEED: f32 = 10.0;
-pub const BULLET_RADIUS: f32 = 160.0;
+pub const BULLET_RADIUS: f32 = 60.0;
 
 pub const CAMERA_SPEED_STATIC: f32 = 0.0; // TODO: make 500.0
 pub const CAMERA_SPEED_DYNAMIC: f32 = 10.0;

@@ -112,7 +112,11 @@ impl AssetLoader for SimpleTextAssetLoader {
     }
 }
 
-fn setup_simple(mut commands: Commands, mut state: ResMut<SimpleState>, asset_server: Res<AssetServer>) {
+fn setup_simple(
+    mut commands: Commands,
+    mut state: ResMut<SimpleState>,
+    asset_server: Res<AssetServer>,
+) {
     state.simple_text = asset_server.load("main_assets.tsj");
     state.simple_text2 = asset_server.load("mission01.tmj");
 
@@ -120,13 +124,13 @@ fn setup_simple(mut commands: Commands, mut state: ResMut<SimpleState>, asset_se
 }
 
 pub mod actions;
+mod components;
 pub mod constants;
 pub mod features;
 pub mod resources;
 pub mod systems;
 pub mod types;
 pub mod utils;
-mod components;
 
 use crate::constants::{MAX_HEIGHT, MAX_WIDTH};
 use bevy::asset::io::Reader;

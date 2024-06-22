@@ -12,7 +12,7 @@ impl TankBullet {
     pub fn new(destination: Vec2) -> Self {
         TankBullet {
             speed: 750.0,
-            damage: 10,
+            damage: 900,
             destination,
         }
     }

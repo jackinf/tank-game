@@ -1,3 +1,4 @@
+use crate::features::building::components::Building;
 use crate::features::tank::actions::spawn_tank_bullet;
 use crate::features::tank::components::Tank;
 use crate::features::unit::UnitId;
@@ -7,7 +8,6 @@ use bevy::prelude::{
     With,
 };
 use std::collections::HashMap;
-use crate::features::building::components::Building;
 
 pub fn periodic_shooting(
     mut commands: Commands,

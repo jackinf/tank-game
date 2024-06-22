@@ -1,12 +1,15 @@
-use bevy::math::Rect;
-use crate::constants::{SPRITE_SCALE, HEALTH_BAR_HEIGHT};
+use crate::components::HealthBar;
+use crate::constants::{HEALTH_BAR_HEIGHT, SPRITE_SCALE};
 use crate::features::building::components::Building;
 use crate::features::building::types::BuildingTile;
-use crate::types::player::Player;
-use bevy::prelude::{default, AssetServer, Commands, Res, Sprite, SpriteBundle, Transform, Vec2, Vec3, Color, BuildChildren, ResMut};
-use bevy::sprite::Anchor;
-use crate::components::HealthBar;
 use crate::features::unit::UnitIdCounter;
+use crate::types::player::Player;
+use bevy::math::Rect;
+use bevy::prelude::{
+    default, AssetServer, BuildChildren, Color, Commands, Res, ResMut, Sprite, SpriteBundle,
+    Transform, Vec2, Vec3,
+};
+use bevy::sprite::Anchor;
 
 pub fn spawn_building(
     commands: &mut Commands,
@@ -28,8 +31,7 @@ pub fn spawn_building(
         Some(Player::P2) => crate::constants::P2_COLOR,
         _ => crate::constants::NEUTRAL_COLOR,
     };
-    let tile_width_units = building_tile.get_size().0;
-    let tile_width = 130. * tile_width_units as f32;
+    let health_rect = building_tile.get_health_rect_default();
 
     commands
         .spawn((SpriteBundle {
@@ -51,10 +53,7 @@ pub fn spawn_building(
                     transform: Transform::from_xyz(-10.0, 10.0, 0.2),
                     sprite: Sprite {
                         color: Color::PURPLE, // Health bar color
-                        rect: Some(Rect {
-                            min: Vec2::new(0.0, 0.0),
-                            max: Vec2::new(tile_width, HEALTH_BAR_HEIGHT),
-                        }),
+                        rect: Some(health_rect),
                         anchor: Anchor::CenterLeft, // Anchor the health bar to the left of the tank
                         ..default()
                     },
@@ -62,5 +61,5 @@ pub fn spawn_building(
                 })
                 .insert(HealthBar);
         })
-        .insert(Building::new(building_id, building_tile, map_coord, player, 100));
+        .insert(Building::new(building_id, building_tile, map_coord, player));
 }

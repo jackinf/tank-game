@@ -1,11 +1,11 @@
+use crate::features::building::components::Building;
 use crate::features::tank::components::Tank;
 use crate::features::tank::resources::TankMonitoringTimer;
 use crate::features::unit::UnitId;
 use crate::types::player::Player;
 use bevy::prelude::{Query, Res, ResMut, Time, Transform, Vec2, Vec3Swizzles, With};
-use std::collections::HashMap;
 use bevy::utils::petgraph::visit::Walker;
-use crate::features::building::components::Building;
+use std::collections::HashMap;
 
 type UnitInfo = (UnitId, Vec2, f32, Option<Player>, bool);
 
@@ -28,7 +28,7 @@ pub fn monitor_for_enemies(
                 transform.translation.xy(),
                 tank.get_radius(),
                 tank.get_player(),
-                tank.is_moving()
+                tank.is_moving(),
             )
         })
         .collect();

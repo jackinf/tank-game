@@ -1,8 +1,9 @@
-use crate::constants::TileSize;
+use crate::constants::{TileSize, HEALTH_BAR_HEIGHT};
 use crate::features::building::types::building_tile_type::BuildingTileType;
 use crate::features::con_menu::SubMenuType;
 use crate::types::player::Player;
 use crate::types::{AssetTile, AssetTileSubType, AssetTileType};
+use bevy::math::{Rect, Vec2};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct BuildingTile {
@@ -89,6 +90,20 @@ impl BuildingTile {
             BuildingTileType::Factory => -20,
             BuildingTileType::PowerPlant => 100,
         }
+    }
+
+    pub fn get_health_rect(&self, current_health: u32) -> Rect {
+        let max_health = self.get_max_health() as f32;
+        let tile_width = 130. * self.get_size().0 as f32;
+        let health_bar_width = tile_width * (current_health as f32 / max_health);
+        Rect {
+            min: Vec2::new(0.0, 0.0),
+            max: Vec2::new(health_bar_width, HEALTH_BAR_HEIGHT),
+        }
+    }
+
+    pub fn get_health_rect_default(&self) -> Rect {
+        self.get_health_rect(self.get_max_health())
     }
 }
 
