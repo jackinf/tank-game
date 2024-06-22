@@ -1,5 +1,7 @@
 use crate::actions::calculate_astar_path::calculate_astar_path;
-use crate::actions::calculate_tile_world_position::calculate_tile_to_world_position;
+use crate::actions::calculate_tile_world_position::{
+    calculate_tile_to_world_position, calculate_world_to_tile_position,
+};
 use crate::actions::get_all_blocking_cells::get_all_blocking_cells;
 use crate::features::building::components::Building;
 use crate::features::cursor::CursorCoordinates;
@@ -12,13 +14,15 @@ use bevy::input::keyboard::KeyboardInput;
 use bevy::input::mouse::MouseButtonInput;
 use bevy::input::ButtonState;
 use bevy::math::Vec2;
-use bevy::prelude::{EventReader, KeyCode, MouseButton, Query, Res, Sprite, With};
+use bevy::prelude::{
+    EventReader, KeyCode, MouseButton, Query, Res, Sprite, Transform, Vec3Swizzles, With,
+};
 use std::collections::{HashSet, VecDeque};
 
 pub fn set_tank_target_position_to_move(
     mut q_tanks: Query<(&mut Tank, &mut Sprite), With<Tank>>,
     q_tiles: Query<&Tile>,
-    q_buildings: Query<&Building>,
+    mut q_buildings: Query<&Building>,
     mut mouse_button_events: EventReader<MouseButtonInput>,
     mut key_button_events: EventReader<KeyboardInput>,
     my_world_coords: Res<CursorCoordinates>,
@@ -48,13 +52,21 @@ pub fn set_tank_target_position_to_move(
             && mouse_button_event.state == ButtonState::Pressed
         {
             let world_coords = my_world_coords.get_world();
+            let coord = calculate_world_to_tile_position(&world_coords);
             let wx = world_coords.x;
             let wy = world_coords.y;
 
-            let clicked_on_enemy_tank_id: Option<UnitId> = q_tanks
+            let mut clicked_on_enemy_unit_id: Option<UnitId> = q_tanks
                 .iter_mut()
                 .find(|(tank, _)| tank.is_clicked_on(wx, wy) && !tank.is_mine(&me))
                 .map(|(tank, _)| tank.get_id().clone());
+
+            if clicked_on_enemy_unit_id.is_none() {
+                clicked_on_enemy_unit_id = q_buildings
+                    .iter_mut()
+                    .find(|building| building.contains(coord) && !building.is_mine(&me))
+                    .map(|building| building.id().clone());
+            }
 
             let grid_size = mission_info_resource.get_grid_size();
             let all_blocking_cells = get_all_blocking_cells(&q_tiles, &q_buildings);
@@ -86,10 +98,9 @@ pub fn set_tank_target_position_to_move(
                     .filter(|(tank, _)| tank.is_mine(&me) && tank.selected)
                     .map(|(tank, _)| tank)
                     .for_each(|mut my_selected_tank| {
-                        match &clicked_on_enemy_tank_id {
-                            Some(enemy_tank_id) => {
-                                dbg!(enemy_tank_id);
-                                my_selected_tank.set_target(Some(enemy_tank_id.clone()));
+                        match &clicked_on_enemy_unit_id {
+                            Some(unit_id) => {
+                                my_selected_tank.set_target(Some(unit_id.clone()));
                                 my_selected_tank.set_stop_when_target_in_range(true);
                             }
                             None => {

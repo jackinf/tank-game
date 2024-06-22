@@ -1,10 +1,12 @@
 use std::collections::HashSet;
 
-use bevy::prelude::Component;
+use crate::actions::calculate_tile_world_position::calculate_tile_to_world_position;
+use bevy::prelude::{Component, Vec2};
 
-use crate::constants::{TileCoord, TileSize};
+use crate::constants::{TileCoord, TileSize, WorldCoord};
 use crate::features::building::types::{BuildingTile, BuildingTileType};
 use crate::features::unit::UnitId;
+use crate::resources::me::Me;
 use crate::types::player::Player;
 
 #[derive(Component, Clone)]
@@ -92,6 +94,24 @@ impl Building {
 
     pub fn is_destroyed(&self) -> bool {
         self.health <= 0
+    }
+
+    pub fn is_mine(&self, me: &Me) -> bool {
+        if let Some(player) = self.player.clone() {
+            player == me.get_player()
+        } else {
+            false
+        }
+    }
+
+    pub fn center(&self) -> Vec2 {
+        let top_left = calculate_tile_to_world_position(&self.building_tile_coord);
+
+        let (width, height) = self.building_tile.get_size();
+        let center_x = top_left.x + width as f32 * 0.5;
+        let center_y = top_left.y + height as f32 * 0.5;
+
+        Vec2::new(center_x, center_y)
     }
 }
 

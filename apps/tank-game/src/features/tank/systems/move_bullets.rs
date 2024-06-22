@@ -8,7 +8,6 @@ use bevy::prelude::{
     Children, Commands, DespawnRecursiveExt, Entity, EventWriter, Query, Res, Sprite, Time,
     Transform, Vec2, Vec3, Vec3Swizzles, With, Without,
 };
-use bevy::utils::HashSet;
 
 pub fn move_bullets(
     mut commands: Commands,
@@ -72,7 +71,7 @@ pub fn move_bullets(
                 commands.entity(entity).despawn();
                 let target = transform.translation.xy();
                 trigger_explosion_animation_event_writer
-                    .send(TriggerExplosionAnimationEvent::new(target.clone()));
+                    .send(TriggerExplosionAnimationEvent::new(target.clone(), 1.0));
                 Some((target, bullet.get_damage()))
             } else {
                 None
@@ -85,12 +84,16 @@ pub fn move_bullets(
     // Damage tanks
     let mut destroyed_tanks = Vec::new();
     for (id, mut tank, transform) in q_tanks.iter_mut() {
+        let tank_pos = transform.translation.xy();
         for (bullet_position, bullet_damage) in bullets_exploded_at.iter() {
-            if transform.translation.xy().distance(*bullet_position) < BULLET_RADIUS {
+            if tank_pos.distance(*bullet_position) < BULLET_RADIUS {
                 tank.take_damage(*bullet_damage);
 
                 if tank.is_dead() {
                     destroyed_tanks.push(id);
+
+                    trigger_explosion_animation_event_writer
+                        .send(TriggerExplosionAnimationEvent::new(tank_pos.clone(), 2.0));
                 }
             }
         }
@@ -118,6 +121,10 @@ pub fn move_bullets(
 
                 if building.is_destroyed() {
                     destroyed_buildings.push(id);
+
+                    trigger_explosion_animation_event_writer.send(
+                        TriggerExplosionAnimationEvent::new(building.center().clone(), 5.0),
+                    );
                 }
             }
         }
