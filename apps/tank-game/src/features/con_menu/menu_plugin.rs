@@ -1,19 +1,21 @@
 use bevy::prelude::*;
+use bevy::winit::WinitSettings;
 
 use crate::features::con_menu::components::SubMenuInfo;
-use crate::features::con_menu::systems::{
-    detect_mouse_over_container, setup, update_money_text, update_power_text,
-};
+use crate::features::con_menu::systems::{detect_mouse_over_container, interact_with_menu, setup, update_money_text, update_power_text};
 
 pub struct MenuPlugin;
 
 impl Plugin for MenuPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(PreStartup, setup)
+            // Only run the app when there is user input. This will significantly reduce CPU/GPU use.
+            .insert_resource(WinitSettings::desktop_app())
             .add_systems(Update, detect_mouse_over_container)
             .add_systems(Update, update_money_text)
             .add_systems(Update, update_power_text)
-            .add_systems(Update, toggle_menu_visibility);
+            .add_systems(Update, toggle_menu_visibility)
+            .add_systems(Update, interact_with_menu);
     }
 }
 

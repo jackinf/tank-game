@@ -1,11 +1,8 @@
-use crate::features::con_menu::components::{SubMenuInfo, SubMenuType};
+use crate::features::con_menu::components::{MenuCellInfo, SubMenuInfo, SubMenuType};
 use bevy::asset::AssetServer;
 use bevy::hierarchy::ChildBuilder;
 use bevy::prelude::Val::Px;
-use bevy::prelude::{
-    default, AlignItems, BuildChildren, Color, FlexDirection, ImageBundle, JustifyContent,
-    NodeBundle, PositionType, Res, Style, TextBundle, TextStyle, UiImage, UiRect, Val, Visibility,
-};
+use bevy::prelude::{default, AlignItems, BuildChildren, Color, FlexDirection, ImageBundle, JustifyContent, NodeBundle, PositionType, Res, Style, TextBundle, TextStyle, UiImage, UiRect, Val, Visibility, ButtonBundle};
 
 pub fn show_menu_grid(
     parent: &mut ChildBuilder,
@@ -55,16 +52,19 @@ pub fn show_menu_grid(
 
                             // Spawn each cell as a sprite with a price label
                             row_parent
-                                .spawn(ImageBundle {
-                                    image: UiImage::new(asset_server.load(image_path)),
-                                    style: Style {
-                                        width: Val::Px(cell_width),
-                                        height: Val::Px(cell_height),
-                                        margin: UiRect::all(Px(padding)),
+                                .spawn((
+                                    ButtonBundle {
+                                        image: UiImage::new(asset_server.load(image_path)),
+                                        style: Style {
+                                            width: Val::Px(cell_width),
+                                            height: Val::Px(cell_height),
+                                            margin: UiRect::all(Px(padding)),
+                                            ..default()
+                                        },
                                         ..default()
                                     },
-                                    ..default()
-                                })
+                                    MenuCellInfo::new(image_path.clone(), price),
+                                ))
                                 .with_children(|cell| {
                                     // Add price text here, dynamic based on the item
                                     cell.spawn(
