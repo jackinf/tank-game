@@ -1,4 +1,4 @@
-use crate::constants::TANK_FULL_HEALTH_BAR_WIDTH;
+use crate::constants::FULL_HEALTH_BAR_WIDTH;
 use bevy::prelude::Component;
 
 #[derive(Component)]
@@ -14,7 +14,7 @@ impl TankHealth {
 
     pub fn get_current_health_bar_width(&self) -> f32 {
         let health_percentage = self.current / self.max;
-        let full_health_bar_width = TANK_FULL_HEALTH_BAR_WIDTH;
+        let full_health_bar_width = FULL_HEALTH_BAR_WIDTH;
         full_health_bar_width * health_percentage
     }
 }

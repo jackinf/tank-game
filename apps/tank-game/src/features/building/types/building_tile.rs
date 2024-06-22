@@ -50,12 +50,28 @@ impl BuildingTile {
         self.tile_size
     }
 
+    pub fn get_max_health(&self) -> u32 {
+        match &self.get_building_type() {
+            BuildingTileType::Base => 1000,
+            BuildingTileType::Factory => 500,
+            BuildingTileType::PowerPlant => 500,
+        }
+    }
+
     pub fn get_player(&self) -> Option<Player> {
         self.player.clone()
     }
 
     pub fn get_building_type(&self) -> BuildingTileType {
         self.building_type.clone()
+    }
+
+    pub fn radius(&self) -> f32 {
+        match &self.get_building_type() {
+            BuildingTileType::Base => 500.0,
+            BuildingTileType::Factory => 500.0,
+            BuildingTileType::PowerPlant => 500.0,
+        }
     }
 
     // TODO: what is this for?

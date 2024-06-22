@@ -2,12 +2,14 @@ use crate::actions::calculate_tile_world_position::calculate_tile_to_world_posit
 use crate::constants::TILE_SIZE;
 use crate::features::building::actions::spawn_building;
 use crate::features::building::types::buildings_layer::BuildingsLayer;
-use bevy::prelude::{AssetServer, Commands, Res, Vec2};
+use bevy::prelude::{AssetServer, Commands, Res, ResMut, Vec2};
+use crate::features::unit::UnitIdCounter;
 
 pub fn spawn_buildings(
     mut commands: &mut Commands,
     asset_server: &Res<AssetServer>,
     layer: BuildingsLayer,
+    id_counter: &mut ResMut<UnitIdCounter>,
 ) {
     layer
         .enumerate()
@@ -25,6 +27,7 @@ pub fn spawn_buildings(
                 ),
                 building_tile,
                 coord,
+                id_counter,
             );
         });
 }

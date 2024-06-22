@@ -6,10 +6,8 @@ use crate::features::tile::{find_accessible_tile, find_tile, Tile};
 use crate::utils::logger::Logger;
 use bevy::input::mouse::MouseButtonInput;
 use bevy::input::ButtonState;
-use bevy::prelude::{
-    AssetServer, Commands, EventReader, MouseButton, Query, Res, Sprite, Transform, Vec2, Vec3,
-    With,
-};
+use bevy::prelude::{AssetServer, Commands, EventReader, MouseButton, Query, Res, ResMut, Sprite, Transform, Vec2, Vec3, With};
+use crate::features::unit::UnitIdCounter;
 
 pub fn draw_construction_tiles(
     mut commands: Commands,
@@ -21,6 +19,7 @@ pub fn draw_construction_tiles(
     >,
     cursor: Res<CursorCoordinates>,
     mut mouse_button_events: EventReader<MouseButtonInput>,
+    mut unit_id_counter: ResMut<UnitIdCounter>,
 ) {
     match (
         q_placement.single_mut(),
@@ -73,6 +72,7 @@ pub fn draw_construction_tiles(
                         Vec2::new(world_x - TILE_SIZE, world_y + TILE_SIZE),
                         building_tile,
                         (tile_x, tile_y),
+                        &mut unit_id_counter,
                     );
                 }
             }

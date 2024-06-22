@@ -14,7 +14,7 @@ fn main() {
     }))
     .init_state::<AppState>()
     .insert_resource(Msaa::Sample4)
-    .insert_resource(UnitIdCounter(1))
+    .insert_resource(UnitIdCounter(1, 100000))
     .insert_resource(Me::new(Player::P1))
     .insert_resource(MainAssetInfoResource::new())
     .insert_resource(MissionInfoResource::new())
@@ -126,6 +126,7 @@ pub mod resources;
 pub mod systems;
 pub mod types;
 pub mod utils;
+mod components;
 
 use crate::constants::{MAX_HEIGHT, MAX_WIDTH};
 use bevy::asset::io::Reader;

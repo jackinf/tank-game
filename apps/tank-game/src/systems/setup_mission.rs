@@ -56,7 +56,7 @@ pub fn setup_mission(
     */
 
     let buildings_layer = mission_info_resource.get_buildings_layer();
-    spawn_buildings(&mut commands, &asset_server, buildings_layer);
+    spawn_buildings(&mut commands, &asset_server, buildings_layer, &mut unit_id_counter);
 
     commands.spawn(PerfUiCompleteBundle::default());
     simple_state.ready = true;
