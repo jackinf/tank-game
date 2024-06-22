@@ -112,9 +112,11 @@ impl AssetLoader for SimpleTextAssetLoader {
     }
 }
 
-fn setup_simple(mut state: ResMut<SimpleState>, asset_server: Res<AssetServer>) {
+fn setup_simple(mut commands: Commands, mut state: ResMut<SimpleState>, asset_server: Res<AssetServer>) {
     state.simple_text = asset_server.load("main_assets.tsj");
     state.simple_text2 = asset_server.load("mission01.tmj");
+
+    commands.spawn(PerfUiCompleteBundle::default());
 }
 
 pub mod actions;
@@ -132,7 +134,7 @@ use bevy::prelude::*;
 use bevy::utils::thiserror::Error;
 use bevy::window::{Cursor, WindowResolution};
 use bevy_prototype_lyon::prelude::ShapePlugin;
-use iyes_perf_ui::PerfUiPlugin;
+use iyes_perf_ui::{PerfUiCompleteBundle, PerfUiPlugin};
 
 use crate::features::building::building_plugin::BuildingPlugin;
 use crate::features::con_menu::MenuPlugin;
