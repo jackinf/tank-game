@@ -5,8 +5,8 @@ use bevy::prelude::{Component, Vec2};
 
 use crate::constants::{TileCoord, TileSize, WorldCoord};
 use crate::features::building::types::{BuildingTile, BuildingTileType};
+use crate::features::con_menu::MenuInfo;
 use crate::features::unit::UnitId;
-use crate::resources::me::Me;
 use crate::types::player::Player;
 
 #[derive(Component, Clone)]
@@ -96,9 +96,9 @@ impl Building {
         self.health <= 0
     }
 
-    pub fn is_mine(&self, me: &Me) -> bool {
+    pub fn is_mine(&self, me: &MenuInfo) -> bool {
         if let Some(player) = self.player.clone() {
-            player == me.get_player()
+            player == me.player()
         } else {
             false
         }

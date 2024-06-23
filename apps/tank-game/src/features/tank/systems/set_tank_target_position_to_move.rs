@@ -4,11 +4,11 @@ use crate::actions::calculate_tile_world_position::{
 };
 use crate::actions::get_all_blocking_cells::get_all_blocking_cells;
 use crate::features::building::components::Building;
+use crate::features::con_menu::MenuInfo;
 use crate::features::cursor::CursorCoordinates;
 use crate::features::tank::components::Tank;
 use crate::features::tile::{find_accessible_tile_coord, Tile};
 use crate::features::unit::UnitId;
-use crate::resources::me::Me;
 use crate::resources::mission_info_resource::MissionInfoResource;
 use bevy::input::keyboard::KeyboardInput;
 use bevy::input::mouse::MouseButtonInput;
@@ -26,7 +26,7 @@ pub fn set_tank_target_position_to_move(
     mut mouse_button_events: EventReader<MouseButtonInput>,
     mut key_button_events: EventReader<KeyboardInput>,
     my_world_coords: Res<CursorCoordinates>,
-    me: Res<Me>,
+    q_menu_info: Query<&MenuInfo>,
     mission_info_resource: Res<MissionInfoResource>,
 ) {
     for key_button_event in key_button_events.read() {
@@ -51,6 +51,7 @@ pub fn set_tank_target_position_to_move(
         if MouseButton::Right == mouse_button_event.button
             && mouse_button_event.state == ButtonState::Pressed
         {
+            let me = q_menu_info.single();
             let world_coords = my_world_coords.get_world();
             let coord = calculate_world_to_tile_position(&world_coords);
             let wx = world_coords.x;

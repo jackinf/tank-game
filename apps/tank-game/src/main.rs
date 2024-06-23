@@ -15,7 +15,6 @@ fn main() {
     .init_state::<AppState>()
     .insert_resource(Msaa::Sample4)
     .insert_resource(UnitIdCounter(1, 100000))
-    .insert_resource(Me::new(Player::P1))
     .insert_resource(MainAssetInfoResource::new())
     .insert_resource(MissionInfoResource::new())
     .init_resource::<SimpleState>()
@@ -151,7 +150,6 @@ use crate::features::monitoring::MonitoringPlugin;
 use crate::features::tank::TankPlugin;
 use crate::features::unit::UnitIdCounter;
 use crate::features::unit::UnitSelectionPlugin;
-use crate::resources::me::Me;
 use crate::resources::mission_info_resource::MissionInfoResource;
 use crate::systems::setup_main_assets;
 use crate::systems::setup_mission;

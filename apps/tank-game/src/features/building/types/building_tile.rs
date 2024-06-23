@@ -21,12 +21,12 @@ pub enum BuildingTileErrors {
 }
 
 impl BuildingTile {
-    pub fn new(building_tile: BuildingTile) -> Self {
-        let tile_size = building_tile.get_size();
-        let image_path = building_tile.get_image_path();
-        let building_type = building_tile.get_building_type();
-        let player = building_tile.get_player();
-
+    pub fn new(
+        image_path: String,
+        tile_size: TileSize,
+        building_type: BuildingTileType,
+        player: Option<Player>,
+    ) -> Self {
         BuildingTile {
             image_path,
             tile_size,
@@ -150,10 +150,10 @@ pub fn create_building_tile(
     }
     let building_tile_type = building_tile_type.unwrap();
 
-    Ok(BuildingTile {
-        image_path: value.get_image_path(),
-        tile_size: value.get_tile_size(),
-        building_type: building_tile_type,
+    Ok(BuildingTile::new(
+        value.get_image_path(),
+        value.get_tile_size(),
+        building_tile_type,
         player,
-    })
+    ))
 }

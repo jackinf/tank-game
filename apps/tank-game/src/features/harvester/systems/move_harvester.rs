@@ -37,7 +37,7 @@ pub fn move_harvester(
                         harvester.set_harvesting();
                     } else if harvester.is_returning_to_base() {
                         let unloaded_gold = harvester.unload_gold();
-                        menu_info.add_money(unloaded_gold as i32);
+                        menu_info.add_money(unloaded_gold);
                         harvester.set_idle();
                     } else if harvester.is_forced_by_player() {
                         harvester.set_idle();

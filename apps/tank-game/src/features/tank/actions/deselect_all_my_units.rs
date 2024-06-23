@@ -1,8 +1,11 @@
+use crate::features::con_menu::MenuInfo;
 use crate::features::tank::components::Tank;
-use crate::resources::me::Me;
 use bevy::prelude::{Query, Sprite, With};
 
-pub fn deselect_all_my_units(query: &mut Query<(&mut Tank, &mut Sprite), With<Tank>>, me: &Me) {
+pub fn deselect_all_my_units(
+    query: &mut Query<(&mut Tank, &mut Sprite), With<Tank>>,
+    me: &MenuInfo,
+) {
     query
         .iter_mut()
         .filter(|(tank, _)| tank.is_mine(&me))

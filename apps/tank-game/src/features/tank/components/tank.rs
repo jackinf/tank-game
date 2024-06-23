@@ -4,8 +4,8 @@ use bevy::math::Vec2;
 use bevy::prelude::{Color, Component, Mut, Sprite};
 
 use crate::constants::{WorldCoord, TILE_SIZE};
+use crate::features::con_menu::MenuInfo;
 use crate::features::unit::UnitId;
-use crate::resources::me::Me;
 use crate::types::player::Player;
 
 #[derive(Component)]
@@ -86,9 +86,9 @@ impl Tank {
         self.moving
     }
 
-    pub fn is_mine(&self, me: &Me) -> bool {
+    pub fn is_mine(&self, me: &MenuInfo) -> bool {
         if let Some(player) = self.player.clone() {
-            player == me.get_player()
+            player == me.player()
         } else {
             false
         }

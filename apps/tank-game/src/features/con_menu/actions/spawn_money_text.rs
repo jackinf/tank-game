@@ -3,7 +3,7 @@ use bevy::asset::AssetServer;
 use bevy::hierarchy::ChildBuilder;
 use bevy::prelude::{default, Label, Res, Style, TextBundle, TextStyle, UiRect, Val};
 
-pub fn spawn_money_text(asset_server: &Res<AssetServer>, parent: &mut ChildBuilder, money: i32) {
+pub fn spawn_money_text(asset_server: &Res<AssetServer>, parent: &mut ChildBuilder, money: u32) {
     parent
         .spawn((
             TextBundle::from_section(

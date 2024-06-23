@@ -1,6 +1,7 @@
 use crate::constants::TILE_SIZE;
 use crate::features::building::actions::spawn_building;
 use crate::features::building::components::BuildingPlacementTiles;
+use crate::features::con_menu::BuildingProgressInfo;
 use crate::features::cursor::CursorCoordinates;
 use crate::features::tile::{find_accessible_tile, find_tile, Tile};
 use crate::features::unit::UnitIdCounter;
@@ -23,6 +24,7 @@ pub fn draw_construction_tiles(
     cursor: Res<CursorCoordinates>,
     mut mouse_button_events: EventReader<MouseButtonInput>,
     mut unit_id_counter: ResMut<UnitIdCounter>,
+    mut q_building_progress_info: Query<&mut BuildingProgressInfo>,
 ) {
     match (
         q_placement.single_mut(),
@@ -73,10 +75,18 @@ pub fn draw_construction_tiles(
                         &asset_server,
                         // TODO: why -TILE_SIZE & +TILE_SIZE?
                         Vec2::new(world_x - TILE_SIZE, world_y + TILE_SIZE),
-                        building_tile,
+                        building_tile.clone(),
                         (tile_x, tile_y),
                         &mut unit_id_counter,
                     );
+
+                    q_building_progress_info.iter_mut().for_each(|mut info| {
+                        if let (Some(curr_tile)) = info.get_building_tile() {
+                            if info.is_placing() && curr_tile == building_tile {
+                                info.reset();
+                            }
+                        }
+                    });
                 }
             }
         }

@@ -1,7 +1,7 @@
+use crate::features::con_menu::MenuInfo;
 use crate::features::cursor::CursorCoordinates;
 use crate::features::tank::{deselect_all_my_units, Tank};
 use crate::features::unit::components::UnitSelectionRect;
-use crate::resources::me::Me;
 use bevy::input::mouse::MouseButtonInput;
 use bevy::input::ButtonState;
 use bevy::math::Vec2;
@@ -13,9 +13,10 @@ pub fn calculate_selection_rect_coordinates(
     my_world_coords: ResMut<CursorCoordinates>,
     mut mouse_button_input_events: EventReader<MouseButtonInput>,
     mut tank_query: Query<(&mut Tank, &mut Sprite), With<Tank>>,
-    me: Res<Me>,
+    q_menu_info: Query<&MenuInfo>,
 ) {
     for mouse_button_input_event in mouse_button_input_events.read() {
+        let me = q_menu_info.single();
         let world_coords = my_world_coords.get_world();
         let wx = world_coords.x;
         let wy = world_coords.y;

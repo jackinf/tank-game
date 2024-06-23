@@ -65,7 +65,7 @@ fn inflate_all_tanks(
 fn buying_stuff(mut q_menu_info: Query<&mut MenuInfo>, keyboard: Res<ButtonInput<KeyCode>>) {
     if keyboard.just_pressed(KeyCode::KeyB) {
         let mut menu_info = q_menu_info.single_mut();
-        menu_info.add_money(-100);
+        menu_info.substract_money(100);
         println!("Buying stuff, money left: {}", menu_info.get_money());
     }
 }

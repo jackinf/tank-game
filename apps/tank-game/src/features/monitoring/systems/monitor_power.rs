@@ -1,13 +1,13 @@
 use crate::features::building::components::Building;
+use crate::features::con_menu::MenuInfo;
 use crate::features::monitoring::resources::PowerTimer;
-use crate::resources::me::Me;
 use bevy::prelude::{Query, Res, ResMut, Time};
 
 pub fn monitor_power(
     q_buildings: Query<&Building>,
-    mut me: ResMut<Me>,
     mut timer: ResMut<PowerTimer>,
     time: Res<Time>,
+    mut q_menu_info: Query<&mut MenuInfo>,
 ) {
     if !timer.0.tick(time.delta()).just_finished() {
         return;
@@ -19,5 +19,6 @@ pub fn monitor_power(
         .sum::<i32>()
         .into();
 
+    let mut me = q_menu_info.single_mut();
     me.set_energy(total_power);
 }
