@@ -1,2 +1,2 @@
 [workspace]
-members = [ "apps/custom-asset", "apps/sandbox", "apps/tank-game", "apps/tilemap-generator"]
+members = ["examples/custom-asset", "examples/sandbox", "apps/tank-game", "examples/tilemap-generator"]
