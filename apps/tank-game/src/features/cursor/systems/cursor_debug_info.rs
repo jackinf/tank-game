@@ -5,7 +5,7 @@ use bevy::prelude::{
     PositionType, Res, Style, TextBundle, TextStyle, UiRect, Val,
 };
 
-pub fn cursor_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
+pub fn cursor_debug_info(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands
         .spawn(NodeBundle {
             style: Style {

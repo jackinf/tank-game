@@ -76,6 +76,8 @@ pub fn interact_with_menu(
                     color.0 = Color::GREEN;
                 } else if progress_info.is_idle() {
                     color.0 = Color::WHITE;
+                } else {
+                    color.0 = Color::WHITE;
                 }
             }
         }

@@ -1,4 +1,5 @@
-use crate::constants::TileCoord;
+use crate::actions::calculate_tile_world_position::calculate_world_to_tile_position;
+use crate::constants::{TileCoord, TILE_SIZE};
 use bevy::math::Vec2;
 use bevy::prelude::Resource;
 
@@ -20,15 +21,11 @@ impl CursorCoordinates {
         self.world = world;
     }
 
-    pub fn set_tile(&mut self, tile: Option<TileCoord>) {
-        self.tile = tile;
-    }
-
     pub fn get_world(&self) -> Vec2 {
         self.world
     }
 
     pub fn get_tile(&self) -> Option<TileCoord> {
-        self.tile
+        Some(calculate_world_to_tile_position(&self.world))
     }
 }
