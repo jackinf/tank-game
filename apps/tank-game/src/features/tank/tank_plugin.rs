@@ -1,3 +1,5 @@
+use crate::features::tank::event_handlers::spawn_tank_event_handler;
+use crate::features::tank::events::SpawnTankEvent;
 use crate::features::tank::resources::{TankMonitoringTimer, TankUngroupTimer};
 use crate::features::tank::systems::{
     monitor_for_enemies, move_bullets, move_tanks_towards_target, periodic_shooting,
@@ -23,6 +25,8 @@ impl Plugin for TankPlugin {
         .add_systems(FixedUpdate, move_bullets)
         .add_systems(Update, periodic_shooting)
         .add_systems(Update, monitor_for_enemies)
-        .add_systems(Update, ungroup_tanks);
+        .add_systems(Update, ungroup_tanks)
+        .add_event::<SpawnTankEvent>()
+        .add_systems(Update, spawn_tank_event_handler);
     }
 }

@@ -1,6 +1,6 @@
 use crate::components::HealthBar;
 use crate::constants::{HEALTH_BAR_HEIGHT, SPRITE_SCALE};
-use crate::features::building::components::Building;
+use crate::features::building::components::{Building, UnitSpawner};
 use crate::features::building::types::BuildingTile;
 use crate::features::unit::UnitIdCounter;
 use crate::types::player::Player;
@@ -24,6 +24,7 @@ pub fn spawn_building(
 
     let sprite_path = building_tile.get_image_path();
     let layer = building_tile.get_layer();
+    let spawn_timer = building_tile.get_spawn_timer().clone();
 
     let player = building_tile.get_player();
     let color = match player {
@@ -36,7 +37,7 @@ pub fn spawn_building(
     commands
         .spawn((SpriteBundle {
             transform: Transform::default()
-                .with_translation(translation.extend(layer))
+                .with_translation(translation.extend(layer).clone())
                 .with_scale(Vec3::splat(SPRITE_SCALE)),
             texture: asset_server.load(sprite_path),
             sprite: Sprite {
@@ -61,5 +62,15 @@ pub fn spawn_building(
                 })
                 .insert(HealthBar);
         })
-        .insert(Building::new(building_id, building_tile, map_coord, player));
+        .insert(Building::new(
+            building_id.clone(),
+            building_tile.clone(),
+            map_coord.clone(),
+            player.clone(),
+        ))
+        .insert(UnitSpawner {
+            spawn_timer,
+            spawn_position: translation,
+            player: player.clone(),
+        });
 }

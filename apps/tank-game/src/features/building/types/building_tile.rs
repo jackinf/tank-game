@@ -4,6 +4,7 @@ use crate::features::con_menu::SubMenuType;
 use crate::types::player::Player;
 use crate::types::{AssetTile, AssetTileSubType, AssetTileType};
 use bevy::math::{Rect, Vec2};
+use bevy::prelude::{Timer, TimerMode};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct BuildingTile {
@@ -104,6 +105,18 @@ impl BuildingTile {
 
     pub fn get_health_rect_default(&self) -> Rect {
         self.get_health_rect(self.get_max_health())
+    }
+
+    pub fn get_spawn_interval(&self) -> f32 {
+        match &self.get_building_type() {
+            BuildingTileType::Base => 100.0,
+            BuildingTileType::Factory => 20.0,
+            BuildingTileType::PowerPlant => 5.0, // does not make sense.
+        }
+    }
+
+    pub fn get_spawn_timer(&self) -> Timer {
+        Timer::from_seconds(self.get_spawn_interval(), TimerMode::Repeating)
     }
 }
 

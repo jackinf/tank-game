@@ -1,5 +1,7 @@
 mod actions;
 mod components;
+mod event_handlers;
+pub mod events;
 mod resources;
 mod systems;
 mod tank_plugin;
