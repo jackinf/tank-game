@@ -3,7 +3,7 @@ use std::collections::HashSet;
 use crate::actions::calculate_tile_world_position::calculate_tile_to_world_position;
 use bevy::prelude::{Component, Vec2};
 
-use crate::constants::{TileCoord, TileSize, WorldCoord};
+use crate::constants::{TileCoord, TileSize};
 use crate::features::building::types::{BuildingTile, BuildingTileType};
 use crate::features::con_menu::MenuInfo;
 use crate::features::unit::UnitId;

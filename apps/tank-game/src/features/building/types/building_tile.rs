@@ -84,7 +84,9 @@ impl BuildingTile {
         }
     }
 
-    // TODO: what is this for?
+    /// This is used to distinguish between which Construction Menu to show when clicking on the building.
+    /// For example, when clicking on a Base building, the Base Construction Menu for constructing buildings should be shown.
+    /// When clicking on a Factory building, the Factory Construction Menu for constructing tanks and other units should be shown.
     pub fn get_sub_menu_type(&self) -> Option<SubMenuType> {
         match &self.get_building_type() {
             BuildingTileType::Base => Some(SubMenuType::Base),

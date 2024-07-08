@@ -5,7 +5,7 @@ use std::time::Duration;
 #[derive(PartialEq)]
 enum UnitConstructionState {
     Idle,
-    Unit,
+    Constructing,
     Placing,
 }
 
@@ -31,7 +31,7 @@ impl UnitConstructionProgressInfo {
 
     pub fn start_from_price(&mut self, price: u32, unit_tile: UnitTile) {
         self.total_ticks = price / PRICE_PER_TICK;
-        self.state = UnitConstructionState::Unit;
+        self.state = UnitConstructionState::Constructing;
         self.unit_tile = Some(unit_tile);
     }
 
@@ -55,8 +55,8 @@ impl UnitConstructionProgressInfo {
         self.state == UnitConstructionState::Idle
     }
 
-    pub fn is_unit(&self) -> bool {
-        self.state == UnitConstructionState::Unit
+    pub fn is_constructing(&self) -> bool {
+        self.state == UnitConstructionState::Constructing
     }
 
     pub fn is_placing(&self) -> bool {

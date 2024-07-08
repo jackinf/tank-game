@@ -1,6 +1,7 @@
 use crate::features::con_menu::systems::{
-    building_process, detect_mouse_over_container, interact_with_construction_menu, setup,
-    toggle_menu_visibility, update_money_text, update_power_text,
+    construction_process, detect_mouse_over_container, interact_with_building_construction_menu,
+    interact_with_unit_construction_menu, setup, toggle_menu_visibility, update_money_text,
+    update_power_text,
 };
 use crate::AppState;
 use bevy::prelude::*;
@@ -20,8 +21,9 @@ impl Plugin for MenuPlugin {
                 update_money_text,
                 update_power_text,
                 toggle_menu_visibility,
-                interact_with_construction_menu,
-                building_process,
+                interact_with_building_construction_menu,
+                interact_with_unit_construction_menu,
+                construction_process,
             )
                 .chain()
                 .run_if(in_state(AppState::Playing)),

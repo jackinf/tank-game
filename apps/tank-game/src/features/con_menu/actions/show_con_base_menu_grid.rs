@@ -1,4 +1,5 @@
 use crate::features::building::types::BuildingTileType;
+use crate::features::con_menu::components::BuildingTileTypeMenuCellInfo;
 use crate::features::con_menu::{BuildingConstructionProgressInfo, SubMenuInfo, SubMenuType};
 use crate::types::main_asset_info_resource::MainAssetInfoResource;
 use bevy::asset::AssetServer;
@@ -9,7 +10,6 @@ use bevy::prelude::{
     NodeBundle, PositionType, Res, ResMut, Style, TextBundle, TextStyle, UiImage, UiRect, Val,
     Visibility,
 };
-use crate::features::con_menu::components::BuildingTileTypeMenuCellInfo;
 
 pub fn show_con_base_menu_grid(
     parent: &mut ChildBuilder,
@@ -83,8 +83,9 @@ pub fn show_con_base_menu_grid(
                                         break;
                                     }
                                     let building_tile_type = building_tile_type.unwrap();
-                                    let building_tile =
-                                        dynamic_resources.get_building_tiles().get(&building_tile_type);
+                                    let building_tile = dynamic_resources
+                                        .get_building_tiles()
+                                        .get(&building_tile_type);
                                     if building_tile.is_none() {
                                         break;
                                     }
@@ -107,7 +108,9 @@ pub fn show_con_base_menu_grid(
                                                 },
                                                 ..default()
                                             },
-                                            BuildingTileTypeMenuCellInfo::new(building_tile_type.clone()),
+                                            BuildingTileTypeMenuCellInfo::new(
+                                                building_tile_type.clone(),
+                                            ),
                                             BuildingConstructionProgressInfo::new(),
                                         ))
                                         .with_children(|cell| {

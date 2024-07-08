@@ -7,7 +7,7 @@ use bevy::prelude::{
     BackgroundColor, Button, Changed, Color, Interaction, Query, Res, ResMut, With,
 };
 
-pub fn interact_with_construction_menu(
+pub fn interact_with_building_construction_menu(
     mut interaction_query: Query<
         (
             &Interaction,
@@ -37,7 +37,7 @@ pub fn interact_with_construction_menu(
                     progress_info.start_from_price(price, building_tile);
                 }
 
-                if progress_info.is_building() {
+                if progress_info.is_constructing() {
                     continue;
                 }
 
@@ -61,7 +61,7 @@ pub fn interact_with_construction_menu(
                 }
             }
             Interaction::None => {
-                if progress_info.is_building() {
+                if progress_info.is_constructing() {
                     color.0 = Color::GRAY;
                 } else if progress_info.is_placing() {
                     color.0 = Color::GREEN;

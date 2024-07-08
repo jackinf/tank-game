@@ -3,15 +3,15 @@ use bevy::prelude::Component;
 
 #[derive(Debug, Clone, Component)]
 pub struct UnitTileTypeMenuCellInfo {
-    unit_type: UnitTileType,
+    unit_tile_type: UnitTileType,
 }
 
 impl UnitTileTypeMenuCellInfo {
-    pub fn new(unit_type: UnitTileType) -> Self {
-        Self { unit_type }
+    pub fn new(unit_tile_type: UnitTileType) -> Self {
+        Self { unit_tile_type }
     }
 
-    pub fn unit_type(&self) -> UnitTileType {
-        self.unit_type.clone()
+    pub fn unit_tile_type(&self) -> UnitTileType {
+        self.unit_tile_type.clone()
     }
 }
