@@ -35,7 +35,6 @@ pub fn create_unit_tile(
 
     let unit_tile_type = match tile_sub_type {
         AssetTileSubType::Tank => Ok(UnitTileType::Tank),
-        AssetTileSubType::Soldier => Ok(UnitTileType::Soldier),
         AssetTileSubType::Harvester => Ok(UnitTileType::Harvester),
         _ => Err(UnitTileErrors::InvalidUnitType {
             message: format!(

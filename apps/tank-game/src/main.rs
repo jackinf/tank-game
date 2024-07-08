@@ -55,6 +55,7 @@ fn main() {
 enum AppState {
     #[default]
     Loading,
+    PreparingUsingDynamicAssets,
     Playing,
 }
 

@@ -41,5 +41,5 @@ pub fn setup_main_assets(
     let mission_info: MissionInfo = mission_info.unwrap();
     mission_info_resource.initialize(mission_info);
 
-    state.set(AppState::Playing);
+    state.set(AppState::PreparingUsingDynamicAssets);
 }

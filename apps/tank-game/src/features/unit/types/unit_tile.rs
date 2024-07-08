@@ -40,4 +40,11 @@ impl UnitTile {
     pub fn get_player(&self) -> Option<Player> {
         self.player.clone()
     }
+
+    pub fn get_price(&self) -> u32 {
+        match &self.get_unit_type() {
+            UnitTileType::Tank => 300,
+            UnitTileType::Harvester => 500,
+        }
+    }
 }

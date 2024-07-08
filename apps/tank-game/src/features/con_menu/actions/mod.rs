@@ -1,6 +1,5 @@
 mod show_con_base_menu_grid;
 mod show_factory_menu_grid;
-mod show_menu_grid;
 mod spawn_money_text;
 mod spawn_power_text;
 

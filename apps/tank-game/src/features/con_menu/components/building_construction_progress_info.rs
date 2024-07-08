@@ -3,35 +3,35 @@ use bevy::prelude::{Component, Resource, State, Timer, TimerMode};
 use std::time::Duration;
 
 #[derive(PartialEq)]
-enum BuildingState {
+enum BuildingConstructionState {
     Idle,
     Building,
     Placing,
 }
 
 #[derive(Component)]
-pub struct BuildingProgressInfo {
+pub struct BuildingConstructionProgressInfo {
     tick_timer: Timer,
     total_ticks: u32,
-    state: BuildingState,
+    state: BuildingConstructionState,
     building_tile: Option<BuildingTile>,
 }
 
 const PRICE_PER_TICK: u32 = 100;
 
-impl BuildingProgressInfo {
+impl BuildingConstructionProgressInfo {
     pub fn new() -> Self {
         Self {
             tick_timer: Timer::from_seconds(0.5, TimerMode::Repeating),
             total_ticks: 0,
-            state: BuildingState::Idle,
+            state: BuildingConstructionState::Idle,
             building_tile: None,
         }
     }
 
     pub fn start_from_price(&mut self, price: u32, building_tile: BuildingTile) {
         self.total_ticks = price / PRICE_PER_TICK;
-        self.state = BuildingState::Building;
+        self.state = BuildingConstructionState::Building;
         self.building_tile = Some(building_tile);
     }
 
@@ -39,7 +39,7 @@ impl BuildingProgressInfo {
         if self.tick_timer.tick(delta).just_finished() {
             self.total_ticks = self.total_ticks.saturating_sub(1);
             if self.total_ticks == 0 {
-                self.state = BuildingState::Placing;
+                self.state = BuildingConstructionState::Placing;
             }
             println!("Ticks left: {}", self.total_ticks);
             return true;
@@ -52,19 +52,19 @@ impl BuildingProgressInfo {
     }
 
     pub fn is_idle(&self) -> bool {
-        self.state == BuildingState::Idle
+        self.state == BuildingConstructionState::Idle
     }
 
     pub fn is_building(&self) -> bool {
-        self.state == BuildingState::Building
+        self.state == BuildingConstructionState::Building
     }
 
     pub fn is_placing(&self) -> bool {
-        self.state == BuildingState::Placing
+        self.state == BuildingConstructionState::Placing
     }
 
     pub fn reset(&mut self) {
-        self.state = BuildingState::Idle;
+        self.state = BuildingConstructionState::Idle;
         self.total_ticks = 0;
     }
 

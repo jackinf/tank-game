@@ -2,13 +2,20 @@ use crate::features::con_menu::actions::{
     show_con_base_menu_grid, show_factory_menu_grid, spawn_money_text, spawn_power_text,
 };
 use crate::features::con_menu::MenuInfo;
+use crate::types::main_asset_info_resource::MainAssetInfoResource;
+use crate::AppState;
 use bevy::asset::AssetServer;
 use bevy::prelude::{
     default, AlignItems, BuildChildren, Commands, FlexDirection, Interaction, JustifyContent,
-    NodeBundle, Res, Style,
+    NextState, NodeBundle, Res, ResMut, Style,
 };
 
-pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
+pub fn setup(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    main_asset_info_resource: ResMut<MainAssetInfoResource>,
+    mut state: ResMut<NextState<AppState>>,
+) {
     // Assume you have your sprite sheet or individual sprites ready
     let menu_info = MenuInfo::new();
 
@@ -41,7 +48,9 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                     spawn_power_text(&asset_server, row_parent);
                 });
 
-            show_factory_menu_grid(parent, &asset_server);
-            show_con_base_menu_grid(parent, &asset_server);
+            show_factory_menu_grid(parent, &asset_server, &main_asset_info_resource);
+            show_con_base_menu_grid(parent, &asset_server, &main_asset_info_resource);
         });
+
+    state.set(AppState::Playing);
 }

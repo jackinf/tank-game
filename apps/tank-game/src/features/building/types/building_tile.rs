@@ -60,6 +60,14 @@ impl BuildingTile {
         }
     }
 
+    pub fn get_price(&self) -> u32 {
+        match &self.get_building_type() {
+            BuildingTileType::Base => 1000,
+            BuildingTileType::Factory => 500,
+            BuildingTileType::PowerPlant => 300,
+        }
+    }
+
     pub fn get_player(&self) -> Option<Player> {
         self.player.clone()
     }
