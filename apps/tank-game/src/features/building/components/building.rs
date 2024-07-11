@@ -1,9 +1,9 @@
 use std::collections::HashSet;
 
 use crate::actions::calculate_tile_world_position::calculate_tile_to_world_position;
-use bevy::prelude::{Component, Vec2};
+use bevy::prelude::{Component, Rect, Vec2};
 
-use crate::constants::{TileCoord, TileSize};
+use crate::constants::{TileCoord, TileSize, TILE_SIZE};
 use crate::features::building::types::{BuildingTile, BuildingTileType};
 use crate::features::con_menu::MenuInfo;
 use crate::features::unit::UnitId;
@@ -112,6 +112,43 @@ impl Building {
         let center_y = top_left.y + height as f32 * 0.5;
 
         Vec2::new(center_x, center_y)
+    }
+
+    pub fn get_outer_tiles(&self) -> HashSet<TileCoord> {
+        let mut outer_tiles = HashSet::new();
+
+        for tile in self.building_tiles.iter() {
+            // Iterating from -1 to 1, convert this to check for underflow and overflow
+            for x in 0..=2 {
+                for y in 0..=2 {
+                    // Convert from 0..=2 range to -1..=1 by subtracting 1
+                    let dx = x as isize - 1;
+                    let dy = y as isize - 1;
+
+                    if let (Some(nx), Some(ny)) = (
+                        (tile.0 as isize)
+                            .checked_add(dx)
+                            .and_then(|x| usize::try_from(x).ok()),
+                        (tile.1 as isize)
+                            .checked_add(dy)
+                            .and_then(|y| usize::try_from(y).ok()),
+                    ) {
+                        outer_tiles.insert((nx, ny));
+                    }
+                }
+            }
+        }
+
+        // other buildings cannot be placed on the building itself
+        for tile in self.building_tiles.iter() {
+            outer_tiles.remove(tile);
+        }
+
+        outer_tiles
+    }
+
+    pub fn get_size(&self) -> TileSize {
+        self.building_tile.get_size()
     }
 }
 

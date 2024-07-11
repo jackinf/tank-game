@@ -1,7 +1,7 @@
 use crate::features::building::types::building_queue::BuildingQueue;
 use bevy::prelude::{Query, Res, Time};
 
-pub fn update_building_construction(
+pub fn sys_update_building_construction(
     time: Res<Time>,
     mut q_building_queues: Query<&mut BuildingQueue>,
 ) {

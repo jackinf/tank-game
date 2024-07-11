@@ -9,9 +9,9 @@ use bevy::prelude::{Timer, TimerMode};
 #[derive(Clone, Debug, PartialEq)]
 pub struct BuildingTile {
     image_path: String,
-    tile_size: TileSize,
+    tile_size: TileSize, // TODO: move to Building.rs
     building_type: BuildingTileType,
-    player: Option<Player>,
+    player: Option<Player>, // TODO: move to Building.rs
 }
 
 #[derive(Debug)]

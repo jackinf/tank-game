@@ -1,4 +1,4 @@
-pub mod draw_construction_tiles;
-pub mod interact_with_building;
-pub mod setup;
-pub mod update_building_construction;
+pub mod sys_draw_construction_tiles;
+pub mod sys_interact_with_building;
+pub mod sys_spawn_placement_tile;
+pub mod sys_update_building_construction;

@@ -5,7 +5,7 @@ use bevy::input::mouse::MouseButtonInput;
 use bevy::input::ButtonState;
 use bevy::prelude::{EventReader, MouseButton, Query, Res, Visibility, With};
 
-pub fn interact_with_building(
+pub fn sys_interact_with_building(
     mut mouse_button_events: EventReader<MouseButtonInput>,
     q_buildings: Query<&Building>,
     mut q_sub_menu_info: Query<(&mut Visibility, &SubMenuInfo), With<SubMenuInfo>>,

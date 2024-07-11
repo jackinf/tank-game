@@ -1,13 +1,14 @@
 use crate::constants::TILE_SIZE;
-use crate::features::building::components::BuildingPlacementTiles;
+use crate::features::building::components::GlobalBuildingPlacementTiles;
 use bevy::prelude::{
     default, AssetServer, Color, Commands, Res, Sprite, SpriteBundle, Transform, Vec2, Vec3,
 };
 
-pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
+pub fn sys_spawn_placement_tile(mut commands: Commands, asset_server: Res<AssetServer>) {
     // selector entity for placing buildings
     commands
         .spawn((SpriteBundle {
+            // TODO: refactor to use a Rect
             texture: asset_server.load("pixels/white.png"),
             transform: Transform::default()
                 .with_translation(Vec3::new(0., 0., 100.))
@@ -18,5 +19,5 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             },
             ..default()
         },))
-        .insert(BuildingPlacementTiles::new());
+        .insert(GlobalBuildingPlacementTiles::new());
 }

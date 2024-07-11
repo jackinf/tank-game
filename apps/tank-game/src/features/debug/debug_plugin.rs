@@ -1,7 +1,7 @@
 use bevy::app::Plugin;
 use bevy::prelude::*;
 
-use crate::features::building::components::building_placement_tiles::BuildingPlacementTiles;
+use crate::features::building::components::global_building_placement_tiles::GlobalBuildingPlacementTiles;
 use crate::features::building::types::building_tile_type::BuildingTileType;
 use crate::features::con_menu::MenuInfo;
 use crate::features::cursor::CursorCoordinates;
@@ -34,7 +34,7 @@ fn logger(mut timer: ResMut<TankLogTimer>, time: Res<Time>, q_coords: Res<Cursor
 
 fn construction_complete(
     main_asset_info_resource: Res<MainAssetInfoResource>,
-    mut q_placement_building: Query<&mut BuildingPlacementTiles>,
+    mut q_placement_building: Query<&mut GlobalBuildingPlacementTiles>,
     keyboard: Res<ButtonInput<KeyCode>>,
 ) {
     if !keyboard.just_pressed(KeyCode::KeyM) {

@@ -1,4 +1,4 @@
-use crate::features::building::components::BuildingPlacementTiles;
+use crate::features::building::components::GlobalBuildingPlacementTiles;
 use crate::features::building::types::BuildingTileType;
 use crate::features::con_menu::components::BuildingTileTypeMenuCellInfo;
 use crate::features::con_menu::resources::BuildingConstructionProgressInfo;
@@ -18,7 +18,7 @@ pub fn interact_with_building_construction_menu(
         (Changed<Interaction>, With<Button>),
     >,
     main_asset_info_resource: Res<MainAssetInfoResource>,
-    mut q_placement_building: Query<&mut BuildingPlacementTiles>,
+    mut q_placement_building: Query<&mut GlobalBuildingPlacementTiles>,
 ) {
     for (interaction, mut color, cell_info, mut progress_info) in &mut interaction_query {
         match *interaction {
