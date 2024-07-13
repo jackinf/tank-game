@@ -5,6 +5,7 @@ use bevy::prelude::{Color, Component, Mut, Sprite};
 
 use crate::constants::{WorldCoord, TILE_SIZE};
 use crate::features::con_menu::MenuInfo;
+use crate::features::tank::types::TankStrategy;
 use crate::features::unit::UnitId;
 use crate::types::player::Player;
 
@@ -23,10 +24,16 @@ pub struct Tank {
     cooldown_seconds: f64,
     last_shot_timestamp: f64,
     stop_when_target_in_range: bool,
+    pub current_strategy: TankStrategy,
 }
 
 impl Tank {
-    pub fn new(id: usize, target_position: Vec2, player: Option<Player>) -> Self {
+    pub fn new(
+        id: usize,
+        target_position: Vec2,
+        player: Option<Player>,
+        strategy: TankStrategy,
+    ) -> Self {
         Tank {
             id: UnitId(id),
             selected: false,
@@ -40,6 +47,7 @@ impl Tank {
             cooldown_seconds: 1.0,
             last_shot_timestamp: 0.0,
             stop_when_target_in_range: false,
+            current_strategy: strategy,
         }
     }
 
@@ -177,5 +185,25 @@ impl Tank {
 
     pub fn is_dead(&self) -> bool {
         self.health == 0
+    }
+
+    /**
+     * Tank Strategy operations
+     */
+
+    pub fn get_current_strategy(&self) -> TankStrategy {
+        self.current_strategy.clone()
+    }
+
+    pub fn make_aggressive(&mut self) {
+        self.current_strategy = TankStrategy::Aggressive;
+    }
+
+    pub fn make_defensive(&mut self) {
+        self.current_strategy = TankStrategy::Defensive;
+    }
+
+    pub fn make_idle(&mut self) {
+        self.current_strategy = TankStrategy::Idle;
     }
 }

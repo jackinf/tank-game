@@ -74,9 +74,12 @@ pub fn sys_monitor_for_enemies(
         }
     }
 
-    q_tanks.iter_mut().for_each(|(mut tank, _)| {
-        if let Some(target_id) = targets.get(&tank.id) {
-            tank.set_target(Some(target_id.clone()));
-        }
-    });
+    q_tanks
+        .iter_mut()
+        .filter(|(tank, _)| !tank.has_target())
+        .for_each(|(mut tank, _)| {
+            if let Some(target_id) = targets.get(&tank.id) {
+                tank.set_target(Some(target_id.clone()));
+            }
+        });
 }

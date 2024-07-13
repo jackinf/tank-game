@@ -1,3 +1,4 @@
+use crate::features::tank::TankStrategy;
 use crate::types::player::Player;
 use bevy::prelude::{Event, Vec2};
 
@@ -5,4 +6,5 @@ use bevy::prelude::{Event, Vec2};
 pub struct SpawnTankEvent {
     pub position: Vec2,
     pub player: Player,
+    pub strategy: TankStrategy,
 }

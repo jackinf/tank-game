@@ -16,6 +16,7 @@ pub fn spawn_tank_event_handler(
             spawn_tank_event.position,
             &mut tank_id_counter,
             Some(spawn_tank_event.player.clone()),
+            spawn_tank_event.strategy.clone(),
         );
     }
 }

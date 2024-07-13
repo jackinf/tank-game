@@ -1,7 +1,7 @@
 use crate::actions::calculate_tile_world_position::calculate_tile_to_world_position;
 use crate::constants::TileCoord;
 use crate::features::harvester::spawn_harvester;
-use crate::features::tank::spawn_tank;
+use crate::features::tank::{spawn_tank, TankStrategy};
 use crate::features::unit::types::UnitTileType;
 use crate::features::unit::{UnitIdCounter, UnitsLayer};
 use bevy::prelude::{AssetServer, Commands, Res, ResMut, Vec2};
@@ -23,6 +23,7 @@ pub fn spawn_units(
                     pos,
                     &mut unit_id_counter,
                     unit.get_player(),
+                    TankStrategy::Aggressive,
                 );
             }
             UnitTileType::Harvester => {

@@ -5,6 +5,7 @@ use crate::features::con_menu::components::UnitConstructionProgressInfo;
 use crate::features::con_menu::resources::BuildingConstructionProgressInfo;
 use crate::features::con_menu::MenuInfo;
 use crate::features::tank::events::{SpawnHarvesterEvent, SpawnTankEvent};
+use crate::features::tank::TankStrategy;
 use crate::features::unit::UnitTileType;
 use bevy::prelude::{EventWriter, Query, Res, Time, Vec2};
 use rand::prelude::SliceRandom;
@@ -84,6 +85,7 @@ pub fn construction_process(
                         spawn_tank_event_writer.send(SpawnTankEvent {
                             position: factory_pos.clone(),
                             player: me.player().clone(),
+                            strategy: TankStrategy::Idle,
                         });
                     } else if unit_tile.get_unit_type() == UnitTileType::Harvester {
                         spawn_harvester_event_writer.send(SpawnHarvesterEvent {

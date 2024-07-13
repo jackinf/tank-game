@@ -1,6 +1,7 @@
 use crate::components::HealthBar;
 use crate::constants::{HEALTH_BAR_SIZE, SPRITE_SCALE, TANK_MAX_HEALTH};
 use crate::features::tank::components::{Tank, TankGun, TankHealth};
+use crate::features::tank::TankStrategy;
 use crate::features::unit::{UnitId, UnitIdCounter};
 use crate::types::player::Player;
 use crate::utils::common_helpers::CommonHelpers;
@@ -21,13 +22,14 @@ pub fn spawn_tank(
     translation: Vec2,
     tank_id_counter: &mut ResMut<UnitIdCounter>,
     player: Option<Player>,
+    strategy: TankStrategy,
 ) {
     let tank_id = tank_id_counter.0;
     tank_id_counter.0 += 1;
 
     let tank_texture = asset_server.load("sprites/tank_base2_bw.png");
     let gun_texture = asset_server.load("sprites/tank_head_bw.png");
-    let tank = Tank::new(tank_id, translation, player.clone());
+    let tank = Tank::new(tank_id, translation, player.clone(), strategy);
     let layer = CommonHelpers::calculate_random_layer(5.0);
 
     let tank_radius = tank.get_radius().clone();

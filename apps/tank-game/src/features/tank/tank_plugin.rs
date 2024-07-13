@@ -1,7 +1,7 @@
 use crate::features::tank::event_handlers::{
-    spawn_harvester_event_handler, spawn_tank_event_handler,
+    set_path_to_target_event_handler, spawn_harvester_event_handler, spawn_tank_event_handler,
 };
-use crate::features::tank::events::{SpawnHarvesterEvent, SpawnTankEvent};
+use crate::features::tank::events::{SetPathToTargetEvent, SpawnHarvesterEvent, SpawnTankEvent};
 use crate::features::tank::resources::{TankMonitoringTimer, TankUngroupTimer};
 use crate::features::tank::systems::{
     sys_monitor_for_enemies, sys_move_bullets, sys_move_tanks_towards_target,
@@ -31,7 +31,9 @@ impl Plugin for TankPlugin {
         .add_systems(Update, sys_ungroup_tanks)
         .add_event::<SpawnTankEvent>()
         .add_event::<SpawnHarvesterEvent>()
+        .add_event::<SetPathToTargetEvent>()
         .add_systems(Update, spawn_tank_event_handler)
-        .add_systems(Update, spawn_harvester_event_handler);
+        .add_systems(Update, spawn_harvester_event_handler)
+        .add_systems(Update, set_path_to_target_event_handler);
     }
 }

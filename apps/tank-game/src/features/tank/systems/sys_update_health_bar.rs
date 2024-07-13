@@ -4,10 +4,10 @@ use crate::features::tank::components::Tank;
 use bevy::prelude::{Children, Query, Rect, Sprite, Vec2};
 
 pub fn sys_update_health_bar(
-    query: Query<(&Tank, &Children)>,
+    q_tanks: Query<(&Tank, &Children)>,
     mut health_bar_query: Query<(&mut Sprite, &HealthBar)>,
 ) {
-    for (tank, children) in query.iter() {
+    for (tank, children) in q_tanks.iter() {
         for &child in children.iter() {
             if let Ok((mut sprite, _)) = health_bar_query.get_mut(child) {
                 // Calculate the current health percentage based on the Tank component

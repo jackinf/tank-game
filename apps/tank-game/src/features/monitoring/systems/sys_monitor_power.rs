@@ -3,7 +3,7 @@ use crate::features::con_menu::MenuInfo;
 use crate::features::monitoring::resources::PowerTimer;
 use bevy::prelude::{Query, Res, ResMut, Time};
 
-pub fn monitor_power(
+pub fn sys_monitor_power(
     q_buildings: Query<&Building>,
     mut timer: ResMut<PowerTimer>,
     time: Res<Time>,
