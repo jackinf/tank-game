@@ -49,7 +49,7 @@ pub fn sys_set_tank_target_position_to_move(
 
     for mouse_button_event in mouse_button_events.read() {
         if MouseButton::Right == mouse_button_event.button
-            && mouse_button_event.state == ButtonState::Pressed
+            && mouse_button_event.state == ButtonState::Released
         {
             let me = q_menu_info.single();
             let world_coords = my_world_coords.get_world();
