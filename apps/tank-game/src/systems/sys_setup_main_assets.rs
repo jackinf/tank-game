@@ -9,7 +9,7 @@ use crate::types::main_asset_info::MainAssetInfo;
 use crate::types::main_asset_info_resource::MainAssetInfoResource;
 use crate::types::mission_info::MissionInfo;
 
-pub fn setup_main_assets(
+pub fn sys_setup_main_assets(
     mut main_asset_info_resource: ResMut<MainAssetInfoResource>,
     mut mission_info_resource: ResMut<MissionInfoResource>,
     mut state: ResMut<NextState<AppState>>,

@@ -9,7 +9,7 @@ use bevy::prelude::{
 };
 use std::collections::HashMap;
 
-pub fn periodic_shooting(
+pub fn sys_periodic_shooting(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut q_tanks: Query<(&mut Tank, &Transform), With<Tank>>,

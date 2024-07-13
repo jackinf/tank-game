@@ -23,7 +23,7 @@ fn main() {
     .add_systems(PreStartup, setup_simple)
     .add_systems(
         Update,
-        (setup_main_assets, setup_mission)
+        (sys_setup_main_assets, sys_setup_mission)
             .chain()
             .run_if(in_state(AppState::Loading)),
     )
@@ -152,7 +152,7 @@ use crate::features::tank::TankPlugin;
 use crate::features::unit::UnitIdCounter;
 use crate::features::unit::UnitSelectionPlugin;
 use crate::resources::mission_info_resource::MissionInfoResource;
-use crate::systems::setup_main_assets;
-use crate::systems::setup_mission;
+use crate::systems::sys_setup_main_assets;
+use crate::systems::sys_setup_mission;
 use crate::types::main_asset_info_resource::MainAssetInfoResource;
 use crate::types::player::Player;

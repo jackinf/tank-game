@@ -9,7 +9,7 @@ use std::collections::HashMap;
 
 type UnitInfo = (UnitId, Vec2, f32, Option<Player>, bool);
 
-pub fn monitor_for_enemies(
+pub fn sys_monitor_for_enemies(
     mut q_tanks: Query<(&mut Tank, &Transform), With<Tank>>,
     mut q_buildings: Query<(&mut Building, &Transform), With<Building>>,
     mut tank_monitoring_timer: ResMut<TankMonitoringTimer>,

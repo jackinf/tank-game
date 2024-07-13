@@ -5,7 +5,7 @@ use crate::features::unit::UnitId;
 use bevy::prelude::{Quat, Query, Res, Time, Transform, Vec2, Vec3Swizzles, With, Without};
 use std::collections::HashMap;
 
-pub fn move_tanks_towards_target(
+pub fn sys_move_tanks_towards_target(
     time: Res<Time>,
     mut tank_query: Query<
         (&mut Transform, &mut Tank),

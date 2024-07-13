@@ -9,7 +9,7 @@ use bevy::prelude::{
     Transform, Vec2, Vec3, Vec3Swizzles, With, Without,
 };
 
-pub fn move_bullets(
+pub fn sys_move_bullets(
     mut commands: Commands,
     time: Res<Time>,
     mut q_bullets: Query<

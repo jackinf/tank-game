@@ -19,7 +19,7 @@ use bevy::prelude::{
 };
 use std::collections::{HashSet, VecDeque};
 
-pub fn set_tank_target_position_to_move(
+pub fn sys_set_tank_target_position_to_move(
     mut q_tanks: Query<(&mut Tank, &mut Sprite), With<Tank>>,
     q_tiles: Query<&Tile>,
     mut q_buildings: Query<&Building>,

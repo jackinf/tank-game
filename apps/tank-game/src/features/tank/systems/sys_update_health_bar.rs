@@ -3,7 +3,7 @@ use crate::constants::{FULL_HEALTH_BAR_WIDTH, HEALTH_BAR_HEIGHT, TANK_MAX_HEALTH
 use crate::features::tank::components::Tank;
 use bevy::prelude::{Children, Query, Rect, Sprite, Vec2};
 
-pub fn update_health_bar(
+pub fn sys_update_health_bar(
     query: Query<(&Tank, &Children)>,
     mut health_bar_query: Query<(&mut Sprite, &HealthBar)>,
 ) {

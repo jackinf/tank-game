@@ -4,8 +4,9 @@ use crate::features::tank::event_handlers::{
 use crate::features::tank::events::{SpawnHarvesterEvent, SpawnTankEvent};
 use crate::features::tank::resources::{TankMonitoringTimer, TankUngroupTimer};
 use crate::features::tank::systems::{
-    monitor_for_enemies, move_bullets, move_tanks_towards_target, periodic_shooting,
-    set_tank_target_position_to_move, ungroup_tanks, update_health_bar,
+    sys_monitor_for_enemies, sys_move_bullets, sys_move_tanks_towards_target,
+    sys_periodic_shooting, sys_set_tank_target_position_to_move, sys_ungroup_tanks,
+    sys_update_health_bar,
 };
 use bevy::prelude::*;
 
@@ -21,13 +22,13 @@ impl Plugin for TankPlugin {
             0.5,
             TimerMode::Repeating,
         )))
-        .add_systems(Update, update_health_bar)
-        .add_systems(Update, set_tank_target_position_to_move)
-        .add_systems(FixedUpdate, move_tanks_towards_target)
-        .add_systems(FixedUpdate, move_bullets)
-        .add_systems(Update, periodic_shooting)
-        .add_systems(Update, monitor_for_enemies)
-        .add_systems(Update, ungroup_tanks)
+        .add_systems(Update, sys_update_health_bar)
+        .add_systems(Update, sys_set_tank_target_position_to_move)
+        .add_systems(FixedUpdate, sys_move_tanks_towards_target)
+        .add_systems(FixedUpdate, sys_move_bullets)
+        .add_systems(Update, sys_periodic_shooting)
+        .add_systems(Update, sys_monitor_for_enemies)
+        .add_systems(Update, sys_ungroup_tanks)
         .add_event::<SpawnTankEvent>()
         .add_event::<SpawnHarvesterEvent>()
         .add_systems(Update, spawn_tank_event_handler)

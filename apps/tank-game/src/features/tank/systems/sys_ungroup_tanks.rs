@@ -14,7 +14,7 @@ use bevy::prelude::{
 };
 use std::collections::{HashMap, HashSet, VecDeque};
 
-pub fn ungroup_tanks(
+pub fn sys_ungroup_tanks(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     time: Res<Time>,

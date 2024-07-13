@@ -9,7 +9,7 @@ use crate::features::unit::{spawn_units, UnitIdCounter};
 use crate::resources::mission_info_resource::MissionInfoResource;
 use crate::SimpleState;
 
-pub fn setup_mission(
+pub fn sys_setup_mission(
     mission_info_resource: Res<MissionInfoResource>,
     mut commands: Commands,
     asset_server: Res<AssetServer>,
