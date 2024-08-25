@@ -1,4 +1,4 @@
-use bevy::prelude::Resource;
+use bevy::prelude::{Asset, TypePath};
 use serde::{Deserialize, Serialize};
 
 /// Main assets
@@ -10,13 +10,14 @@ pub struct TiledMainAssetsGrid {
     width: u32,
 }
 
-#[derive(Debug, Serialize, Deserialize, Resource)]
+#[derive(Debug, Serialize, Deserialize, Asset, TypePath)]
 pub struct TiledMainAssets {
     columns: u32,
     grid: TiledMainAssetsGrid,
     margin: u32,
     name: String,
     spacing: u32,
+
     #[serde(rename = "tilecount")]
     tile_count: u32,
     #[serde(rename = "tiledversion")]
@@ -49,7 +50,7 @@ struct TiledMissionLayer {
     y: u32,
 }
 
-#[derive(Debug, Serialize, Deserialize, Resource)]
+#[derive(Debug, Serialize, Deserialize, Asset, TypePath)]
 pub struct TiledMission {
     #[serde(rename = "compressionlevel")]
     compression_level: i32,
