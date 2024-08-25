@@ -1,2 +1,2 @@
 [workspace]
-members = ["examples/custom-asset", "examples/sandbox", "apps/tank-game", "examples/tilemap-generator", "examples/example-ui"]
+members = ["examples/custom-asset", "examples/sandbox", "apps/tank-game", "examples/tilemap-generator", "examples/example-ui", "apps/tiled"]

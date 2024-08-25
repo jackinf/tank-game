@@ -3638,6 +3638,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "tiled"
+version = "0.1.0"
+dependencies = [
+ "bevy",
+ "serde",
+ "serde_json",
+ "thiserror",
+]
+
+[[package]]
 name = "tilemap-generator"
 version = "0.1.0"
 dependencies = [
