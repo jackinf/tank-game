@@ -162,7 +162,6 @@ pub fn sys_draw_level(
             if *cell <= 0 {
                 return;
             }
-            println!("{}: {}", index, cell);
 
             // find(x => x.id === * cell as usize - 1)
             let tile = &main_assets.tiles.iter().find(|x| x.id == *cell - 1).unwrap();
@@ -184,9 +183,6 @@ pub fn sys_draw_level(
             },));
         });
     }
-
-    println!("{:?}", main_assets);
-    println!("{:?}", mission_assets);
 
     // zoom out
     commands.spawn(Camera2dBundle {
