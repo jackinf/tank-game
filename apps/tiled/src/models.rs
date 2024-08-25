@@ -10,6 +10,27 @@ pub struct TiledMainAssetsGrid {
     width: u32,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct TiledMainAssetsTileProperty {
+    name: String,
+    // #[serde(rename = "type")]
+    // property_type: String,
+    value: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct TiledMainAssetsTile {
+    pub id: u32,
+    pub image: String,
+    #[serde(rename = "imageheight")]
+    image_height: u32,
+    #[serde(rename = "imagewidth")]
+    image_width: u32,
+    // #[serde(rename = "type")]
+    // tile_type: String,
+    properties: Vec<TiledMainAssetsTileProperty>,
+}
+
 #[derive(Debug, Serialize, Deserialize, Asset, TypePath)]
 pub struct TiledMainAssets {
     columns: u32,
@@ -24,6 +45,8 @@ pub struct TiledMainAssets {
     tiled_version: String,
     #[serde(rename = "tileheight")]
     tile_height: u32,
+
+    pub tiles: Vec<TiledMainAssetsTile>,
 }
 
 /// Mission layout
@@ -36,16 +59,16 @@ struct TiledMissionTileSet {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-struct TiledMissionLayer {
-    data: Vec<u32>,
-    height: u32,
-    id: u32,
+pub struct TiledMissionLayer {
+    pub data: Vec<u32>,
+    pub height: u32,
+    pub id: u32,
     name: String,
     opacity: f32,
-    #[serde(rename = "type")]
-    layer_type: String,
+    // #[serde(rename = "type")]
+    // layer_type: String,
     visible: bool,
-    width: u32,
+    pub width: u32,
     x: u32,
     y: u32,
 }
@@ -56,7 +79,7 @@ pub struct TiledMission {
     compression_level: i32,
     height: u32,
     infinite: bool,
-    layers: Vec<TiledMissionLayer>,
+    pub layers: Vec<TiledMissionLayer>,
     #[serde(rename = "nextlayerid")]
     next_layer_id: u32,
     #[serde(rename = "nextobjectid")]
@@ -72,8 +95,8 @@ pub struct TiledMission {
     tile_sets: Vec<TiledMissionTileSet>,
     #[serde(rename = "tilewidth")]
     tile_width: u32,
-    #[serde(rename = "type")]
-    map_type: String,
+    // #[serde(rename = "type")]
+    // map_type: String,
     version: String,
     width: u32,
 }
