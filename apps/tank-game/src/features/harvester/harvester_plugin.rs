@@ -1,6 +1,7 @@
 use crate::features::harvester::resources::HarvesterTimer;
 use crate::features::harvester::systems::{
-    begin, collect_gold, find_base_to_return, find_gold_for_hungry_harvester, move_harvester,
+    sys_begin, sys_collect_gold, sys_find_base_to_return, sys_find_gold_for_hungry_harvester,
+    sys_move_harvester,
 };
 use crate::AppState;
 use bevy::app::App;
@@ -17,17 +18,17 @@ impl Plugin for HarvesterPlugin {
         .add_systems(
             Update,
             (
-                begin,
-                find_gold_for_hungry_harvester,
-                collect_gold,
-                find_base_to_return,
+                sys_begin,
+                sys_find_gold_for_hungry_harvester,
+                sys_collect_gold,
+                sys_find_base_to_return,
             )
                 .chain()
                 .run_if(in_state(AppState::Playing)),
         )
         .add_systems(
             FixedUpdate,
-            move_harvester.run_if(in_state(AppState::Playing)),
+            sys_move_harvester.run_if(in_state(AppState::Playing)),
         );
     }
 }

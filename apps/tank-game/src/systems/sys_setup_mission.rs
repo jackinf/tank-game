@@ -3,7 +3,7 @@ use bevy::prelude::*;
 
 use crate::features::building::actions::spawn_buildings::spawn_buildings;
 use crate::features::tile::spawn_tiles;
-use crate::features::unit::{spawn_units, UnitIdCounter};
+use crate::features::unit::{sys_spawn_units, UnitIdCounter};
 use crate::resources::mission_info_resource::MissionInfoResource;
 use crate::SimpleState;
 
@@ -42,7 +42,7 @@ pub fn sys_setup_mission(
     */
 
     let units_layer = mission_info_resource.get_units_layer();
-    spawn_units(
+    sys_spawn_units(
         &mut commands,
         &asset_server,
         &mut unit_id_counter,

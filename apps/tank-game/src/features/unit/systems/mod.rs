@@ -1,9 +1,9 @@
-mod calculate_selection_rect_coordinates;
-mod display_selection_rect;
-mod spawn_unit_selection_rect;
-mod spawn_units;
+mod sys_calculate_selection_rect_coordinates;
+mod sys_display_selection_rect;
+mod sys_spawn_unit_selection_rect;
+mod sys_spawn_units;
 
-pub use calculate_selection_rect_coordinates::calculate_selection_rect_coordinates;
-pub use display_selection_rect::display_selection_rect;
-pub use spawn_unit_selection_rect::spawn_unit_selection_rect;
-pub use spawn_units::spawn_units;
+pub use sys_calculate_selection_rect_coordinates::sys_calculate_selection_rect_coordinates;
+pub use sys_display_selection_rect::sys_display_selection_rect;
+pub use sys_spawn_unit_selection_rect::sys_spawn_unit_selection_rect;
+pub use sys_spawn_units::sys_spawn_units;

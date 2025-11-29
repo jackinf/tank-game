@@ -8,6 +8,7 @@ pub mod mission_layer;
 pub mod player;
 mod players_layer;
 pub mod raw_mission_layer;
+pub mod tiled;
 
 pub use asset_tile::AssetImagePath;
 pub use asset_tile::AssetTile;
@@ -15,3 +16,4 @@ pub use asset_tile::AssetTileId;
 pub use asset_tile_sub_type::AssetTileSubType;
 pub use asset_tile_type::AssetTileType;
 pub use players_layer::PlayersLayer;
+pub use tiled::{TiledLayer, TiledMap, TiledTile, TiledTileset};
