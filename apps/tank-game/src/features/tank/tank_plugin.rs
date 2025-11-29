@@ -29,9 +29,9 @@ impl Plugin for TankPlugin {
         .add_systems(Update, sys_periodic_shooting)
         .add_systems(Update, sys_monitor_for_enemies)
         .add_systems(Update, sys_ungroup_tanks)
-        .add_event::<SpawnTankEvent>()
-        .add_event::<SpawnHarvesterEvent>()
-        .add_event::<SetPathToTargetEvent>()
+        .add_message::<SpawnTankEvent>()
+        .add_message::<SpawnHarvesterEvent>()
+        .add_message::<SetPathToTargetEvent>()
         .add_systems(Update, spawn_tank_event_handler)
         .add_systems(Update, spawn_harvester_event_handler)
         .add_systems(Update, set_path_to_target_event_handler);

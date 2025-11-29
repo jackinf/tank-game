@@ -1,6 +1,6 @@
 use crate::features::animation::{AnimationActive, AnimationIndices, AnimationTimer};
 use bevy::asset::{AssetServer, Assets};
-use bevy::math::{Vec2, Vec3};
+use bevy::math::{UVec2, Vec3};
 use bevy::prelude::{
     default, Commands, Res, ResMut, Sprite, TextureAtlas,
     TextureAtlasLayout, Timer, TimerMode, Transform,
@@ -12,7 +12,7 @@ pub fn explosion_animation_setup(
     mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
 ) {
     let texture = asset_server.load("animations/explosion.png");
-    let layout = TextureAtlasLayout::from_grid(Vec2::new(31., 35.), 5, 1, None, None);
+    let layout = TextureAtlasLayout::from_grid(UVec2::new(31, 35), 5, 1, None, None);
     let texture_atlas_layout = texture_atlas_layouts.add(layout);
     // Use only the subset of sprites in the sheet that make up the run animation
     let animation_indices = AnimationIndices::new(0, 4);

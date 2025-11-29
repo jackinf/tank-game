@@ -127,7 +127,7 @@ fn setup(
     state.other_handle = asset_server.load("data/asset_no_extension");
 
     let main_assets_handler: Handle<Tileset> = asset_server.load("data/main_assets.tsj");
-    let main_assets = main_assets.get(main_assets_handler);
+    let main_assets = main_assets.get(&main_assets_handler);
 
     if main_assets.is_none() {
         info!("Main Assets Not Ready");

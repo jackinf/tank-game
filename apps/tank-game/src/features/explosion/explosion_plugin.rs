@@ -9,7 +9,7 @@ pub struct ExplosionPlugin;
 
 impl Plugin for ExplosionPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<TriggerExplosionAnimationEvent>()
+        app.add_message::<TriggerExplosionAnimationEvent>()
             .add_systems(Startup, prepare_explosion_animation)
             .add_systems(
                 Update,
