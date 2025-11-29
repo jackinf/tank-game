@@ -7,7 +7,6 @@ mod features;
 use crate::features::animation::{
     explosion_animation_setup, play_explosion, trigger_animation_on_key,
 };
-use bevy::prelude::*;
 
 fn main() {
     App::new()
@@ -21,5 +20,5 @@ fn main() {
 }
 
 fn camera_setup(mut commands: Commands) {
-    commands.spawn(Camera2dBundle::default());
+    commands.spawn(Camera2d);
 }

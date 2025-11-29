@@ -1,10 +1,12 @@
 use crate::constants::{TileCoord, TILE_SIZE};
 use crate::features::building::actions::spawn_building;
 use crate::features::building::components::{Building, GlobalBuildingPlacementTiles};
-use crate::features::con_menu::{BuildingConstructionProgressInfo, MenuInfo};
+use crate::features::con_menu::BuildingConstructionProgressInfo;
 use crate::features::cursor::CursorCoordinates;
 use crate::features::tile::{find_accessible_tile, Tile};
 use crate::features::unit::UnitIdCounter;
+use bevy::color::palettes::css;
+use bevy::color::Alpha;
 use bevy::input::mouse::MouseButtonInput;
 use bevy::input::ButtonState;
 use bevy::prelude::{
@@ -32,12 +34,11 @@ pub fn sys_draw_construction_tiles(
     mut q_building_progress_info: Query<&mut BuildingConstructionProgressInfo>,
 ) {
     match (
-        q_placement.single_mut(),
+        q_placement.single_mut().unwrap(),
         find_accessible_tile(&q_tiles, &cursor.get_world()),
     ) {
         ((mut transform, mut sprite, mut placement), Some(tile)) => {
             sprite.color = Color::NONE;
-            sprite.color.set_a(0.);
 
             if !placement.is_ready() {
                 return;
@@ -48,19 +49,18 @@ pub fn sys_draw_construction_tiles(
             transform.translation = Vec3::new(world_x, world_y, transform.translation.z);
 
             // by default, assume that the placement is valid
-            sprite.color = Color::GREEN;
-            sprite.color.set_a(0.5);
+            sprite.color = Color::from(css::GREEN).with_alpha(0.5);
 
             // check if the building is near the building
             if !is_placement_near_a_building(&q_buildings, &mut placement, &cursor_at) {
-                sprite.color = Color::RED;
+                sprite.color = Color::from(css::RED).with_alpha(0.5);
                 return;
             }
 
             // check if placement overlaps with something else
             if does_placement_overlap_with_something_else(&q_buildings, &mut placement, &cursor_at)
             {
-                sprite.color = Color::RED;
+                sprite.color = Color::from(css::RED).with_alpha(0.5);
                 return;
             }
 
@@ -70,7 +70,7 @@ pub fn sys_draw_construction_tiles(
                 {
                     // is ready check makes sure that there's a building type
                     let building_tile = placement.get_building_tile().unwrap().clone();
-                    sprite.color.set_a(0.0);
+                    sprite.color = Color::NONE;
                     placement.set_ready(None);
 
                     // spawn a building
@@ -96,7 +96,7 @@ pub fn sys_draw_construction_tiles(
             }
         }
         ((_, mut sprite, _), None) => {
-            sprite.color.set_a(0.0); // hide placement tile(s)
+            sprite.color = Color::NONE; // hide placement tile(s)
         }
     }
 }

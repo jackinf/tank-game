@@ -19,6 +19,6 @@ pub fn sys_monitor_power(
         .sum::<i32>()
         .into();
 
-    let mut me = q_menu_info.single_mut();
+    let mut me = q_menu_info.single_mut().unwrap();
     me.set_energy(total_power);
 }

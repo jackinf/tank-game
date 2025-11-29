@@ -1,6 +1,7 @@
-use bevy::prelude::{Event, Vec2};
+use bevy::ecs::message::Message;
+use bevy::prelude::Vec2;
 
-#[derive(Event)]
+#[derive(Message)]
 pub struct TriggerExplosionAnimationEvent {
     at: Vec2,
     scale: f32,

@@ -1,9 +1,10 @@
 use std::collections::VecDeque;
 
+use bevy::color::Srgba;
 use bevy::math::Vec2;
 use bevy::prelude::{Color, Component, Mut, Sprite};
 
-use crate::constants::{WorldCoord, TILE_SIZE};
+use crate::constants::TILE_SIZE;
 use crate::features::con_menu::MenuInfo;
 use crate::features::tank::types::TankStrategy;
 use crate::features::unit::UnitId;
@@ -66,9 +67,9 @@ impl Tank {
     pub fn get_default_color(&self) -> Color {
         let brightness = 2.;
         match self.player {
-            Some(Player::P1) => Color::rgb(0.3, 0.3, 0.7) * brightness,
-            Some(Player::P2) => Color::rgb(0.8, 0.2, 0.2) * brightness,
-            _ => Color::rgb(0.5, 0.5, 0.5) * brightness,
+            Some(Player::P1) => Color::srgb(0.3 * brightness, 0.3 * brightness, 0.7 * brightness),
+            Some(Player::P2) => Color::srgb(0.8 * brightness, 0.2 * brightness, 0.2 * brightness),
+            _ => Color::srgb(0.5 * brightness, 0.5 * brightness, 0.5 * brightness),
         }
     }
 
@@ -160,10 +161,10 @@ impl Tank {
 
     pub fn select(&mut self, sprite: &mut Mut<Sprite>) {
         self.selected = true;
-        let color = self.get_default_color();
+        let color: Srgba = self.get_default_color().into();
 
         // Make the selected tank brighter by moving closer to white (max value=(1.0, 1.0, 1.0))
-        sprite.color = Color::rgb(color.r() + 0.3, color.r() + 0.3, color.b() + 0.3);
+        sprite.color = Color::srgb(color.red + 0.3, color.green + 0.3, color.blue + 0.3);
     }
 
     pub fn deselect(&mut self, sprite: &mut Mut<Sprite>) {

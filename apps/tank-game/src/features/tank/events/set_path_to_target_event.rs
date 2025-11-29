@@ -1,7 +1,7 @@
 use crate::features::unit::UnitId;
-use bevy::prelude::Event;
+use bevy::ecs::message::Message;
 
-#[derive(Event)]
+#[derive(Message)]
 pub struct SetPathToTargetEvent {
     pub source: UnitId,
     pub target: UnitId,

@@ -5,15 +5,9 @@ use crate::features::tank::TankStrategy;
 use crate::features::unit::{UnitId, UnitIdCounter};
 use crate::types::player::Player;
 use crate::utils::common_helpers::CommonHelpers;
-use bevy::asset::ErasedAssetLoader;
-use bevy::math::Quat;
-use bevy::prelude::{
-    default, AssetServer, BuildChildren, Color, Commands, Rect, Res, ResMut, Sprite, SpriteBundle,
-    Transform, Vec2, Vec3,
-};
+use bevy::color::Srgba;
+use bevy::prelude::*;
 use bevy::sprite::Anchor;
-use bevy_prototype_lyon::prelude::{GeometryBuilder, ShapeBundle, Stroke};
-use bevy_prototype_lyon::shapes;
 use std::f32::consts::PI;
 
 pub fn spawn_tank(
@@ -32,67 +26,55 @@ pub fn spawn_tank(
     let tank = Tank::new(tank_id, translation, player.clone(), strategy);
     let layer = CommonHelpers::calculate_random_layer(5.0);
 
-    let tank_radius = tank.get_radius().clone();
-
     let color = tank.get_default_color().clone();
+    // Convert to Srgba to get components for brightening
+    let color_srgba: Srgba = color.into();
+    let brighter_color = Color::srgb(
+        (color_srgba.red * 2.0).min(1.0),
+        (color_srgba.green * 2.0).min(1.0),
+        (color_srgba.blue * 2.0).min(1.0),
+    );
+    
     commands
-        .spawn((SpriteBundle {
-            transform: Transform::default()
-                .with_translation(translation.extend(layer))
-                .with_scale(Vec3::splat(SPRITE_SCALE)),
-            texture: tank_texture,
-            sprite: Sprite {
+        .spawn((
+            Sprite {
+                image: tank_texture,
                 color: color.clone(),
                 ..default()
             },
-            ..default()
-        },))
-        .insert(tank)
-        .insert(TankHealth::new(TANK_MAX_HEALTH as f32))
+            Transform::default()
+                .with_translation(translation.extend(layer))
+                .with_scale(Vec3::splat(SPRITE_SCALE)),
+            tank,
+            TankHealth::new(TANK_MAX_HEALTH as f32),
+        ))
         .with_children(move |parent| {
             // Spawn the turret as a child of the tank
-            parent
-                .spawn(SpriteBundle {
-                    transform: Transform::from_xyz(0.0, 0.0, 0.1)
-                        .with_rotation(Quat::from_rotation_z(PI))
-                        .with_scale(Vec3::splat(SPRITE_SCALE)), // Ensure it's positioned correctly relative to the base
-                    texture: gun_texture,
-                    sprite: Sprite {
-                        color: color * 2.0,
-                        ..default()
-                    },
-                    ..default()
-                })
-                .insert(TankGun::new(UnitId(tank_id)));
-
             parent.spawn((
-                ShapeBundle {
-                    path: GeometryBuilder::build_as(&shapes::Circle {
-                        radius: tank_radius / SPRITE_SCALE,
-                        ..default()
-                    }),
+                Sprite {
+                    image: gun_texture,
+                    color: brighter_color,
                     ..default()
                 },
-                // Fill::color(Color::CYAN),
-                Stroke::new(Color::BLACK, 2.0),
+                Transform::from_xyz(0.0, 0.0, 0.1)
+                    .with_rotation(Quat::from_rotation_z(PI))
+                    .with_scale(Vec3::splat(SPRITE_SCALE)),
+                TankGun::new(UnitId(tank_id)),
             ));
 
+            // Debug circle removed - bevy_prototype_lyon has compatibility issues
+            // Can use Bevy gizmos for runtime debug visualization if needed
+
             // Spawn the health bar as a child of the tank
-            parent
-                .spawn(SpriteBundle {
-                    // Position the health bar above the tank
-                    transform: Transform::from_xyz(-50.0, 40.0, 0.2),
-                    sprite: Sprite {
-                        color: Color::PURPLE, // Health bar color
-                        rect: Some(Rect {
-                            min: Vec2::new(0.0, 0.0),
-                            max: HEALTH_BAR_SIZE,
-                        }),
-                        anchor: Anchor::CenterLeft, // Anchor the health bar to the left of the tank
-                        ..default()
-                    },
+            parent.spawn((
+                Sprite {
+                    color: Color::from(bevy::color::palettes::css::PURPLE),
+                    custom_size: Some(HEALTH_BAR_SIZE),
                     ..default()
-                })
-                .insert(HealthBar);
+                },
+                Anchor::CENTER_LEFT,
+                Transform::from_xyz(-50.0, 40.0, 0.2),
+                HealthBar,
+            ));
         });
 }

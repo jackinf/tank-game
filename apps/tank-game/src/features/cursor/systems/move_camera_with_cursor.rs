@@ -16,10 +16,10 @@ pub fn move_camera_with_cursor(
     mut mouse_button_events: EventReader<MouseButtonInput>,
     mut click_info: ResMut<ClickInfo>,
 ) {
-    let dt = time.delta_seconds();
+    let dt = time.delta_secs();
 
-    let mut transform = q_camera.single_mut();
-    let menu_info = q_menu_info.single();
+    let mut transform = q_camera.single_mut().unwrap();
+    let menu_info = q_menu_info.single().unwrap();
     if menu_info.is_hovered() {
         // Don't move the camera if the cursor is over the UI
         return;
@@ -28,7 +28,7 @@ pub fn move_camera_with_cursor(
     // TODO: stop moving when on the edge of the map
     // let (min_x, max_x, min_y, max_y) = game_map.get_min_max();
 
-    let window = q_window.single();
+    let window = q_window.single().unwrap();
     if let None = window.cursor_position() {
         return;
     }

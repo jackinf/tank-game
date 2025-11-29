@@ -4,7 +4,7 @@ pub fn move_camera_with_keys(
     keyboard: Res<ButtonInput<KeyCode>>,
     mut q_camera: Query<&mut Transform, With<Camera>>,
 ) {
-    let mut camera_transform = q_camera.single_mut();
+    let mut camera_transform = q_camera.single_mut().unwrap();
 
     if keyboard.just_pressed(KeyCode::KeyA) {
         camera_transform.translation.x -= 300.0;

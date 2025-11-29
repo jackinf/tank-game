@@ -22,7 +22,7 @@ fn main() {
 
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     // Camera
-    commands.spawn(Camera2dBundle::default());
+    commands.spawn(Camera2d);
 
     // root node
     commands
@@ -44,7 +44,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                         border: UiRect::all(Val::Px(2.)),
                         ..default()
                     },
-                    background_color: Color::rgb(0.65, 0.65, 0.65).into(),
+                    background_color: Color::srgb(0.65, 0.65, 0.65).into(),
                     ..default()
                 })
                 .with_children(|parent| {
@@ -55,7 +55,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                                 width: Val::Percent(100.),
                                 ..default()
                             },
-                            background_color: Color::rgb(0.75, 0.15, 0.15).into(),
+                            background_color: Color::srgb(0.75, 0.15, 0.15).into(),
                             ..default()
                         })
                         .with_children(|parent| {
@@ -73,9 +73,6 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                                     margin: UiRect::all(Val::Px(5.)),
                                     ..default()
                                 }),
-                                // Because this is a distinct label widget and
-                                // not button/list item text, this is necessary
-                                // for accessibility to treat the text accordingly.
                                 Label,
                             ));
                         });
@@ -90,7 +87,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                         width: Val::Px(200.),
                         ..default()
                     },
-                    background_color: Color::rgb(0.15, 0.15, 0.15).into(),
+                    background_color: Color::srgb(0.15, 0.15, 0.15).into(),
                     ..default()
                 })
                 .with_children(|parent| {
@@ -116,7 +113,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                                 overflow: Overflow::clip_y(),
                                 ..default()
                             },
-                            background_color: Color::rgb(0.10, 0.10, 0.10).into(),
+                            background_color: Color::srgb(0.10, 0.10, 0.10).into(),
                             ..default()
                         })
                         .with_children(|parent| {
@@ -165,8 +162,8 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                         border: UiRect::all(Val::Px(20.)),
                         ..default()
                     },
-                    border_color: Color::GREEN.into(),
-                    background_color: Color::rgb(0.4, 0.4, 1.).into(),
+                    border_color: Color::from(bevy::color::palettes::css::GREEN).into(),
+                    background_color: Color::srgb(0.4, 0.4, 1.).into(),
                     ..default()
                 })
                 .with_children(|parent| {
@@ -176,7 +173,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                             height: Val::Percent(100.0),
                             ..default()
                         },
-                        background_color: Color::rgb(0.8, 0.8, 1.).into(),
+                        background_color: Color::srgb(0.8, 0.8, 1.).into(),
                         ..default()
                     });
                 });
@@ -201,13 +198,12 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                                 height: Val::Px(100.0),
                                 ..default()
                             },
-                            background_color: Color::rgb(1.0, 0.0, 0.).into(),
+                            background_color: Color::srgb(1.0, 0.0, 0.).into(),
                             ..default()
                         })
                         .with_children(|parent| {
                             parent.spawn(NodeBundle {
                                 style: Style {
-                                    // Take the size of the parent node.
                                     width: Val::Percent(100.0),
                                     height: Val::Percent(100.0),
                                     position_type: PositionType::Absolute,
@@ -215,7 +211,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                                     bottom: Val::Px(20.),
                                     ..default()
                                 },
-                                background_color: Color::rgb(1.0, 0.3, 0.3).into(),
+                                background_color: Color::srgb(1.0, 0.3, 0.3).into(),
                                 ..default()
                             });
                             parent.spawn(NodeBundle {
@@ -227,7 +223,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                                     bottom: Val::Px(40.),
                                     ..default()
                                 },
-                                background_color: Color::rgb(1.0, 0.5, 0.5).into(),
+                                background_color: Color::srgb(1.0, 0.5, 0.5).into(),
                                 ..default()
                             });
                             parent.spawn(NodeBundle {
@@ -239,7 +235,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                                     bottom: Val::Px(60.),
                                     ..default()
                                 },
-                                background_color: Color::rgb(1.0, 0.7, 0.7).into(),
+                                background_color: Color::srgb(1.0, 0.7, 0.7).into(),
                                 ..default()
                             });
                             // alpha test
@@ -252,7 +248,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                                     bottom: Val::Px(80.),
                                     ..default()
                                 },
-                                background_color: Color::rgba(1.0, 0.9, 0.9, 0.4).into(),
+                                background_color: Color::srgba(1.0, 0.9, 0.9, 0.4).into(),
                                 ..default()
                             });
                         });
@@ -271,8 +267,6 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                 })
                 .with_children(|parent| {
                     // bevy logo (image)
-                    // A `NodeBundle` is used to display the logo the image as an `ImageBundle` can't automatically
-                    // size itself with a child node present.
                     parent
                         .spawn((
                             NodeBundle {
@@ -282,16 +276,12 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                                     margin: UiRect::top(Val::VMin(5.)),
                                     ..default()
                                 },
-                                // a `NodeBundle` is transparent by default, so to see the image we have to its color to `WHITE`
                                 background_color: Color::WHITE.into(),
                                 ..default()
                             },
                             UiImage::new(asset_server.load("branding/bevy_logo_dark_big.png")),
                         ))
                         .with_children(|parent| {
-                            // alt text
-                            // This UI node takes up no space in the layout and the `Text` component is used by the accessibility module
-                            // and is not rendered.
                             parent.spawn((
                                 NodeBundle {
                                     style: Style {
@@ -300,7 +290,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                                     },
                                     ..Default::default()
                                 },
-                                Text::from_section("Bevy logo", TextStyle::default()),
+                                Text::from("Bevy logo"),
                             ));
                         });
                 });

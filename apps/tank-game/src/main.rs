@@ -2,18 +2,13 @@ fn main() {
     let mut app = App::new();
     app.add_plugins(DefaultPlugins.set(WindowPlugin {
         primary_window: Some(Window {
-            resolution: WindowResolution::new(MAX_WIDTH as f32, MAX_HEIGHT as f32),
+            resolution: WindowResolution::new(MAX_WIDTH as u32, MAX_HEIGHT as u32),
             title: "Tank Game".into(),
-            cursor: Cursor {
-                icon: CursorIcon::Default,
-                ..default()
-            },
             ..default()
         }),
         ..default()
     }))
     .init_state::<AppState>()
-    .insert_resource(Msaa::Sample4)
     .insert_resource(UnitIdCounter(1, 100000))
     .insert_resource(MainAssetInfoResource::new())
     .insert_resource(MissionInfoResource::new())
@@ -30,7 +25,7 @@ fn main() {
     // .add_systems(PreStartup, (setup_main_assets, setup_mission).chain())
     .add_plugins((
         ExplosionPlugin,
-        ShapePlugin,
+        // ShapePlugin removed - bevy_prototype_lyon has lyon compatibility issues
         DebugPlugin,
         CursorPlugin,
         TankPlugin,
@@ -40,15 +35,12 @@ fn main() {
         BuildingPlugin,
         MonitoringPlugin,
     ))
-    .add_plugins(bevy::diagnostic::FrameTimeDiagnosticsPlugin)
-    .add_plugins(bevy::diagnostic::EntityCountDiagnosticsPlugin)
-    .add_plugins(bevy::diagnostic::SystemInformationDiagnosticsPlugin)
-    .add_plugins(PerfUiPlugin);
+    .add_plugins(bevy::diagnostic::FrameTimeDiagnosticsPlugin::default())
+    .add_plugins(bevy::diagnostic::EntityCountDiagnosticsPlugin::default())
+    .add_plugins(bevy::diagnostic::SystemInformationDiagnosticsPlugin::default())
+    .add_plugins(bevy::diagnostic::LogDiagnosticsPlugin::default());
 
-    // use bevy::diagnostic::LogDiagnosticsPlugin;
-    // app.add_plugins(LogDiagnosticsPlugin::default());
-
-    app.run()
+    app.run();
 }
 
 #[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Hash, States)]
@@ -91,20 +83,19 @@ impl AssetLoader for SimpleTextAssetLoader {
     type Asset = SimpleText;
     type Settings = ();
     type Error = SimpleTextAssetLoaderError;
-    fn load<'a>(
-        &'a self,
-        reader: &'a mut Reader,
-        _settings: &'a (),
-        _load_context: &'a mut LoadContext,
-    ) -> BoxedFuture<'a, Result<Self::Asset, Self::Error>> {
-        Box::pin(async move {
-            let mut bytes = Vec::new();
-            reader.read_to_end(&mut bytes).await?;
 
-            let content = String::from_utf8(bytes)?;
+    async fn load(
+        &self,
+        reader: &mut dyn Reader,
+        _settings: &(),
+        _load_context: &mut LoadContext<'_>,
+    ) -> Result<Self::Asset, Self::Error> {
+        let mut bytes = Vec::new();
+        reader.read_to_end(&mut bytes).await?;
 
-            Ok(SimpleText { content })
-        })
+        let content = String::from_utf8(bytes)?;
+
+        Ok(SimpleText { content })
     }
 
     fn extensions(&self) -> &[&str] {
@@ -113,14 +104,11 @@ impl AssetLoader for SimpleTextAssetLoader {
 }
 
 fn setup_simple(
-    mut commands: Commands,
     mut state: ResMut<SimpleState>,
     asset_server: Res<AssetServer>,
 ) {
     state.simple_text = asset_server.load("main_assets.tsj");
     state.simple_text2 = asset_server.load("mission01.tmj");
-
-    commands.spawn(PerfUiCompleteBundle::default());
 }
 
 pub mod actions;
@@ -134,12 +122,10 @@ pub mod utils;
 
 use crate::constants::{MAX_HEIGHT, MAX_WIDTH};
 use bevy::asset::io::Reader;
-use bevy::asset::{AssetLoader, AsyncReadExt, BoxedFuture, LoadContext};
+use bevy::asset::{AssetLoader, AsyncReadExt, LoadContext};
 use bevy::prelude::*;
-use bevy::utils::thiserror::Error;
-use bevy::window::{Cursor, WindowResolution};
-use bevy_prototype_lyon::prelude::ShapePlugin;
-use iyes_perf_ui::{PerfUiCompleteBundle, PerfUiPlugin};
+use bevy::window::WindowResolution;
+use thiserror::Error;
 
 use crate::features::building::building_plugin::BuildingPlugin;
 use crate::features::con_menu::MenuPlugin;

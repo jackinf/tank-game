@@ -7,8 +7,8 @@ use crate::features::con_menu::MenuInfo;
 use crate::features::tank::events::{SpawnHarvesterEvent, SpawnTankEvent};
 use crate::features::tank::TankStrategy;
 use crate::features::unit::UnitTileType;
-use bevy::prelude::{EventWriter, Query, Res, Time, Vec2};
-use rand::prelude::SliceRandom;
+use bevy::prelude::{MessageWriter, Query, Res, Time, Vec2};
+use rand::prelude::IndexedRandom;
 
 pub fn construction_process(
     mut time: Res<Time>,
@@ -16,10 +16,10 @@ pub fn construction_process(
     mut q_unit_construction_progress_info: Query<&mut UnitConstructionProgressInfo>,
     mut q_menu_info: Query<&mut MenuInfo>,
     q_buildings: Query<&Building>,
-    mut spawn_tank_event_writer: EventWriter<SpawnTankEvent>,
-    mut spawn_harvester_event_writer: EventWriter<SpawnHarvesterEvent>,
+    mut spawn_tank_event_writer: MessageWriter<SpawnTankEvent>,
+    mut spawn_harvester_event_writer: MessageWriter<SpawnHarvesterEvent>,
 ) {
-    let mut me = q_menu_info.single_mut();
+    let mut me = q_menu_info.single_mut().unwrap();
     q_building_construction_progress_info
         .iter_mut()
         .for_each(|mut info| {
@@ -82,13 +82,13 @@ pub fn construction_process(
 
                 if let Some(unit_tile) = info.get_unit_tile() {
                     if unit_tile.get_unit_type() == UnitTileType::Tank {
-                        spawn_tank_event_writer.send(SpawnTankEvent {
+                        spawn_tank_event_writer.write(SpawnTankEvent {
                             position: factory_pos.clone(),
                             player: me.player().clone(),
                             strategy: TankStrategy::Idle,
                         });
                     } else if unit_tile.get_unit_type() == UnitTileType::Harvester {
-                        spawn_harvester_event_writer.send(SpawnHarvesterEvent {
+                        spawn_harvester_event_writer.write(SpawnHarvesterEvent {
                             position: factory_pos.clone(),
                             player: me.player().clone(),
                         });

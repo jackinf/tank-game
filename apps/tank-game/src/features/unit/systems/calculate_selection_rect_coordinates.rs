@@ -16,7 +16,7 @@ pub fn calculate_selection_rect_coordinates(
     q_menu_info: Query<&MenuInfo>,
 ) {
     for mouse_button_input_event in mouse_button_input_events.read() {
-        let me = q_menu_info.single();
+        let me = q_menu_info.single().unwrap();
         let world_coords = my_world_coords.get_world();
         let wx = world_coords.x;
         let wy = world_coords.y;
@@ -39,11 +39,11 @@ pub fn calculate_selection_rect_coordinates(
                 deselect_all_my_units(&mut tank_query, &me);
 
                 q_unit_selection_rect
-                    .single_mut()
+                    .single_mut().unwrap()
                     .set_start(Some(Vec2::new(wx, wy)));
             }
             (MouseButton::Left, ButtonState::Released, _) => {
-                let mut tank_selection_rect = q_unit_selection_rect.single_mut();
+                let mut tank_selection_rect = q_unit_selection_rect.single_mut().unwrap();
                 if tank_selection_rect.start().is_none() {
                     continue;
                 }

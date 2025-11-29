@@ -2,18 +2,14 @@ use crate::features::building::components::Building;
 use crate::features::tank::actions::spawn_tank_bullet;
 use crate::features::tank::components::Tank;
 use crate::features::unit::UnitId;
-use bevy::audio::AudioBundle;
-use bevy::prelude::{
-    default, AssetServer, Commands, EventWriter, Query, Res, Time, Transform, Vec2, Vec3Swizzles,
-    With,
-};
+use bevy::prelude::*;
 use std::collections::HashMap;
 
 pub fn sys_periodic_shooting(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut q_tanks: Query<(&mut Tank, &Transform), With<Tank>>,
-    mut q_buildings: Query<(&mut Building, &Transform), With<Building>>,
+    q_buildings: Query<(&Building, &Transform), With<Building>>,
     time: Res<Time>,
 ) {
     let tank_id_pos_map: HashMap<UnitId, Vec2> = q_tanks
@@ -33,7 +29,7 @@ pub fn sys_periodic_shooting(
 
     q_tanks
         .iter_mut()
-        .filter(|(tank, _)| tank.has_target() && !tank.is_cooling_down(time.elapsed_seconds_f64()))
+        .filter(|(tank, _)| tank.has_target() && !tank.is_cooling_down(time.elapsed_secs_f64()))
         .for_each(|(mut tank, _)| {
             let source_option = tank_id_pos_map.get(&tank.id);
             let target_option = all_id_pos_map.get(&tank.get_target().unwrap());
@@ -43,13 +39,13 @@ pub fn sys_periodic_shooting(
                     return;
                 }
 
-                tank.start_cooling_down(time.elapsed_seconds_f64());
+                tank.start_cooling_down(time.elapsed_secs_f64());
                 spawn_tank_bullet(&mut commands, &asset_server, source.clone(), target.clone());
 
-                commands.spawn(AudioBundle {
-                    source: asset_server.load("sounds/explosion.ogg"),
-                    ..default()
-                });
+                // Play explosion sound
+                commands.spawn(AudioPlayer::new(
+                    asset_server.load("sounds/explosion.ogg"),
+                ));
             }
         });
 }

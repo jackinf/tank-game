@@ -4,10 +4,7 @@ use crate::constants::BULLET_RADIUS;
 use crate::features::building::components::Building;
 use crate::features::explosion::TriggerExplosionAnimationEvent;
 use crate::features::tank::components::{Tank, TankBullet};
-use bevy::prelude::{
-    Children, Commands, DespawnRecursiveExt, Entity, EventWriter, Query, Res, Sprite, Time,
-    Transform, Vec2, Vec3, Vec3Swizzles, With, Without,
-};
+use bevy::prelude::*;
 
 pub fn sys_move_bullets(
     mut commands: Commands,
@@ -48,9 +45,9 @@ pub fn sys_move_bullets(
             Without<Tank>,
         ),
     >,
-    mut trigger_explosion_animation_event_writer: EventWriter<TriggerExplosionAnimationEvent>,
+    mut trigger_explosion_animation_event_writer: MessageWriter<TriggerExplosionAnimationEvent>,
 ) {
-    let dt = time.delta_seconds(); // Get the delta time for frame-rate independent movement
+    let dt = time.delta_secs(); // Get the delta time for frame-rate independent movement
 
     let bullets_exploded_at = q_bullets
         .iter_mut()
@@ -68,10 +65,10 @@ pub fn sys_move_bullets(
             );
 
             if distance.abs() < 10.0 {
-                commands.entity(entity).despawn_recursive();
+                commands.entity(entity).despawn();
                 let target = transform.translation.xy();
                 trigger_explosion_animation_event_writer
-                    .send(TriggerExplosionAnimationEvent::new(target.clone(), 1.0));
+                    .write(TriggerExplosionAnimationEvent::new(target.clone(), 1.0));
                 Some((target, bullet.get_damage()))
             } else {
                 None
@@ -93,14 +90,14 @@ pub fn sys_move_bullets(
                     destroyed_tanks.push(id);
 
                     trigger_explosion_animation_event_writer
-                        .send(TriggerExplosionAnimationEvent::new(tank_pos.clone(), 2.0));
+                        .write(TriggerExplosionAnimationEvent::new(tank_pos.clone(), 2.0));
                 }
             }
         }
     }
 
     for id in destroyed_tanks {
-        commands.entity(id).despawn_recursive();
+        commands.entity(id).despawn();
     }
 
     // Damange buildings
@@ -113,7 +110,7 @@ pub fn sys_move_bullets(
                 let health = building.get_health();
                 let rect = building.get_building_tile().get_health_rect(health);
 
-                for &child in children.iter() {
+                for child in children.iter() {
                     if let Ok((mut sprite)) = q_building_health_bars.get_mut(child) {
                         sprite.rect = Some(rect);
                     }
@@ -122,7 +119,7 @@ pub fn sys_move_bullets(
                 if building.is_destroyed() {
                     destroyed_buildings.push(id);
 
-                    trigger_explosion_animation_event_writer.send(
+                    trigger_explosion_animation_event_writer.write(
                         TriggerExplosionAnimationEvent::new(building.center().clone(), 5.0),
                     );
                 }
@@ -131,6 +128,6 @@ pub fn sys_move_bullets(
     }
 
     for id in destroyed_buildings {
-        commands.entity(id).despawn_recursive();
+        commands.entity(id).despawn();
     }
 }

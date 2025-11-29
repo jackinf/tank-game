@@ -1,7 +1,8 @@
 use crate::features::cursor::CursorCoordinates;
 use crate::features::unit::components::UnitSelectionRect;
+use bevy::color::Alpha;
 use bevy::math::Vec3;
-use bevy::prelude::{Query, ResMut, Sprite, Transform, With};
+use bevy::prelude::{Color, Query, ResMut, Sprite, Transform, With};
 
 pub fn display_selection_rect(
     mut q_tank_selection_rect: Query<
@@ -10,10 +11,10 @@ pub fn display_selection_rect(
     >,
     my_world_coords: ResMut<CursorCoordinates>,
 ) {
-    let (mut tank_selection_rect, mut transform, mut sprite) = q_tank_selection_rect.single_mut();
+    let (mut tank_selection_rect, mut transform, mut sprite) = q_tank_selection_rect.single_mut().unwrap();
 
     if tank_selection_rect.is_visible() {
-        sprite.color.set_a(0.5);
+        sprite.color = Color::from(bevy::color::palettes::basic::BLUE).with_alpha(0.5);
         let world_coords = my_world_coords.get_world();
 
         let start = tank_selection_rect.start().unwrap();
@@ -29,6 +30,6 @@ pub fn display_selection_rect(
         let height = end.y - start.y;
         transform.scale = Vec3::new(width, height, 1.0);
     } else {
-        sprite.color.set_a(0.0);
+        sprite.color = Color::NONE;
     }
 }

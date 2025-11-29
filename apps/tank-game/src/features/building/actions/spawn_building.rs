@@ -1,13 +1,10 @@
 use crate::components::HealthBar;
-use crate::constants::{HEALTH_BAR_HEIGHT, SPRITE_SCALE, TILE_SIZE};
+use crate::constants::{SPRITE_SCALE, TILE_SIZE};
 use crate::features::building::components::{Building, BuildingPlacementTiles, UnitSpawner};
 use crate::features::building::types::BuildingTile;
 use crate::features::unit::UnitIdCounter;
 use crate::types::player::Player;
-use bevy::prelude::{
-    default, AssetServer, BuildChildren, Color, Commands, Rect, Res, ResMut, Sprite, SpriteBundle,
-    Transform, Vec2, Vec3,
-};
+use bevy::prelude::*;
 use bevy::sprite::Anchor;
 
 pub fn spawn_building(
@@ -31,7 +28,7 @@ pub fn spawn_building(
         Some(Player::P2) => crate::constants::P2_COLOR,
         _ => crate::constants::NEUTRAL_COLOR,
     };
-    let health_rect = building_tile.get_health_rect_default();
+    let health_size = building_tile.get_health_size_default();
 
     let building: Building = Building::new(
         building_id.clone(),
@@ -41,62 +38,53 @@ pub fn spawn_building(
     );
 
     commands
-        .spawn((SpriteBundle {
-            transform: Transform::default()
-                .with_translation(translation.extend(layer).clone())
-                .with_scale(Vec3::splat(SPRITE_SCALE)),
-            texture: asset_server.load(sprite_path),
-            sprite: Sprite {
+        .spawn((
+            Sprite {
+                image: asset_server.load(sprite_path),
                 color,
-                anchor: Anchor::TopLeft,
                 ..default()
             },
-            ..default()
-        },))
+            Anchor::TOP_LEFT,
+            Transform::default()
+                .with_translation(translation.extend(layer).clone())
+                .with_scale(Vec3::splat(SPRITE_SCALE)),
+            building.clone(),
+            UnitSpawner {
+                spawn_timer,
+                spawn_position: translation,
+                player: player.clone(),
+            },
+        ))
         .with_children(|parent| {
-            // Spawn the health bar as a child of the tank
-            parent
-                .spawn(SpriteBundle {
-                    transform: Transform::from_xyz(-10.0, 10.0, 0.2),
-                    sprite: Sprite {
-                        color: Color::PURPLE, // Health bar color
-                        rect: Some(health_rect),
-                        anchor: Anchor::CenterLeft, // Anchor the health bar to the left of the tank
-                        ..default()
-                    },
+            // Spawn the health bar as a child of the building
+            parent.spawn((
+                Sprite {
+                    color: Color::from(bevy::color::palettes::css::PURPLE),
+                    custom_size: Some(health_size),
                     ..default()
-                })
-                .insert(HealthBar);
+                },
+                Anchor::CENTER_LEFT,
+                Transform::from_xyz(-10.0, 10.0, 0.2),
+                HealthBar,
+            ));
 
             // Spawn placement tile sprite that will be used as a guide where to place the building
-
             let width = building.get_size().0 as f32;
             let height = building.get_size().1 as f32;
             let x = width * TILE_SIZE;
             let y = height * TILE_SIZE;
 
-            parent
-                .spawn(SpriteBundle {
-                    transform: Transform::default()
-                        .with_translation(Vec2::new(x, -y).extend(layer + 1.0))
-                        .with_scale(Vec3::splat(8.0)),
-                    sprite: Sprite {
-                        color: Color::WHITE.with_a(0.05),
-                        rect: Some(Rect {
-                            min: Vec2::new(0., 0.),
-                            max: Vec2::new(TILE_SIZE, TILE_SIZE),
-                        }),
-                        anchor: Anchor::Center,
-                        ..default()
-                    },
+            parent.spawn((
+                Sprite {
+                    color: Color::srgba(1.0, 1.0, 1.0, 0.05),
+                    custom_size: Some(Vec2::new(TILE_SIZE, TILE_SIZE)),
                     ..default()
-                })
-                .insert(BuildingPlacementTiles::new());
-        })
-        .insert(building)
-        .insert(UnitSpawner {
-            spawn_timer,
-            spawn_position: translation,
-            player: player.clone(),
+                },
+                Anchor::CENTER,
+                Transform::default()
+                    .with_translation(Vec2::new(x, -y).extend(layer + 1.0))
+                    .with_scale(Vec3::splat(8.0)),
+                BuildingPlacementTiles::new(),
+            ));
         });
 }

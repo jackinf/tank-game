@@ -2,7 +2,7 @@ use crate::features::animation::{AnimationActive, AnimationIndices, AnimationTim
 use bevy::asset::{AssetServer, Assets};
 use bevy::math::{Vec2, Vec3};
 use bevy::prelude::{
-    default, Camera2dBundle, Commands, Res, ResMut, SpriteSheetBundle, TextureAtlas,
+    default, Commands, Res, ResMut, Sprite, TextureAtlas,
     TextureAtlasLayout, Timer, TimerMode, Transform,
 };
 
@@ -17,15 +17,15 @@ pub fn explosion_animation_setup(
     // Use only the subset of sprites in the sheet that make up the run animation
     let animation_indices = AnimationIndices::new(0, 4);
     commands.spawn((
-        SpriteSheetBundle {
-            texture,
-            atlas: TextureAtlas {
+        Sprite {
+            image: texture,
+            texture_atlas: Some(TextureAtlas {
                 layout: texture_atlas_layout,
                 index: animation_indices.first(),
-            },
-            transform: Transform::from_scale(Vec3::splat(1.0)),
+            }),
             ..default()
         },
+        Transform::from_scale(Vec3::splat(1.0)),
         animation_indices,
         AnimationTimer(Timer::from_seconds(0.05, TimerMode::Repeating)),
         AnimationActive(false),

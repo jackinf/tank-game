@@ -41,7 +41,7 @@ fn construction_complete(
         return;
     }
 
-    let mut placement_building = q_placement_building.single_mut();
+    let mut placement_building = q_placement_building.single_mut().unwrap();
     let building_tiles = main_asset_info_resource.get_building_tiles();
     let building_tile = building_tiles.get(&BuildingTileType::Base);
     if building_tile.is_none() {
@@ -64,7 +64,7 @@ fn inflate_all_tanks(
 
 fn buying_stuff(mut q_menu_info: Query<&mut MenuInfo>, keyboard: Res<ButtonInput<KeyCode>>) {
     if keyboard.just_pressed(KeyCode::KeyB) {
-        let mut menu_info = q_menu_info.single_mut();
+        let mut menu_info = q_menu_info.single_mut().unwrap();
         menu_info.substract_money(100);
         println!("Buying stuff, money left: {}", menu_info.get_money());
     }

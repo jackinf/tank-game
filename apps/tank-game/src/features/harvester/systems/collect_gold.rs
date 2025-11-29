@@ -9,7 +9,7 @@ pub fn collect_gold(
     mut q_harvesters: Query<(&mut Harvester, &Transform), With<Harvester>>,
     mut q_gold: Query<&Gold>,
 ) {
-    let timestamp = time.elapsed_seconds_f64();
+    let timestamp = time.elapsed_secs_f64();
 
     q_harvesters
         .iter_mut()

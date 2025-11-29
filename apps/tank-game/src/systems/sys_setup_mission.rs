@@ -1,7 +1,5 @@
 use bevy::asset::AssetServer;
 use bevy::prelude::*;
-use bevy::prelude::{Commands, Res, ResMut};
-use iyes_perf_ui::PerfUiCompleteBundle;
 
 use crate::features::building::actions::spawn_buildings::spawn_buildings;
 use crate::features::tile::spawn_tiles;
@@ -63,6 +61,5 @@ pub fn sys_setup_mission(
         &mut unit_id_counter,
     );
 
-    commands.spawn(PerfUiCompleteBundle::default());
     simple_state.ready = true;
 }

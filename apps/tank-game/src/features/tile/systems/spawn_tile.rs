@@ -4,7 +4,7 @@ use crate::features::tile::types::{GroundTile, GroundTileType};
 use crate::features::tile::Tile;
 use bevy::asset::AssetServer;
 use bevy::math::{Vec2, Vec3};
-use bevy::prelude::{default, Commands, Res, SpriteBundle, Transform};
+use bevy::prelude::{default, Commands, Res, Sprite, Transform};
 
 pub fn spawn_tile(
     commands: &mut Commands,
@@ -24,13 +24,15 @@ pub fn spawn_tile(
         map_coord,
     );
 
-    let mut entity_commands = commands.spawn((SpriteBundle {
-        transform: Transform::default()
+    let mut entity_commands = commands.spawn((
+        Sprite {
+            image: asset_server.load(sprite_path),
+            ..default()
+        },
+        Transform::default()
             .with_translation(translation.extend(layer))
             .with_scale(Vec3::splat(SPRITE_SCALE)),
-        texture: asset_server.load(sprite_path),
-        ..default()
-    },));
+    ));
     let builder = entity_commands.insert(tile.clone());
 
     if ground.get_ground_type() == GroundTileType::Gold {

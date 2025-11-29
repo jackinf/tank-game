@@ -20,7 +20,7 @@ pub fn sys_move_tanks_towards_target(
         (With<TankGun>, Without<Tank>, Without<Building>),
     >,
 ) {
-    let dt = time.delta_seconds();
+    let dt = time.delta_secs();
 
     let tank_id_and_positions: HashMap<UnitId, Vec2> = tank_query
         .iter()

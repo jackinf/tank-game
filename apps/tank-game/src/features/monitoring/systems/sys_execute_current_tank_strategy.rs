@@ -4,10 +4,9 @@ use crate::features::tank::events::SetPathToTargetEvent;
 use crate::features::tank::{Tank, TankStrategy};
 use crate::features::unit::UnitId;
 use crate::types::player::Player;
-use bevy::prelude::{Children, EventWriter, Query, Res, ResMut, Time, Transform};
-use bevy::utils::HashSet;
-use rand::prelude::IteratorRandom;
-use rand::thread_rng;
+use bevy::prelude::*;
+use rand::seq::IteratorRandom;
+use std::collections::HashSet;
 
 /// This system is responsible for executing the current strategy of each enemy tank.
 pub fn sys_execute_current_tank_strategy(
@@ -15,7 +14,7 @@ pub fn sys_execute_current_tank_strategy(
     mut timer: ResMut<StrategyMonitoringTimer>,
     mut q_tanks: Query<&mut Tank>,
     q_buildings: Query<&Building>,
-    mut set_path_to_target_event_handler: EventWriter<SetPathToTargetEvent>,
+    mut set_path_to_target_event_handler: MessageWriter<SetPathToTargetEvent>,
 ) {
     if !timer.0.tick(time.delta()).just_finished() {
         return;
@@ -38,9 +37,9 @@ pub fn sys_execute_current_tank_strategy(
 
                 if !tank.has_target() {
                     // randomly select a target
-                    let mut rng = thread_rng();
+                    let mut rng = rand::rng();
                     if let Some(target) = p1_units.iter().choose(&mut rng) {
-                        set_path_to_target_event_handler.send(SetPathToTargetEvent {
+                        set_path_to_target_event_handler.write(SetPathToTargetEvent {
                             source: tank.get_id(),
                             target: target.clone(),
                         });

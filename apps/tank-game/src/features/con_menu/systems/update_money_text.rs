@@ -9,9 +9,9 @@ pub fn update_money_text(
     // TODO: check if it's not updated too often
 
     // Check if the MenuInfo resource has been updated
-    let menu_info = q_menu_info.single();
+    let menu_info = q_menu_info.single().unwrap();
     for mut text in query.iter_mut() {
         // Update the text component
-        text.sections[0].value = format!("Credits: {}", menu_info.get_money());
+        **text = format!("Credits: {}", menu_info.get_money());
     }
 }

@@ -8,14 +8,12 @@ pub fn convert_cursor_to_world_position(
     q_window: Query<&Window, With<PrimaryWindow>>,
     q_camera: Query<(&Camera, &GlobalTransform), With<Camera>>,
 ) {
-    let (camera, camera_transform) = q_camera.single();
-    let window = q_window.single();
+    let (camera, camera_transform) = q_camera.single().unwrap();
+    let window = q_window.single().unwrap();
 
-    if let Some(world_position) = window
-        .cursor_position()
-        .and_then(|cursor| camera.viewport_to_world(camera_transform, cursor))
-        .map(|ray| ray.origin.xy())
-    {
-        my_world_coords.set_world(world_position);
+    if let Some(cursor) = window.cursor_position() {
+        if let Ok(ray) = camera.viewport_to_world(camera_transform, cursor) {
+            my_world_coords.set_world(ray.origin.xy());
+        }
     }
 }

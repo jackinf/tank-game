@@ -1,6 +1,6 @@
 use crate::constants::{GridSize, TileCoord};
-use bevy::utils::petgraph::prelude::NodeIndex;
-use bevy::utils::petgraph::Graph;
+use petgraph::prelude::NodeIndex;
+use petgraph::Graph;
 use std::collections::{HashMap, HashSet, VecDeque};
 
 pub fn calculate_bfs(

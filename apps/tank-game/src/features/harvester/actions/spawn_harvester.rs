@@ -4,7 +4,7 @@ use crate::features::unit::UnitIdCounter;
 use crate::types::player::Player;
 use bevy::asset::AssetServer;
 use bevy::math::Vec2;
-use bevy::prelude::{default, Commands, Res, ResMut, Sprite, SpriteBundle, Transform, Vec3};
+use bevy::prelude::{default, Commands, Res, ResMut, Sprite, Transform, Vec3};
 
 pub fn spawn_harvester(
     commands: &mut Commands,
@@ -28,14 +28,15 @@ pub fn spawn_harvester(
 
     let harvester = Harvester::new(player, unit_id);
 
-    commands
-        .spawn((SpriteBundle {
-            transform: Transform::default()
-                .with_translation(pos.extend(layer))
-                .with_scale(Vec3::splat(SPRITE_SCALE)),
-            texture,
-            sprite: Sprite { color, ..default() },
+    commands.spawn((
+        Sprite {
+            image: texture,
+            color,
             ..default()
-        },))
-        .insert(harvester);
+        },
+        Transform::default()
+            .with_translation(pos.extend(layer))
+            .with_scale(Vec3::splat(SPRITE_SCALE)),
+        harvester,
+    ));
 }

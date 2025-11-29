@@ -1,14 +1,11 @@
 use crate::features::explosion::components::{AnimationActive, SmallExplosion};
 use crate::features::explosion::TriggerExplosionAnimationEvent;
-use bevy::prelude::{
-    default, AssetServer, AudioBundle, Commands, EventReader, Query, Res, TextureAtlas, Transform,
-    Vec3, With,
-};
+use bevy::prelude::*;
 
 pub fn trigger_explosion_animation_event_handler(
     mut trigger_explosion_animation_event_reader: EventReader<TriggerExplosionAnimationEvent>,
     mut query: Query<
-        (&mut Transform, &mut TextureAtlas, &mut AnimationActive),
+        (&mut Transform, &mut Sprite, &mut AnimationActive),
         With<SmallExplosion>,
     >,
 ) {
@@ -16,10 +13,12 @@ pub fn trigger_explosion_animation_event_handler(
         let at = event.at();
         let scale = event.scale();
 
-        for (mut transform, mut atlas, mut active) in &mut query {
+        for (mut transform, mut sprite, mut active) in &mut query {
             transform.translation = at.extend(transform.translation.z);
             transform.scale = Vec3::splat(scale);
-            atlas.index = 0;
+            if let Some(ref mut atlas) = sprite.texture_atlas {
+                atlas.index = 0;
+            }
             active.0 = true;
         }
     }

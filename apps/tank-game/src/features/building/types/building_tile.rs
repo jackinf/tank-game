@@ -117,6 +117,17 @@ impl BuildingTile {
         self.get_health_rect(self.get_max_health())
     }
 
+    pub fn get_health_size(&self, current_health: u32) -> Vec2 {
+        let max_health = self.get_max_health() as f32;
+        let tile_width = 130. * self.get_size().0 as f32;
+        let health_bar_width = tile_width * (current_health as f32 / max_health);
+        Vec2::new(health_bar_width, HEALTH_BAR_HEIGHT)
+    }
+
+    pub fn get_health_size_default(&self) -> Vec2 {
+        self.get_health_size(self.get_max_health())
+    }
+
     pub fn get_spawn_interval(&self) -> f32 {
         match &self.get_building_type() {
             BuildingTileType::Base => 100.0,

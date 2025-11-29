@@ -1,4 +1,5 @@
 use crate::features::tile::GroundTileType;
+use bevy::color::Srgba;
 use bevy::math::Vec2;
 use bevy::prelude::Color;
 
@@ -25,9 +26,9 @@ pub const CAMERA_SPEED_STATIC: f32 = 0.0; // TODO: make 500.0
 pub const CAMERA_SPEED_DYNAMIC: f32 = 10.0;
 pub const SIDE_MARGIN_PERCENTAGE: f32 = 0.1;
 
-pub const P1_COLOR: Color = Color::rgba(0.7, 0.7, 1.0, 1.);
-pub const P2_COLOR: Color = Color::rgba(1.0, 0.7, 0.7, 1.);
-pub const NEUTRAL_COLOR: Color = Color::rgba(0.7, 0.7, 0.7, 1.);
+pub const P1_COLOR: Color = Color::Srgba(Srgba::new(0.7, 0.7, 1.0, 1.0));
+pub const P2_COLOR: Color = Color::Srgba(Srgba::new(1.0, 0.7, 0.7, 1.0));
+pub const NEUTRAL_COLOR: Color = Color::Srgba(Srgba::new(0.7, 0.7, 0.7, 1.0));
 
 pub const HARVESTER_TO_GOLD_MIN_DISTANCE: f32 = 10.0;
 pub const HARVESTER_GOLD_PER_COOLDOWN: u32 = 10;

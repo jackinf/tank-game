@@ -1,10 +1,10 @@
 use crate::features::building::components::GlobalBuildingPlacementTiles;
-use crate::features::building::types::BuildingTileType;
 use crate::features::con_menu::components::BuildingTileTypeMenuCellInfo;
 use crate::features::con_menu::resources::BuildingConstructionProgressInfo;
 use crate::types::main_asset_info_resource::MainAssetInfoResource;
+use bevy::color::palettes::css;
 use bevy::prelude::{
-    BackgroundColor, Button, Changed, Color, Interaction, Query, Res, ResMut, With,
+    BackgroundColor, Button, Changed, Color, Interaction, Query, Res, With,
 };
 
 pub fn interact_with_building_construction_menu(
@@ -25,7 +25,7 @@ pub fn interact_with_building_construction_menu(
             Interaction::Pressed => {
                 if progress_info.is_idle() {
                     println!("INFO: {:?}", cell_info);
-                    color.0 = Color::DARK_GREEN;
+                    *color = Color::from(css::DARK_GREEN).into();
 
                     let building_tile_type = &cell_info.get_building_tile_type();
                     let building_tile = main_asset_info_resource
@@ -48,27 +48,27 @@ pub fn interact_with_building_construction_menu(
                         .expect("Building tile not found")
                         .clone();
                     q_placement_building
-                        .single_mut()
+                        .single_mut().unwrap()
                         .set_ready(Some(building_tile));
                     continue;
                 }
             }
             Interaction::Hovered => {
                 if progress_info.is_idle() {
-                    color.0 = Color::YELLOW;
+                    *color = Color::from(css::YELLOW).into();
                 } else if progress_info.is_placing() {
-                    color.0 = Color::GREEN;
+                    *color = Color::from(css::GREEN).into();
                 }
             }
             Interaction::None => {
                 if progress_info.is_constructing() {
-                    color.0 = Color::GRAY;
+                    *color = Color::from(css::GRAY).into();
                 } else if progress_info.is_placing() {
-                    color.0 = Color::GREEN;
+                    *color = Color::from(css::GREEN).into();
                 } else if progress_info.is_idle() {
-                    color.0 = Color::WHITE;
+                    *color = Color::from(css::WHITE).into();
                 } else {
-                    color.0 = Color::WHITE;
+                    *color = Color::from(css::WHITE).into();
                 }
             }
         }

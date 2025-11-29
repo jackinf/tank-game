@@ -8,10 +8,7 @@ use crate::features::tank::resources::TankUngroupTimer;
 use crate::features::tank::Tank;
 use crate::features::tile::Tile;
 use crate::resources::mission_info_resource::MissionInfoResource;
-use bevy::audio::AudioBundle;
-use bevy::prelude::{
-    default, AssetServer, Commands, Entity, Query, Res, ResMut, Time, Transform, Vec3Swizzles, With,
-};
+use bevy::prelude::*;
 use std::collections::{HashMap, HashSet, VecDeque};
 
 pub fn sys_ungroup_tanks(
@@ -74,10 +71,9 @@ pub fn sys_ungroup_tanks(
     }
 
     if at_least_one_conflict {
-        commands.spawn(AudioBundle {
-            source: asset_server.load("sounds/hugh.ogg"),
-            ..default()
-        });
+        commands.spawn(AudioPlayer::new(
+            asset_server.load("sounds/hugh.ogg"),
+        ));
     }
 }
 

@@ -51,7 +51,7 @@ pub fn sys_set_tank_target_position_to_move(
         if MouseButton::Right == mouse_button_event.button
             && mouse_button_event.state == ButtonState::Released
         {
-            let me = q_menu_info.single();
+            let me = q_menu_info.single().unwrap();
             let world_coords = my_world_coords.get_world();
             let coord = calculate_world_to_tile_position(&world_coords);
             let wx = world_coords.x;

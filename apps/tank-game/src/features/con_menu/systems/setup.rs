@@ -5,10 +5,7 @@ use crate::features::con_menu::MenuInfo;
 use crate::types::main_asset_info_resource::MainAssetInfoResource;
 use crate::AppState;
 use bevy::asset::AssetServer;
-use bevy::prelude::{
-    default, AlignItems, BuildChildren, Commands, FlexDirection, Interaction, JustifyContent,
-    NextState, NodeBundle, Res, ResMut, Style,
-};
+use bevy::prelude::*;
 
 pub fn setup(
     mut commands: Commands,
@@ -21,26 +18,22 @@ pub fn setup(
 
     // Create a parent entity for the grid
     commands
-        .spawn(NodeBundle {
-            style: Style {
+        .spawn((
+            Node {
                 justify_content: JustifyContent::FlexStart,
                 flex_direction: FlexDirection::Column,
                 align_items: AlignItems::FlexStart,
                 ..default()
             },
-            ..default()
-        })
-        .insert(Interaction::None)
-        .insert(menu_info.clone())
+            Interaction::None,
+            menu_info.clone(),
+        ))
         .with_children(|parent| {
             parent
-                .spawn(NodeBundle {
-                    style: Style {
-                        justify_content: JustifyContent::FlexStart,
-                        flex_direction: FlexDirection::Row,
-                        align_items: AlignItems::FlexStart,
-                        ..default()
-                    },
+                .spawn(Node {
+                    justify_content: JustifyContent::FlexStart,
+                    flex_direction: FlexDirection::Row,
+                    align_items: AlignItems::FlexStart,
                     ..default()
                 })
                 .with_children(|row_parent| {

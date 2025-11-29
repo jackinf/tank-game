@@ -1,5 +1,5 @@
 use crate::constants::{GridSize, TileCoord};
-use bevy::utils::petgraph::Graph;
+use petgraph::Graph;
 use std::collections::HashSet;
 
 pub fn calculate_astar_path(
@@ -48,7 +48,7 @@ pub fn calculate_astar_path(
     if let (Some(start_node), Some(goal_node)) =
         (node_indices[start.1][start.0], node_indices[goal.1][goal.0])
     {
-        let result = bevy::utils::petgraph::algo::astar(
+        let result = petgraph::algo::astar(
             &graph,
             start_node,
             |finish| finish == goal_node,

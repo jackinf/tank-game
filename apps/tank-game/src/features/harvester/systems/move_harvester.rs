@@ -9,8 +9,8 @@ pub fn move_harvester(
     mut q_harvesters: Query<(&mut Harvester, &mut Transform), With<Harvester>>,
     mut q_menu_info: Query<&mut MenuInfo>,
 ) {
-    let dt = time.delta_seconds();
-    let mut menu_info = q_menu_info.single_mut();
+    let dt = time.delta_secs();
+    let mut menu_info = q_menu_info.single_mut().unwrap();
 
     q_harvesters
         .iter_mut()
