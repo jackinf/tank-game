@@ -2,46 +2,61 @@
 
 # Tank Game
 
-### Top-down RTS like Dune or Red Alert, built in Rust with Bevy
+### A Red Alert / Dune style real-time strategy game, built in Rust with Bevy
 
 [![Rust](https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white)](https://www.rust-lang.org/)
-[![Bevy](https://img.shields.io/badge/Bevy-232326?style=for-the-badge&logo=bevy&logoColor=white)](https://bevyengine.org/)
-[![Rapier](https://img.shields.io/badge/Rapier2D-000000?style=for-the-badge&logoColor=white)](https://rapier.rs/)
+[![Bevy](https://img.shields.io/badge/Bevy%200.18-232326?style=for-the-badge&logo=bevy&logoColor=white)](https://bevyengine.org/)
 [![WebAssembly](https://img.shields.io/badge/WebAssembly-654FF0?style=for-the-badge&logo=webassembly&logoColor=white)](https://webassembly.org/)
 [![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
-[![Google Cloud](https://img.shields.io/badge/Google%20Cloud-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white)](https://cloud.google.com/run)
 [![Repo](https://img.shields.io/badge/GitHub-jackinf%2Ftank--game-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/jackinf/tank-game)
 
 </div>
 
 ## Overview
 
-Tank Game is a top-down real-time strategy game in the spirit of Dune and Red Alert, written in Rust on top of the [Bevy](https://bevyengine.org/) game engine. It features unit movement and selection, base/structure construction, resource harvesting, combat with explosions, and an A* pathfinding implementation for routing tanks across the map. The project is organized as a Cargo workspace with the main game plus a collection of standalone demos exercising individual subsystems, and it can be built natively or compiled to WebAssembly for the web.
+Tank Game is a playable top-down real-time strategy game in the spirit of **Command & Conquer: Red Alert** and the old **Dune** games, written in Rust on top of the [Bevy](https://bevyengine.org/) engine (latest stable, **0.18**).
 
-![Tank Game Demo](docs/tankdemo.gif)
+You start with a small base and have to grow an economy, build a tech tree, produce an army, and crush an AI opponent that is doing exactly the same thing. Everything is rendered with **simple coloured shapes** (sprites + gizmos) rather than art assets, so the focus is entirely on the simulation — sprites can be dropped in later without touching the game logic.
 
 ## Features
 
-- Top-down RTS gameplay with tank movement and selection
-- A* pathfinding for navigating tanks across the tile map
-- Base building / construction system and harvester (resource-gathering) units
-- Combat with tank guns, health, and explosion effects
-- 2D physics via `bevy_rapier2d` and input mapping via `leafwing-input-manager`
-- In-game menu, money/UI text, and a debug mode for development
-- Tiled map support (separate `tiled` workspace app) and JSON-driven assets
-- Standalone example crates for pathfinding, shooting, construction, harvesting, UI, tilemap generation, and stress testing
-- WebAssembly build target with deployment to Google Cloud Run / Cloud Storage
+- **Tile-based maps** with grass, water, mountains/rock and harvestable **ore** fields, loaded from compact ASCII map definitions (two maps bundled).
+- **Economy**: credits earned by harvesters, plus a **power** system where low power slows production.
+- **Harvesters** with a full state machine: seek the nearest ore, mine it, return to a refinery, deposit for credits, repeat.
+- **Buildings** with footprints, health and a real **tech tree**: Construction Yard → Power Plant → Refinery → Barracks / War Factory, plus defensive Gun Turrets.
+- **Units**: Soldiers, Tanks and Harvesters, each with their own stats, speed and weapons.
+- **Combat**: target acquisition, homing projectiles, area explosions, health bars and death — including attack-move and direct attack orders.
+- **A\*** grid pathfinding (8-directional, no corner cutting) for routing units around terrain and buildings.
+- **Build menu & construction queue** UI with three lanes (structures / infantry / vehicles), live progress, costs and prerequisite gating.
+- **Building placement** mode with a green/red validity preview; structures must be placed near your existing base.
+- **Selection**: click, drag-box, formation move orders, rally points for production buildings.
+- A **simple AI opponent** that builds an economy, manages power, trains an army and periodically launches attack waves.
+- **Win / lose** detection with a game-over screen and instant restart.
+
+## Controls
+
+| Input | Action |
+| --- | --- |
+| **Left click** | Select a unit / building |
+| **Left click + drag** | Box-select your units |
+| **Right click** | Move selected units (or attack an enemy under the cursor) |
+| **Ctrl + Right click** | Attack-move (engage enemies on the way) |
+| **Right click** (building selected) | Set the rally point |
+| **Sidebar buttons** | Queue a building or unit |
+| **Left click** (after a structure finishes) | Place the new building |
+| **W A S D / Arrows / screen edges** | Pan the camera |
+| **`+` / `-`** | Zoom in / out |
+| **R** | Restart after a win/loss |
 
 ## Tech Stack
 
 | Area | Technology |
 | --- | --- |
 | Language | Rust (edition 2021) |
-| Engine | [Bevy](https://bevyengine.org/) 0.17 |
-| Physics | [bevy_rapier2d](https://rapier.rs/) |
-| Input | leafwing-input-manager |
-| Graphs / pathfinding | petgraph + custom A* |
-| Serialization | serde / serde_json |
+| Engine | [Bevy](https://bevyengine.org/) 0.18 (latest stable) |
+| Rendering | Bevy sprites + gizmos (simple shapes) |
+| Pathfinding | Custom A\* over the tile grid |
+| RNG | `rand` |
 | Web target | WebAssembly (`wasm32-unknown-unknown`) + wasm-bindgen |
 | Deploy | Docker, Google Cloud Run, Cloud Storage |
 
@@ -50,62 +65,62 @@ Tank Game is a top-down real-time strategy game in the spirit of Dune and Red Al
 ### Prerequisites
 
 - [Rust and Cargo](https://www.rust-lang.org/tools/install) (stable toolchain)
-- For the web build: the `wasm32-unknown-unknown` target and `wasm-bindgen-cli`
-- For deployment (optional): Docker and the `gcloud`/`gsutil` CLIs
-
-### Installation
-
-Clone the repository and enter the project directory:
-
-```bash
-git clone https://github.com/jackinf/tank-game.git
-cd tank-game
-```
+- On Linux, the usual Bevy system dependencies (e.g. `libwayland-dev`, `libxkbcommon-dev`, `libx11-dev`, `libasound2-dev`, `libudev-dev`). See the [Bevy setup guide](https://bevyengine.org/learn/quick-start/getting-started/setup/).
 
 ### Running
 
-Build and run the game natively:
-
 ```bash
-cargo build
-cargo run
+cargo run -p tank-game --release
 ```
 
-The repository is a Cargo workspace. To run one of the example demos, target it by package name, for example:
+(`--release` is recommended — Bevy is much smoother optimized. Dependency optimization is also enabled in debug via the workspace `Cargo.toml` profiles.)
+
+### Tests
+
+The core simulation (pathfinding, map loading, economy, tech tree) has headless logic tests that run without a window:
 
 ```bash
-cargo run -p pathfinder-demo
-cargo run -p shooting-demo
-cargo run -p construction-demo
+cargo test -p tank-game
 ```
-
-#### Web (WebAssembly) build
-
-The `Makefile` automates a WASM build and Google Cloud deployment. To build the WebAssembly bundle locally:
-
-```bash
-make wasm-build
-```
-
-This installs `wasm-bindgen-cli`, compiles the `tank-game` package for `wasm32-unknown-unknown` in release mode, and emits web bindings into the `out/` directory. The remaining `make` targets (`wasm`, `docker-build`, `docker-push`, `deploy`, `setup`) push artifacts to Google Cloud Storage and deploy to Cloud Run, and require configured `gcloud`/`gsutil` credentials.
 
 ## Project Structure
 
+The game is organised as a set of focused Bevy plugins, one per subsystem:
+
 ```
-tank-game/
-├── apps/
-│   ├── tank-game/        # Main game (Bevy app)
-│   │   └── src/
-│   │       ├── features/ # tank, building, harvester, explosion, cursor, debug, ...
-│   │       ├── actions/  systems/  components/  resources/  types/  utils/
-│   │       └── main.rs
-│   └── tiled/            # Tiled map support app
-├── examples/             # Standalone demos (pathfinder, shooting, construction, ...)
-├── static/               # Web/static assets
-├── docs/                 # Migration notes and demo media
-├── Cargo.toml            # Workspace manifest
-├── Dockerfile            # Container image for web serving
-└── Makefile              # WASM build + Google Cloud deploy
+apps/tank-game/src/
+├── main.rs          # App + plugin wiring
+├── config.rs        # Tunable constants (tile size, colours, costs, UI layout)
+├── state.rs         # GameState (Loading / Playing / GameOver) + result
+├── defs.rs          # Data-driven building & unit stats, weapons, tech tree
+├── grid.rs          # Tile map resource, coordinate maths, A* pathfinding
+├── maps.rs          # ASCII pre-made maps + loader
+├── components.rs    # Shared gameplay components (Health, Mover, Order, ...)
+├── faction.rs       # Player / Enemy / Neutral factions
+├── spawn.rs         # Building & unit spawn helpers, placement validation
+├── setup.rs         # Match setup / restart (loads map, builds both bases)
+├── terrain.rs       # Tile + ore rendering
+├── camera.rs        # RTS camera (pan / zoom)
+├── cursor.rs        # Cursor → world position tracking
+├── economy.rs       # Credits & power per faction
+├── movement.rs      # Path following
+├── combat.rs        # Targeting, weapons, projectiles, damage
+├── harvester.rs     # Harvester AI / resource gathering
+├── selection.rs     # Selection + move/attack orders
+├── production.rs    # Build queues, prerequisites, placement
+├── ai.rs            # Enemy AI (build order + attack waves)
+├── health.rs        # Health bars, death, win/lose
+├── fx.rs            # Explosions & weapon barrels
+└── ui.rs            # HUD, build menu, game-over screen
 ```
 
-The main game's `src/features` directory groups gameplay by subsystem (tank, building, harvester, explosion, cursor, debug, tile, unit, monitoring, and the in-game menu), with shared `constants.rs`, `actions`, `systems`, `components`, `resources`, `types`, and `utils` (A* pathfinding) modules alongside.
+The repository is a Cargo workspace; the `examples/` and `apps/tiled/` crates are earlier experiments / demos kept for reference.
+
+## Roadmap
+
+- Sprite art to replace the placeholder shapes
+- More unit/building types and abilities
+- Fog of war and minimap
+- Map selection screen and more bundled maps
+- Sound effects and music
+- WebAssembly polish

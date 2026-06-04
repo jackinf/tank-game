@@ -1,3 +1,0 @@
-mod trigger_explosion_animation_event;
-
-pub use trigger_explosion_animation_event::TriggerExplosionAnimationEvent;
