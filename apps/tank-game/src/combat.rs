@@ -2,6 +2,7 @@
 
 use crate::components::*;
 use crate::config::z;
+use crate::defs::{damage_multiplier, Role};
 use crate::faction::Faction;
 use crate::grid::{find_path, GameMap};
 use crate::state::{GameEntity, GameState};
@@ -88,6 +89,8 @@ fn unit_brain(
 
         match *command {
             Order::Idle => {
+                // Back to full speed once a group move is over.
+                mover.speed = mover.base_speed;
                 // Defensive: fire at anything that walks into range, but don't chase.
                 if let Some((e, tp)) = nearest_enemy(pos, *faction, range, &targets) {
                     weapon.target = Some(e);
@@ -96,9 +99,11 @@ fn unit_brain(
                     weapon.target = None;
                 }
             }
-            Order::Move(dest) => {
+            Order::Move(_dest) => {
                 weapon.target = None;
-                if !mover.is_moving() && pos.distance(dest) < 6.0 {
+                // The path now ends on a tile centre (grid-snapped), so simply
+                // go idle once there are no waypoints left.
+                if !mover.is_moving() {
                     *command = Order::Idle;
                 }
             }
@@ -109,14 +114,18 @@ fn unit_brain(
                     if pos.distance(tp) <= range {
                         mover.stop();
                     } else {
-                        chase(&mut mover, tp);
+                        chase(&map, &mut mover, tp);
                     }
                 } else {
                     weapon.target = None;
-                    if pos.distance(dest) < 6.0 {
-                        *command = Order::Idle;
-                    } else if !mover.is_moving() {
-                        path_to(&map, &mut mover, pos, dest);
+                    if !mover.is_moving() {
+                        // Arrived at the grid-snapped destination tile (within a
+                        // tile's reach), or it's unreachable — either way, stop.
+                        if pos.distance(dest) < crate::config::TILE {
+                            *command = Order::Idle;
+                        } else {
+                            path_to(&map, &mut mover, pos, dest);
+                        }
                     }
                 }
             }
@@ -127,7 +136,7 @@ fn unit_brain(
                     if pos.distance(t.pos) <= range {
                         mover.stop();
                     } else {
-                        chase(&mut mover, t.pos);
+                        chase(&map, &mut mover, t.pos);
                     }
                 } else {
                     weapon.target = None;
@@ -199,6 +208,7 @@ fn fire_weapons(
                 target,
                 faction: *faction,
                 kind,
+                role: weapon.weapon.role,
                 last_seen: target_pos,
             },
             Sprite::from_color(kind.color(), Vec2::splat(kind.radius() * 2.0)),
@@ -214,7 +224,7 @@ fn update_projectiles(
     time: Res<Time>,
     mut params: ParamSet<(
         Query<(Entity, &mut Transform, &mut Projectile)>,
-        Query<(Entity, &Transform, &mut Health)>,
+        Query<(Entity, &Transform, &mut Health, Option<&Armor>)>,
     )>,
 ) {
     let dt = time.delta_secs();
@@ -223,10 +233,10 @@ fn update_projectiles(
     let positions: HashMap<Entity, Vec2> = params
         .p1()
         .iter()
-        .map(|(e, t, _)| (e, t.translation.truncate()))
+        .map(|(e, t, _, _)| (e, t.translation.truncate()))
         .collect();
 
-    let mut hits: Vec<(Entity, f32, Vec2)> = Vec::new();
+    let mut hits: Vec<(Entity, f32, Role)> = Vec::new();
 
     {
         let mut projectiles = params.p0();
@@ -244,7 +254,7 @@ fn update_projectiles(
             if dist <= step.max(6.0) {
                 // Impact.
                 if aim.is_some() {
-                    hits.push((proj.target, proj.damage, goal));
+                    hits.push((proj.target, proj.damage, proj.role));
                 }
                 commands.spawn((
                     Explosion {
@@ -264,18 +274,30 @@ fn update_projectiles(
         }
     }
 
-    // Apply damage.
+    // Apply damage, scaled by the target's armour against this warhead.
     let mut healths = params.p1();
-    for (target, damage, _) in hits {
-        if let Ok((_, _, mut health)) = healths.get_mut(target) {
-            health.damage(damage);
+    for (target, damage, role) in hits {
+        if let Ok((_, _, mut health, armor)) = healths.get_mut(target) {
+            let mult = armor.map_or(1.0, |a| damage_multiplier(role, a.0));
+            health.damage(damage * mult);
         }
     }
 }
 
-fn chase(mover: &mut Mover, target: Vec2) {
+/// Push a single chase waypoint, but never one inside an impassable tile: if
+/// the target sits on water/mountain/a footprint, aim for the nearest passable
+/// tile instead. Combined with the movement guard, units stop at the edge.
+fn chase(map: &GameMap, mover: &mut Mover, target: Vec2) {
     mover.path.clear();
-    mover.path.push_back(target);
+    let tile = map.world_to_tile(target);
+    let goal = if map.is_passable(tile.0, tile.1) {
+        target
+    } else if let Some(p) = map.nearest_passable(tile) {
+        map.tile_center(p.0, p.1)
+    } else {
+        return;
+    };
+    mover.path.push_back(goal);
 }
 
 fn path_to(map: &GameMap, mover: &mut Mover, from: Vec2, to: Vec2) {
@@ -283,8 +305,13 @@ fn path_to(map: &GameMap, mover: &mut Mover, from: Vec2, to: Vec2) {
     let goal = map.world_to_tile(to);
     if let Some(path) = find_path(map, start, goal) {
         mover.path = path.into_iter().map(|(c, r)| map.tile_center(c, r)).collect();
-        if let Some(last) = mover.path.back_mut() {
-            *last = to;
+        // Only snap the final waypoint onto the exact destination when that
+        // tile is actually passable; otherwise keep the nearest-passable tile
+        // centre that find_path produced so we never aim into a solid tile.
+        if map.is_passable(goal.0, goal.1) {
+            if let Some(last) = mover.path.back_mut() {
+                *last = to;
+            }
         }
     }
 }

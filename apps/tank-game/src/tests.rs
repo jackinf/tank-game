@@ -70,8 +70,32 @@ fn maps_load_with_distinct_starts() {
 fn tech_tree_prerequisites() {
     assert_eq!(BuildingKind::PowerPlant.prerequisite(), Some(BuildingKind::ConstructionYard));
     assert_eq!(BuildingKind::WarFactory.prerequisite(), Some(BuildingKind::Refinery));
-    assert_eq!(UnitKind::Tank.produced_by(), BuildingKind::WarFactory);
-    assert_eq!(UnitKind::Soldier.produced_by(), BuildingKind::Barracks);
+    assert_eq!(UnitKind::BASIC_TANK.produced_by(), BuildingKind::WarFactory);
+    assert_eq!(UnitKind::BASIC_SOLDIER.produced_by(), BuildingKind::Barracks);
+    assert_eq!(UnitKind::Harvester.produced_by(), BuildingKind::WarFactory);
+}
+
+#[test]
+fn armor_damage_table() {
+    use crate::defs::{damage_multiplier, ArmorKind, Role};
+    // Small arms shred infantry but glance off armour and buildings.
+    assert!(damage_multiplier(Role::AntiInfantry, ArmorKind::Infantry) > 0.9);
+    assert!(damage_multiplier(Role::AntiInfantry, ArmorKind::Vehicle) < 0.4);
+    assert!(damage_multiplier(Role::AntiInfantry, ArmorKind::Building) < 0.4);
+    // AT rounds wreck vehicles, weak vs infantry.
+    assert!(damage_multiplier(Role::AntiTank, ArmorKind::Vehicle) > 0.9);
+    assert!(damage_multiplier(Role::AntiTank, ArmorKind::Infantry) < 0.5);
+    // Demolition warheads flatten buildings.
+    assert!(damage_multiplier(Role::AntiBuilding, ArmorKind::Building) > 1.0);
+}
+
+#[test]
+fn unit_matrix_is_complete() {
+    assert_eq!(UnitKind::infantry().len(), 9);
+    assert_eq!(UnitKind::vehicles().len(), 10); // 9 tanks + harvester
+    // Heavier armour is tougher and slower.
+    assert!(UnitKind::HEAVY_TANK.max_health() > UnitKind::LIGHT_TANK.max_health());
+    assert!(UnitKind::HEAVY_TANK.speed() < UnitKind::LIGHT_TANK.speed());
 }
 
 #[test]
@@ -94,6 +118,51 @@ fn power_factor_scales_when_low() {
     eco.power_consumed = 100;
     assert!(!eco.has_power());
     assert!(eco.power_factor() < 1.0 && eco.power_factor() >= 0.25);
+}
+
+#[test]
+fn buildings_need_a_gap_between_them() {
+    use std::collections::HashSet;
+    let mut map = GameMap::new(20, 20);
+    let footprint = (2, 2);
+    // Place a building at (5,5)-(6,6) and mark its footprint as built.
+    for dr in 0..2 {
+        for dc in 0..2 {
+            map.set_blocked(5 + dc, 5 + dr, true);
+            map.set_built(5 + dc, 5 + dr, true);
+        }
+    }
+    // Directly adjacent placements (touching) are rejected...
+    assert!(!map.can_build((3, 5), footprint), "left-adjacent should be blocked");
+    assert!(!map.can_build((7, 5), footprint), "right-adjacent should be blocked");
+    assert!(!map.can_build((5, 3), footprint), "top-adjacent should be blocked");
+    assert!(!map.can_build((3, 3), footprint), "corner-touch should be blocked");
+    // ...but a placement that leaves a one-tile gap is allowed.
+    assert!(map.can_build((8, 5), footprint), "one-tile gap should be allowed");
+
+    // Sanity: the built tiles are a subset of blocked tiles.
+    let built: HashSet<_> = (5..7).flat_map(|c| (5..7).map(move |r| (c, r))).collect();
+    for (c, r) in built {
+        assert!(map.is_built(c, r) && map.is_blocked(c, r));
+    }
+}
+
+#[test]
+fn unit_names_are_distinct_and_characterful() {
+    use std::collections::HashSet;
+    let mut names = HashSet::new();
+    let mut all = UnitKind::infantry();
+    all.extend(UnitKind::vehicles());
+    for kind in all {
+        let name = kind.name();
+        assert!(!name.is_empty());
+        assert!(names.insert(name.clone()), "duplicate unit name: {name}");
+        assert!(!kind.description().is_empty());
+    }
+    // A couple of the requested characterful names exist.
+    assert_eq!(UnitKind::HEAVY_TANK.produced_by(), BuildingKind::WarFactory);
+    assert!(names.contains("Bazooka Joe"));
+    assert!(names.contains("Heavy Tank"));
 }
 
 #[test]

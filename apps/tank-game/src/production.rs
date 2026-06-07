@@ -1,4 +1,7 @@
-//! Construction queues, prerequisites, and building placement.
+//! Per-building construction queues, prerequisites, and building placement.
+//!
+//! Every production building (Construction Yard, Barracks, War Factory) owns
+//! its own [`ProductionQueue`] component, so two barracks build independently.
 
 use crate::components::*;
 use crate::config::TILE;
@@ -12,29 +15,19 @@ use crate::state::GameState;
 use bevy::prelude::*;
 use std::collections::{HashSet, VecDeque};
 
-/// The three production lanes, each with an independent queue.
-pub const STRUCTURES: usize = 0;
-pub const INFANTRY: usize = 1;
-pub const VEHICLES: usize = 2;
-
-pub fn category(p: Producible) -> usize {
-    match p {
-        Producible::Building(_) => STRUCTURES,
-        Producible::Unit(UnitKind::Soldier) => INFANTRY,
-        Producible::Unit(_) => VEHICLES,
-    }
-}
-
-#[derive(Default)]
-pub struct Queue {
+/// An independent build queue attached to a single production building.
+#[derive(Component, Default)]
+pub struct ProductionQueue {
     pub items: VecDeque<Producible>,
     /// Seconds elapsed building the front item.
     pub progress: f32,
-    /// A finished structure awaiting placement (player) / spawning (AI).
-    pub ready_structure: Option<BuildingKind>,
+    /// Finished structures awaiting placement (player) / spawning (AI). Only
+    /// ever populated on a Construction Yard's queue. Multiple buildings can
+    /// accumulate here, so the player can queue several and place them later.
+    pub ready: VecDeque<BuildingKind>,
 }
 
-impl Queue {
+impl ProductionQueue {
     pub fn front(&self) -> Option<Producible> {
         self.items.front().copied()
     }
@@ -44,31 +37,36 @@ impl Queue {
             None => 0.0,
         }
     }
-}
-
-#[derive(Default)]
-pub struct FactionProduction {
-    pub queues: [Queue; 3],
-}
-
-#[derive(Resource, Default)]
-pub struct Production {
-    pub player: FactionProduction,
-    pub enemy: FactionProduction,
-}
-
-impl Production {
-    pub fn get(&self, f: Faction) -> &FactionProduction {
-        match f {
-            Faction::Enemy => &self.enemy,
-            _ => &self.player,
+    /// Remove the first queued copy of `kind` from the ready list, if present.
+    pub fn take_ready(&mut self, kind: BuildingKind) -> bool {
+        if let Some(i) = self.ready.iter().position(|&k| k == kind) {
+            self.ready.remove(i);
+            true
+        } else {
+            false
         }
     }
-    pub fn get_mut(&mut self, f: Faction) -> &mut FactionProduction {
-        match f {
-            Faction::Enemy => &mut self.enemy,
-            _ => &mut self.player,
-        }
+}
+
+/// Does this building host a build queue, and what can it make?
+pub fn is_producer(kind: BuildingKind) -> bool {
+    matches!(
+        kind,
+        BuildingKind::ConstructionYard | BuildingKind::Barracks | BuildingKind::WarFactory
+    )
+}
+
+/// The list of things a given production building can build.
+pub fn producible_menu(kind: BuildingKind) -> Vec<Producible> {
+    match kind {
+        BuildingKind::ConstructionYard => BuildingKind::ALL
+            .into_iter()
+            .filter(|k| *k != BuildingKind::ConstructionYard)
+            .map(Producible::Building)
+            .collect(),
+        BuildingKind::Barracks => UnitKind::infantry().into_iter().map(Producible::Unit).collect(),
+        BuildingKind::WarFactory => UnitKind::vehicles().into_iter().map(Producible::Unit).collect(),
+        _ => Vec::new(),
     }
 }
 
@@ -96,15 +94,14 @@ pub struct ProductionPlugin;
 
 impl Plugin for ProductionPlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<Production>()
-            .init_resource::<OwnedBuildings>()
+        app.init_resource::<OwnedBuildings>()
             .init_resource::<PlacementMode>()
             .add_systems(
                 Update,
                 (
                     update_owned_buildings,
                     tick_production,
-                    sync_placement_mode,
+                    placement_controls,
                     placement_input,
                     draw_placement_preview,
                 )
@@ -123,9 +120,9 @@ pub fn prerequisites_met(owned: &OwnedBuildings, faction: Faction, item: Produci
     }
 }
 
-/// Try to add an item to the appropriate queue. Charges credits up front.
+/// Try to add an item to a building's queue. Charges credits up front.
 pub fn try_enqueue(
-    production: &mut Production,
+    queue: &mut ProductionQueue,
     economy: &mut Economy,
     owned: &OwnedBuildings,
     faction: Faction,
@@ -138,9 +135,8 @@ pub fn try_enqueue(
     if !economy.get(faction).can_afford(cost) {
         return false;
     }
-    let cat = category(item);
     economy.get_mut(faction).credits -= cost;
-    production.get_mut(faction).queues[cat].items.push_back(item);
+    queue.items.push_back(item);
     true
 }
 
@@ -162,63 +158,45 @@ fn update_owned_buildings(
 fn tick_production(
     time: Res<Time>,
     mut commands: Commands,
-    mut production: ResMut<Production>,
     economy: Res<Economy>,
-    rally_buildings: Query<(&Building, &Faction, &Transform, &RallyPoint)>,
+    mut queues: Query<(
+        &Building,
+        &Faction,
+        &mut ProductionQueue,
+        &Transform,
+        Option<&RallyPoint>,
+    )>,
 ) {
     let dt = time.delta_secs();
 
-    for faction in [Faction::Player, Faction::Enemy] {
-        let power_factor = economy.get(faction).power_factor();
-        // Collect completed units to spawn after releasing the borrow.
-        let mut to_spawn: Vec<UnitKind> = Vec::new();
-
-        {
-            let fp = production.get_mut(faction);
-            for (lane, queue) in fp.queues.iter_mut().enumerate() {
-                // Structures lane pauses while a finished structure awaits placement.
-                if lane == STRUCTURES && queue.ready_structure.is_some() {
-                    continue;
-                }
-                let Some(front) = queue.front() else { continue };
-                queue.progress += dt * power_factor;
-                if queue.progress >= front.build_time() {
-                    queue.progress = 0.0;
-                    queue.items.pop_front();
-                    match front {
-                        Producible::Building(b) => queue.ready_structure = Some(b),
-                        Producible::Unit(u) => to_spawn.push(u),
-                    }
+    for (_building, faction, mut queue, tf, rally) in &mut queues {
+        let Some(front) = queue.front() else { continue };
+        let power_factor = economy.get(*faction).power_factor();
+        queue.progress += dt * power_factor;
+        if queue.progress >= front.build_time() {
+            queue.progress = 0.0;
+            queue.items.pop_front();
+            match front {
+                // Finished structures accumulate; the player places them when
+                // ready, the AI drops them straight onto the map.
+                Producible::Building(b) => queue.ready.push_back(b),
+                Producible::Unit(u) => {
+                    let base = tf.translation.truncate();
+                    let rally_pos = rally.map(|r| r.0).unwrap_or(base);
+                    spawn_completed_unit(&mut commands, *faction, u, base, rally_pos);
                 }
             }
-        }
-
-        for unit in to_spawn {
-            spawn_completed_unit(&mut commands, &rally_buildings, faction, unit);
         }
     }
 }
 
 fn spawn_completed_unit(
     commands: &mut Commands,
-    rally_buildings: &Query<(&Building, &Faction, &Transform, &RallyPoint)>,
     faction: Faction,
     unit: UnitKind,
+    base: Vec2,
+    rally: Vec2,
 ) {
-    let produced_by = unit.produced_by();
-    // Find the producing building.
-    let mut spawn_pos = None;
-    let mut rally = None;
-    for (building, bf, tf, rp) in rally_buildings.iter() {
-        if *bf == faction && building.kind == produced_by {
-            spawn_pos = Some(tf.translation.truncate());
-            rally = Some(rp.0);
-            break;
-        }
-    }
-    let Some(base) = spawn_pos else { return };
-    let rally = rally.unwrap_or(base);
-
     // Spawn just below the building, then send to the rally point.
     let spawn_at = Vec2::new(base.x, base.y - TILE * 1.5);
     let entity = spawn_unit(commands, unit, faction, spawn_at);
@@ -234,9 +212,32 @@ fn spawn_completed_unit(
     }
 }
 
-/// Mirror the player's finished structure into the placement mode resource.
-fn sync_placement_mode(production: Res<Production>, mut placement: ResMut<PlacementMode>) {
-    placement.0 = production.player.queues[STRUCTURES].ready_structure;
+/// Keep placement mode valid and let the player cancel it. Escape (or a
+/// right-click) exits placement mode; the building stays in the ready list so
+/// it can be placed later. If the chosen building is no longer ready (e.g. it
+/// was just placed), placement mode clears itself.
+fn placement_controls(
+    keys: Res<ButtonInput<KeyCode>>,
+    mouse: Res<ButtonInput<MouseButton>>,
+    mut placement: ResMut<PlacementMode>,
+    yards: Query<(&Building, &Faction, &ProductionQueue)>,
+) {
+    let Some(kind) = placement.0 else { return };
+
+    if keys.just_pressed(KeyCode::Escape) || mouse.just_pressed(MouseButton::Right) {
+        placement.0 = None;
+        return;
+    }
+
+    // Drop placement mode if no copy of this building is still waiting.
+    let still_ready = yards.iter().any(|(b, f, q)| {
+        *f == Faction::Player
+            && b.kind == BuildingKind::ConstructionYard
+            && q.ready.contains(&kind)
+    });
+    if !still_ready {
+        placement.0 = None;
+    }
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -245,8 +246,8 @@ fn placement_input(
     mouse: Res<ButtonInput<MouseButton>>,
     cursor: Res<CursorWorld>,
     mut map: ResMut<GameMap>,
-    mut production: ResMut<Production>,
-    placement: Res<PlacementMode>,
+    mut placement: ResMut<PlacementMode>,
+    mut yards: Query<(&Building, &Faction, &mut ProductionQueue)>,
     buildings: Query<(&Building, &Faction, &Transform)>,
 ) {
     let Some(kind) = placement.0 else { return };
@@ -256,10 +257,23 @@ fn placement_input(
     let footprint = kind.footprint();
     let origin = origin_from_cursor(&map, cursor.pos, footprint);
 
-    if can_place(&map, origin, footprint) && near_friendly_building(&map, origin, footprint, &buildings)
+    if can_place(&map, origin, footprint)
+        && near_friendly_building(&map, origin, footprint, &buildings)
     {
         spawn_building(&mut commands, &mut map, kind, Faction::Player, origin);
-        production.player.queues[STRUCTURES].ready_structure = None;
+        // Consume one queued copy from the player's Construction Yard.
+        let mut more_ready = false;
+        for (b, f, mut q) in &mut yards {
+            if *f == Faction::Player && b.kind == BuildingKind::ConstructionYard {
+                q.take_ready(kind);
+                more_ready = q.ready.contains(&kind);
+            }
+        }
+        // Stay in placement mode while more of the same kind are waiting,
+        // otherwise exit so a stray click doesn't keep placing.
+        if !more_ready {
+            placement.0 = None;
+        }
     }
 }
 

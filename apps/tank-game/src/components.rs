@@ -6,6 +6,11 @@ use crate::grid::Tile;
 use bevy::prelude::*;
 use std::collections::VecDeque;
 
+/// The armour category an entity presents to incoming fire. Combined with a
+/// weapon's `Role`, this scales how much damage a shot actually deals.
+#[derive(Component, Clone, Copy)]
+pub struct Armor(pub ArmorKind);
+
 /// Health for any destructible entity.
 #[derive(Component)]
 pub struct Health {
@@ -45,13 +50,17 @@ pub struct Selected;
 /// A mobile entity following a path of world-space waypoints.
 #[derive(Component)]
 pub struct Mover {
+    /// Effective speed for the current order (may be lowered to match the
+    /// slowest member of a group move).
     pub speed: f32,
+    /// The unit's intrinsic top speed; `speed` is reset to this when idle.
+    pub base_speed: f32,
     pub path: VecDeque<Vec2>,
 }
 
 impl Mover {
     pub fn new(speed: f32) -> Self {
-        Self { speed, path: VecDeque::new() }
+        Self { speed, base_speed: speed, path: VecDeque::new() }
     }
     pub fn is_moving(&self) -> bool {
         !self.path.is_empty()
@@ -119,6 +128,8 @@ pub struct Projectile {
     pub target: Entity,
     pub faction: Faction,
     pub kind: ProjectileKind,
+    /// Warhead type; scaled against the target's armour on impact.
+    pub role: Role,
     /// Last known target position, in case the target dies mid-flight.
     pub last_seen: Vec2,
 }
@@ -135,3 +146,8 @@ pub struct Explosion {
 /// build-in / damage flashes if desired (kept simple for now).
 #[derive(Component)]
 pub struct Body;
+
+/// Marks a tank's rotating turret/barrel sprite (a child of the hull). The
+/// turret swivels to face where the tank is aiming or moving.
+#[derive(Component)]
+pub struct Turret;

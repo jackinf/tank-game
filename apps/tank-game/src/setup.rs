@@ -8,7 +8,6 @@ use crate::economy::Economy;
 use crate::faction::Faction;
 use crate::grid::{GameMap, Tile};
 use crate::maps::{all_maps, load_map, MapData};
-use crate::production::Production;
 use crate::spawn::{find_spot, spawn_building, spawn_unit};
 use crate::state::{GameEntity, GameState};
 use crate::terrain::spawn_terrain;
@@ -52,7 +51,6 @@ fn setup_match(
 
     // Reset per-match resources.
     commands.insert_resource(Economy::default());
-    commands.insert_resource(Production::default());
     commands.insert_resource(map);
 
     next.set(GameState::Playing);
@@ -65,22 +63,30 @@ fn build_base(
     start: Tile,
     aggressive: bool,
 ) {
-    place(commands, map, BuildingKind::ConstructionYard, faction, start);
-    place(commands, map, BuildingKind::PowerPlant, faction, start);
-    place(commands, map, BuildingKind::Refinery, faction, start);
+    // Spread the starting buildings out around the Construction Yard, fanning
+    // toward the centre of the map so each base feels like a real settlement
+    // rather than a solid block. `find_spot` enforces a one-tile gap, so these
+    // anchors only need to be roughly right.
+    let sx = if (start.0 as usize) < map.width / 2 { 1 } else { -1 };
+    let sy = if (start.1 as usize) < map.height / 2 { 1 } else { -1 };
+    let anchor = |dc: i32, dr: i32| (start.0 + dc * sx, start.1 + dr * sy);
+
+    place(commands, map, BuildingKind::ConstructionYard, faction, anchor(0, 0));
+    place(commands, map, BuildingKind::PowerPlant, faction, anchor(5, 0));
+    place(commands, map, BuildingKind::Refinery, faction, anchor(0, 5));
     if aggressive {
-        place(commands, map, BuildingKind::PowerPlant, faction, start);
-        place(commands, map, BuildingKind::Barracks, faction, start);
-        place(commands, map, BuildingKind::WarFactory, faction, start);
+        place(commands, map, BuildingKind::PowerPlant, faction, anchor(5, 6));
+        place(commands, map, BuildingKind::Barracks, faction, anchor(9, 1));
+        place(commands, map, BuildingKind::WarFactory, faction, anchor(1, 9));
     }
 
     let base = map.tile_center(start.0, start.1);
     spawn_unit(commands, UnitKind::Harvester, faction, base + Vec2::new(TILE * 2.0, -TILE * 2.0));
-    spawn_unit(commands, UnitKind::Soldier, faction, base + Vec2::new(-TILE, -TILE * 3.0));
-    spawn_unit(commands, UnitKind::Soldier, faction, base + Vec2::new(TILE, -TILE * 3.0));
+    spawn_unit(commands, UnitKind::BASIC_SOLDIER, faction, base + Vec2::new(-TILE, -TILE * 3.0));
+    spawn_unit(commands, UnitKind::AT_SOLDIER, faction, base + Vec2::new(TILE, -TILE * 3.0));
     if aggressive {
-        spawn_unit(commands, UnitKind::Tank, faction, base + Vec2::new(0.0, -TILE * 4.0));
-        spawn_unit(commands, UnitKind::Soldier, faction, base + Vec2::new(TILE * 2.0, -TILE * 3.0));
+        spawn_unit(commands, UnitKind::BASIC_TANK, faction, base + Vec2::new(0.0, -TILE * 4.0));
+        spawn_unit(commands, UnitKind::BASIC_SOLDIER, faction, base + Vec2::new(TILE * 2.0, -TILE * 3.0));
     }
 }
 

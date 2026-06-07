@@ -45,6 +45,9 @@ pub struct GameMap {
     pub ore: Vec<u32>,
     /// Static blocking: solid terrain or footprints of buildings.
     pub blocked: Vec<bool>,
+    /// Tiles occupied specifically by a building footprint (a subset of
+    /// `blocked`). Used to enforce a gap between adjacent buildings.
+    pub built: Vec<bool>,
 }
 
 impl GameMap {
@@ -56,6 +59,7 @@ impl GameMap {
             terrain: vec![Terrain::Grass; n],
             ore: vec![0; n],
             blocked: vec![false; n],
+            built: vec![false; n],
         }
     }
 
@@ -132,6 +136,48 @@ impl GameMap {
 
     pub fn is_passable(&self, col: i32, row: i32) -> bool {
         self.in_bounds(col, row) && !self.is_blocked(col, row)
+    }
+
+    /// Is this tile part of a building footprint?
+    pub fn is_built(&self, col: i32, row: i32) -> bool {
+        self.in_bounds(col, row) && self.built[self.idx(col, row)]
+    }
+
+    /// Mark (or clear) a tile as occupied by a building footprint.
+    pub fn set_built(&mut self, col: i32, row: i32, built: bool) {
+        if self.in_bounds(col, row) {
+            let i = self.idx(col, row);
+            self.built[i] = built;
+        }
+    }
+
+    /// Can a building of `footprint` (w, h) sit with its top-left at `origin`
+    /// while leaving at least a one-tile gap to every other building? The gap
+    /// border may run off the map edge or touch solid terrain — it only has to
+    /// stay clear of other building footprints.
+    pub fn can_build(&self, origin: Tile, footprint: (i32, i32)) -> bool {
+        // Footprint itself must be in-bounds, unblocked and ore-free.
+        for dr in 0..footprint.1 {
+            for dc in 0..footprint.0 {
+                let (c, r) = (origin.0 + dc, origin.1 + dr);
+                if !self.in_bounds(c, r) || self.is_blocked(c, r) || self.ore_at(c, r) > 0 {
+                    return false;
+                }
+            }
+        }
+        // One-tile border must not touch another building.
+        for dr in -1..=footprint.1 {
+            for dc in -1..=footprint.0 {
+                let inside = dc >= 0 && dc < footprint.0 && dr >= 0 && dr < footprint.1;
+                if inside {
+                    continue;
+                }
+                if self.is_built(origin.0 + dc, origin.1 + dr) {
+                    return false;
+                }
+            }
+        }
+        true
     }
 
     /// World position of the centre of a tile. The map is centred on the origin.

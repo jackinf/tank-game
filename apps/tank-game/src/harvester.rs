@@ -46,7 +46,30 @@ pub struct HarvesterPlugin;
 
 impl Plugin for HarvesterPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, harvester_ai.run_if(in_state(GameState::Playing)));
+        app.add_systems(
+            Update,
+            (harvester_ai, draw_unload_cells).run_if(in_state(GameState::Playing)),
+        );
+    }
+}
+
+/// Outline each refinery's dedicated unload cell so the dock is visible.
+fn draw_unload_cells(
+    map: Res<GameMap>,
+    mut gizmos: Gizmos,
+    refineries: Query<(&Building, &Faction)>,
+) {
+    for (building, faction) in &refineries {
+        if building.kind != crate::defs::BuildingKind::Refinery {
+            continue;
+        }
+        let dock = refinery_unload_pos(&map, building);
+        let color = if *faction == Faction::Enemy {
+            Color::srgba(1.0, 0.5, 0.3, 0.5)
+        } else {
+            Color::srgba(0.85, 0.75, 0.2, 0.7)
+        };
+        gizmos.rect_2d(Isometry2d::from_translation(dock), Vec2::splat(TILE * 0.9), color);
     }
 }
 
@@ -67,19 +90,35 @@ fn nearest_ore(map: &GameMap, from: Vec2) -> Option<Tile> {
     best.map(|(t, _)| t)
 }
 
-/// Find the nearest friendly refinery, returning its world position.
+/// The dedicated unloading cell for a refinery: the tile centred just below
+/// its footprint. Units can't enter a building's footprint, so the harvester
+/// drives to this cell to dock and deposit. Falls back to the nearest passable
+/// tile if that exact cell is somehow blocked.
+pub fn refinery_unload_pos(map: &GameMap, building: &Building) -> Vec2 {
+    let (w, h) = building.kind.footprint();
+    let cell = (building.origin.0 + w / 2, building.origin.1 + h);
+    let cell = if map.is_passable(cell.0, cell.1) {
+        cell
+    } else {
+        map.nearest_passable(cell).unwrap_or(cell)
+    };
+    map.tile_center(cell.0, cell.1)
+}
+
+/// Find the nearest friendly refinery, returning its unload-cell world position.
 fn nearest_refinery(
+    map: &GameMap,
     from: Vec2,
     faction: Faction,
     refineries: &Query<(&Building, &Faction, &Transform)>,
 ) -> Option<Vec2> {
     let mut best: Option<(Vec2, f32)> = None;
-    for (building, bf, tf) in refineries.iter() {
+    for (building, bf, _tf) in refineries.iter() {
         if *bf == faction && building.kind == crate::defs::BuildingKind::Refinery {
-            let p = tf.translation.truncate();
-            let d = p.distance_squared(from);
+            let dock = refinery_unload_pos(map, building);
+            let d = dock.distance_squared(from);
             if best.map_or(true, |(_, bd)| d < bd) {
-                best = Some((p, d));
+                best = Some((dock, d));
             }
         }
     }
@@ -157,8 +196,8 @@ fn harvester_ai(
                 }
             }
             HarvestState::Returning => {
-                if let Some(refinery) = nearest_refinery(pos, *faction, &refineries) {
-                    if pos.distance(refinery) < TILE * 1.6 {
+                if let Some(refinery) = nearest_refinery(&map, pos, *faction, &refineries) {
+                    if pos.distance(refinery) < TILE * 1.2 {
                         // Deposit.
                         let gained = harv.cargo as i64 * CREDITS_PER_ORE;
                         economy.get_mut(*faction).credits += gained;

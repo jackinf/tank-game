@@ -22,7 +22,7 @@ impl Plugin for SelectionPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<DragSelect>().add_systems(
             Update,
-            (left_click_select, right_click_command, draw_selection)
+            (left_click_select, right_click_command, draw_selection, draw_attack_cursor)
                 .run_if(in_state(GameState::Playing)),
         );
     }
@@ -102,6 +102,7 @@ fn right_click_command(
     keys: Res<ButtonInput<KeyCode>>,
     cursor: Res<CursorWorld>,
     map: Res<GameMap>,
+    placement: Res<PlacementMode>,
     targets: Query<(Entity, &Transform, &Selectable, &Faction)>,
     mut selected_buildings: Query<&mut RallyPoint, With<Selected>>,
     mut selected_units: Query<
@@ -109,6 +110,11 @@ fn right_click_command(
         (With<Selected>, With<Unit>),
     >,
 ) {
+    // While placing a building a right-click just cancels placement mode
+    // (handled in production), so don't also issue movement orders here.
+    if placement.0.is_some() {
+        return;
+    }
     if !mouse.just_pressed(MouseButton::Right) || !cursor.valid || cursor.over_ui {
         return;
     }
@@ -137,8 +143,17 @@ fn right_click_command(
     let count = selected_units.iter().count();
     let cols = (count as f32).sqrt().ceil().max(1.0) as usize;
 
+    // A group moves at the pace of its slowest member, so the formation stays
+    // together instead of strung out.
+    let group_speed = selected_units
+        .iter()
+        .map(|(_, m, _)| m.base_speed)
+        .fold(f32::MAX, f32::min);
+
     for (i, (transform, mut mover, mut command)) in selected_units.iter_mut().enumerate() {
         if let Some(target) = enemy_target {
+            // Attacking units move at their own top speed.
+            mover.speed = mover.base_speed;
             *command = Order::Attack(target);
             continue;
         }
@@ -155,18 +170,49 @@ fn right_click_command(
         let from = transform.translation.truncate();
         let start = map.world_to_tile(from);
         let goal = map.world_to_tile(dest);
+        mover.speed = group_speed;
         mover.path.clear();
         if let Some(path) = find_path(&map, start, goal) {
+            // Keep every waypoint on a tile centre so a forced move ends snapped
+            // to the grid (the endpoint is the centre of the reachable tile).
             mover.path = path.into_iter().map(|(c, r)| map.tile_center(c, r)).collect();
-            if let Some(last) = mover.path.back_mut() {
-                *last = dest;
-            }
         }
         *command = if attack_move {
             Order::AttackMove(dest)
         } else {
             Order::Move(dest)
         };
+    }
+}
+
+/// When the player has units selected and hovers an enemy, draw a red attack
+/// reticle at the cursor so it's clear a right-click will open fire.
+#[allow(clippy::type_complexity)]
+fn draw_attack_cursor(
+    mut gizmos: Gizmos,
+    cursor: Res<CursorWorld>,
+    placement: Res<PlacementMode>,
+    selected: Query<(), (With<Selected>, With<Unit>)>,
+    enemies: Query<(&Transform, &Selectable, &Faction)>,
+) {
+    if !cursor.valid || cursor.over_ui || placement.0.is_some() || selected.is_empty() {
+        return;
+    }
+    let hovering_enemy = enemies.iter().any(|(tf, sel, faction)| {
+        *faction == Faction::Enemy && tf.translation.truncate().distance(cursor.pos) <= sel.radius
+    });
+    if !hovering_enemy {
+        return;
+    }
+    let p = cursor.pos;
+    let red = Color::srgb(1.0, 0.2, 0.2);
+    gizmos.circle_2d(Isometry2d::from_translation(p), 15.0, red);
+    // Corner brackets for a targeting-reticle look.
+    let r = 15.0;
+    for (sx, sy) in [(-1.0, 1.0), (1.0, 1.0), (-1.0, -1.0), (1.0, -1.0)] {
+        let corner = p + Vec2::new(sx * r, sy * r);
+        gizmos.line_2d(corner, corner - Vec2::new(sx * 6.0, 0.0), red);
+        gizmos.line_2d(corner, corner - Vec2::new(0.0, sy * 6.0), red);
     }
 }
 

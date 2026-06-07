@@ -35,6 +35,7 @@ fn death_system(
             for dr in 0..h {
                 for dc in 0..w {
                     map.set_blocked(building.origin.0 + dc, building.origin.1 + dr, false);
+                    map.set_built(building.origin.0 + dc, building.origin.1 + dr, false);
                 }
             }
         }

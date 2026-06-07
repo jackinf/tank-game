@@ -43,25 +43,34 @@ impl Plugin for AiPlugin {
 const UNIT_CAP: usize = 14;
 const ATTACK_SQUAD: usize = 5;
 
+// The enemy fields a representative slice of the unit roster.
+const AI_TANK: UnitKind = UnitKind::BASIC_TANK;
+const AI_SOLDIER: UnitKind = UnitKind::BASIC_SOLDIER;
+
 #[allow(clippy::too_many_arguments)]
 fn ai_build(
     time: Res<Time>,
     mut commands: Commands,
     mut ai: ResMut<AiState>,
     mut map: ResMut<GameMap>,
-    mut production: ResMut<Production>,
     mut economy: ResMut<Economy>,
     owned: Res<OwnedBuildings>,
+    mut queues: Query<(&Building, &Faction, &mut ProductionQueue)>,
     buildings: Query<(&Building, &Faction)>,
     units: Query<(&Unit, &Faction)>,
 ) {
     ai.decision_timer -= time.delta_secs();
 
     // Place any finished structure first (every frame so we never stall).
-    if let Some(kind) = production.enemy.queues[STRUCTURES].ready_structure {
+    let ready = enemy_yard_ready(&queues);
+    if let Some(kind) = ready {
         if let Some(origin) = find_spot(&map, ai.base_tile, kind.footprint()) {
             spawn_building(&mut commands, &mut map, kind, Faction::Enemy, origin);
-            production.enemy.queues[STRUCTURES].ready_structure = None;
+            for (b, f, mut q) in &mut queues {
+                if *f == Faction::Enemy && b.kind == BuildingKind::ConstructionYard {
+                    q.take_ready(kind);
+                }
+            }
         }
     }
 
@@ -73,8 +82,8 @@ fn ai_build(
     let set = owned.enemy.clone();
     let eco = *economy.get(Faction::Enemy);
 
-    // --- Structures lane ---
-    if production.enemy.queues[STRUCTURES].items.is_empty() {
+    // --- Structures ---
+    if !queue_busy(&queues, BuildingKind::ConstructionYard) {
         let next = if !set.contains(&BuildingKind::PowerPlant) {
             Some(BuildingKind::PowerPlant)
         } else if !eco.has_power() {
@@ -85,57 +94,79 @@ fn ai_build(
             Some(BuildingKind::Barracks)
         } else if !set.contains(&BuildingKind::WarFactory) {
             Some(BuildingKind::WarFactory)
-        } else if count_kind(&buildings, Faction::Enemy, BuildingKind::GunTurret) < 3 {
-            Some(BuildingKind::GunTurret)
+        } else if count_kind(&buildings, Faction::Enemy, BuildingKind::AntiInfantryTurret) < 2 {
+            Some(BuildingKind::AntiInfantryTurret)
+        } else if count_kind(&buildings, Faction::Enemy, BuildingKind::AntiTankTurret) < 2 {
+            Some(BuildingKind::AntiTankTurret)
         } else {
             None
         };
         if let Some(b) = next {
-            try_enqueue(&mut production, &mut economy, &owned, Faction::Enemy, Producible::Building(b));
+            ai_enqueue(&mut queues, &mut economy, &owned, Producible::Building(b));
         }
     }
 
-    // --- Harvesters (vehicles lane) ---
-    let harvesters = count_unit(&units, Faction::Enemy, UnitKind::Harvester);
-    let vehicles_busy = !production.enemy.queues[VEHICLES].items.is_empty();
+    // --- Harvesters (war factory) ---
+    let harvesters = count_harvesters(&units, Faction::Enemy);
+    let vehicles_busy = queue_busy(&queues, BuildingKind::WarFactory);
     if set.contains(&BuildingKind::WarFactory) && harvesters < 2 && !vehicles_busy {
-        try_enqueue(
-            &mut production,
+        ai_enqueue(
+            &mut queues,
             &mut economy,
             &owned,
-            Faction::Enemy,
             Producible::Unit(UnitKind::Harvester),
         );
     } else {
         // --- Combat units ---
-        let combat = count_unit(&units, Faction::Enemy, UnitKind::Soldier)
-            + count_unit(&units, Faction::Enemy, UnitKind::Tank);
+        let combat = count_combat(&units, Faction::Enemy);
         if combat < UNIT_CAP {
             if set.contains(&BuildingKind::WarFactory)
                 && !vehicles_busy
-                && economy.get(Faction::Enemy).can_afford(UnitKind::Tank.cost())
+                && economy.get(Faction::Enemy).can_afford(AI_TANK.cost())
             {
-                try_enqueue(
-                    &mut production,
-                    &mut economy,
-                    &owned,
-                    Faction::Enemy,
-                    Producible::Unit(UnitKind::Tank),
-                );
+                ai_enqueue(&mut queues, &mut economy, &owned, Producible::Unit(AI_TANK));
             }
             if set.contains(&BuildingKind::Barracks)
-                && production.enemy.queues[INFANTRY].items.is_empty()
+                && !queue_busy(&queues, BuildingKind::Barracks)
             {
-                try_enqueue(
-                    &mut production,
-                    &mut economy,
-                    &owned,
-                    Faction::Enemy,
-                    Producible::Unit(UnitKind::Soldier),
-                );
+                ai_enqueue(&mut queues, &mut economy, &owned, Producible::Unit(AI_SOLDIER));
             }
         }
     }
+}
+
+/// The structure waiting to be placed at the enemy Construction Yard, if any.
+fn enemy_yard_ready(queues: &Query<(&Building, &Faction, &mut ProductionQueue)>) -> Option<BuildingKind> {
+    queues
+        .iter()
+        .find(|(b, f, _)| **f == Faction::Enemy && b.kind == BuildingKind::ConstructionYard)
+        .and_then(|(_, _, q)| q.ready.front().copied())
+}
+
+/// Is the enemy's producer of `producer_kind` currently building something?
+fn queue_busy(queues: &Query<(&Building, &Faction, &mut ProductionQueue)>, producer_kind: BuildingKind) -> bool {
+    queues
+        .iter()
+        .any(|(b, f, q)| *f == Faction::Enemy && b.kind == producer_kind && !q.items.is_empty())
+}
+
+/// Enqueue `item` into the enemy building that produces it.
+fn ai_enqueue(
+    queues: &mut Query<(&Building, &Faction, &mut ProductionQueue)>,
+    economy: &mut Economy,
+    owned: &OwnedBuildings,
+    item: Producible,
+) -> bool {
+    let producer = match item {
+        Producible::Building(_) => BuildingKind::ConstructionYard,
+        Producible::Unit(u) => u.produced_by(),
+    };
+    for (b, f, mut q) in queues.iter_mut() {
+        if *f == Faction::Enemy && b.kind == producer {
+            return try_enqueue(&mut q, economy, owned, Faction::Enemy, item);
+        }
+    }
+    false
 }
 
 #[allow(clippy::type_complexity)]
@@ -195,9 +226,14 @@ fn count_kind(q: &Query<(&Building, &Faction)>, faction: Faction, kind: Building
         .count()
 }
 
-fn count_unit(q: &Query<(&Unit, &Faction)>, faction: Faction, kind: UnitKind) -> usize {
+fn count_harvesters(q: &Query<(&Unit, &Faction)>, faction: Faction) -> usize {
     q.iter()
-        .filter(|(u, f)| **f == faction && u.kind == kind)
+        .filter(|(u, f)| **f == faction && matches!(u.kind, UnitKind::Harvester))
         .count()
 }
 
+fn count_combat(q: &Query<(&Unit, &Faction)>, faction: Faction) -> usize {
+    q.iter()
+        .filter(|(u, f)| **f == faction && matches!(u.kind, UnitKind::Combat { .. }))
+        .count()
+}

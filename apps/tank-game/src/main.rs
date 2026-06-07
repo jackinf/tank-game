@@ -16,6 +16,7 @@ mod economy;
 mod faction;
 mod fx;
 mod grid;
+mod gridview;
 mod harvester;
 mod health;
 mod maps;
@@ -40,6 +41,7 @@ use crate::config::*;
 use crate::cursor::CursorPlugin;
 use crate::economy::EconomyPlugin;
 use crate::fx::FxPlugin;
+use crate::gridview::GridViewPlugin;
 use crate::harvester::HarvesterPlugin;
 use crate::health::HealthPlugin;
 use crate::movement::MovementPlugin;
@@ -83,6 +85,7 @@ fn main() {
             AiPlugin,
             FxPlugin,
             UiPlugin,
+            GridViewPlugin,
             SetupPlugin,
         ))
         .run();
