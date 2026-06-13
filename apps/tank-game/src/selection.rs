@@ -25,6 +25,43 @@ impl Plugin for SelectionPlugin {
             (left_click_select, right_click_command, draw_selection, draw_attack_cursor)
                 .run_if(in_state(GameState::Playing)),
         );
+
+        // Debug-only health cheats for the currently selected entities.
+        #[cfg(debug_assertions)]
+        app.add_systems(
+            Update,
+            debug_health_cheat.run_if(in_state(GameState::Playing)),
+        );
+    }
+}
+
+/// Debug cheat (dev builds only): tweak the health of every selected entity.
+///   `[`  -> deal 20% of max health
+///   `]`  -> heal 20% of max health
+///   `\`  -> destroy instantly (set health to 0)
+/// Useful for testing damage states, e.g. the Construction Yard's damaged sprite.
+#[cfg(debug_assertions)]
+fn debug_health_cheat(
+    keys: Res<ButtonInput<KeyCode>>,
+    mut selected: Query<&mut Health, With<Selected>>,
+) {
+    let damage = keys.just_pressed(KeyCode::BracketLeft);
+    let heal = keys.just_pressed(KeyCode::BracketRight);
+    let kill = keys.just_pressed(KeyCode::Backslash);
+    if !(damage || heal || kill) {
+        return;
+    }
+    for mut health in &mut selected {
+        let step = health.max * 0.2;
+        if damage {
+            health.damage(step);
+        }
+        if heal {
+            health.heal(step);
+        }
+        if kill {
+            health.current = 0.0;
+        }
     }
 }
 

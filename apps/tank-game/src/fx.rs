@@ -12,9 +12,36 @@ impl Plugin for FxPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(
             Update,
-            (update_explosions, rotate_turrets, draw_barrels)
+            (update_explosions, rotate_turrets, draw_barrels, texture_buildings)
                 .run_if(in_state(GameState::Playing)),
         );
+    }
+}
+
+/// Draw textured buildings with their sprite asset instead of a flat colour,
+/// switching to a damaged variant once health drops below 50%. The footprint
+/// size set at spawn time is kept; we replace the image and drop the colour
+/// tint so the texture shows its true colours. `asset_server.load` is cached,
+/// and we only touch the sprite when the chosen image actually changes, so this
+/// is cheap to run every frame. Buildings without an asset are untouched.
+fn texture_buildings(
+    asset_server: Res<AssetServer>,
+    mut buildings: Query<(&Building, &Faction, &Health, &mut Sprite)>,
+) {
+    for (building, faction, health, mut sprite) in &mut buildings {
+        let Some(healthy) = building.kind.texture_path() else {
+            continue;
+        };
+        let path = match building.kind.damaged_texture_path() {
+            Some(damaged) if health.fraction() < 0.5 => damaged,
+            _ => healthy,
+        };
+        let handle = asset_server.load(path);
+        if sprite.image != handle {
+            sprite.image = handle;
+            // Subtle faction wash so you can tell whose base it is at a glance.
+            sprite.color = faction.tint();
+        }
     }
 }
 

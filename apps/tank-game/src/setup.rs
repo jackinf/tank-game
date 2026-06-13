@@ -71,14 +71,17 @@ fn build_base(
     let sy = if (start.1 as usize) < map.height / 2 { 1 } else { -1 };
     let anchor = |dc: i32, dr: i32| (start.0 + dc * sx, start.1 + dr * sy);
 
+    // Every base starts fully built: one of each structure, fanned out from the
+    // Construction Yard toward the centre of the map. `find_spot` enforces a
+    // one-tile gap, so these anchors only need to be roughly right.
     place(commands, map, BuildingKind::ConstructionYard, faction, anchor(0, 0));
     place(commands, map, BuildingKind::PowerPlant, faction, anchor(5, 0));
+    place(commands, map, BuildingKind::WarFactory, faction, anchor(9, 0));
     place(commands, map, BuildingKind::Refinery, faction, anchor(0, 5));
-    if aggressive {
-        place(commands, map, BuildingKind::PowerPlant, faction, anchor(5, 6));
-        place(commands, map, BuildingKind::Barracks, faction, anchor(9, 1));
-        place(commands, map, BuildingKind::WarFactory, faction, anchor(1, 9));
-    }
+    place(commands, map, BuildingKind::Barracks, faction, anchor(5, 5));
+    place(commands, map, BuildingKind::PowerPlant, faction, anchor(9, 5));
+    place(commands, map, BuildingKind::AntiInfantryTurret, faction, anchor(3, 9));
+    place(commands, map, BuildingKind::AntiTankTurret, faction, anchor(8, 9));
 
     let base = map.tile_center(start.0, start.1);
     spawn_unit(commands, UnitKind::Harvester, faction, base + Vec2::new(TILE * 2.0, -TILE * 2.0));

@@ -80,11 +80,15 @@ pub fn spawn_building(
     ));
 
     // Ownership marker (faction-coloured inner square) + a name label above.
+    // Skip the marker for textured buildings so it doesn't cover the artwork;
+    // the faction-coloured label still signals ownership.
     e.with_children(|p| {
-        p.spawn((
-            Sprite::from_color(faction.color(), size * 0.45),
-            Transform::from_xyz(0.0, 0.0, 0.1),
-        ));
+        if kind.texture_path().is_none() {
+            p.spawn((
+                Sprite::from_color(faction.color(), size * 0.45),
+                Transform::from_xyz(0.0, 0.0, 0.1),
+            ));
+        }
         // Building label, in world space, just above the footprint.
         let label_color = if faction == Faction::Enemy {
             Color::srgb(1.0, 0.75, 0.7)

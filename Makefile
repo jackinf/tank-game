@@ -9,8 +9,13 @@ IMAGE_URI=gcr.io/$(PROJECT_ID)/$(IMAGE_NAME)
 WASM_TARGET=wasm32-unknown-unknown
 WASM_DIR=out
 
+# Asset tooling
+PYTHON ?= python3
+VENV_DIR=tools/.venv
+VENV_PY=$(VENV_DIR)/bin/python
+
 # Phony targets
-.PHONY: all gcloud-auth gcloud-config bucket-setup wasm-build wasm-upload docker-auth docker-build docker-push deploy
+.PHONY: all gcloud-auth gcloud-config bucket-setup wasm-build wasm-upload docker-auth docker-build docker-push deploy cutbg
 
 all: wasm deploy
 
@@ -49,3 +54,15 @@ deploy: docker-push
 setup: gcloud-auth gcloud-config bucket-setup docker-auth
 
 full: wasm deploy
+
+# Create the Python venv used by the asset tools (first run only).
+$(VENV_PY):
+	$(PYTHON) -m venv $(VENV_DIR)
+	$(VENV_DIR)/bin/pip install -q -r tools/requirements.txt
+
+# Remove a flat background from a sprite render and write an RGBA PNG.
+#   make cutbg IN=~/Downloads/foo.png OUT=apps/tank-game/assets/buildings/foo.png
+cutbg: $(VENV_PY)
+	@if [ -z "$(IN)" ] || [ -z "$(OUT)" ]; then \
+		echo "Usage: make cutbg IN=<src.png> OUT=<dst.png>"; exit 1; fi
+	$(VENV_PY) tools/cutbg.py "$(IN)" "$(OUT)"

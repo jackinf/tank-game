@@ -39,6 +39,12 @@ pub const PLAYER_COLOR: Color = Color::srgb(0.40, 0.55, 1.0);
 pub const ENEMY_COLOR: Color = Color::srgb(1.0, 0.40, 0.35);
 pub const NEUTRAL_COLOR: Color = Color::srgb(0.7, 0.7, 0.7);
 
+/// Subtle faction wash multiplied over textured sprites so ownership reads at a
+/// glance without hiding the artwork. Kept close to white on purpose.
+pub const PLAYER_TINT: Color = Color::srgb(0.78, 0.86, 1.0);
+pub const ENEMY_TINT: Color = Color::srgb(1.0, 0.82, 0.78);
+pub const NEUTRAL_TINT: Color = Color::WHITE;
+
 /// Selection / UI accent.
 pub const SELECT_COLOR: Color = Color::srgb(0.2, 1.0, 0.3);
 

@@ -20,6 +20,16 @@ impl Faction {
         }
     }
 
+    /// Subtle wash multiplied over a textured sprite to signal ownership while
+    /// keeping the artwork readable (see [`crate::config::PLAYER_TINT`]).
+    pub fn tint(self) -> Color {
+        match self {
+            Faction::Player => PLAYER_TINT,
+            Faction::Enemy => ENEMY_TINT,
+            Faction::Neutral => NEUTRAL_TINT,
+        }
+    }
+
     /// True if `self` and `other` are enemies of each other.
     pub fn is_hostile_to(self, other: Faction) -> bool {
         use Faction::*;

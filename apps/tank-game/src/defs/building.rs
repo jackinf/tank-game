@@ -49,6 +49,35 @@ impl BuildingKind {
         }
     }
 
+    /// Optional sprite asset (relative to the `assets/` folder). When `Some`,
+    /// the building body is drawn with this texture instead of a flat colour.
+    /// Falls back to the colour primitive when `None` or while the image loads.
+    pub fn texture_path(self) -> Option<&'static str> {
+        match self {
+            BuildingKind::ConstructionYard => Some("buildings/construction_yard.png"),
+            BuildingKind::Refinery => Some("buildings/refinery.png"),
+            BuildingKind::PowerPlant => Some("buildings/power_plant.png"),
+            BuildingKind::Barracks => Some("buildings/barracks.png"),
+            BuildingKind::WarFactory => Some("buildings/war_factory.png"),
+            BuildingKind::AntiInfantryTurret => Some("buildings/flak_turret.png"),
+            BuildingKind::AntiTankTurret => Some("buildings/cannon_turret.png"),
+        }
+    }
+
+    /// Optional damaged sprite, shown once health drops below 50%. Falls back
+    /// to the healthy texture when `None`.
+    pub fn damaged_texture_path(self) -> Option<&'static str> {
+        match self {
+            BuildingKind::ConstructionYard => Some("buildings/construction_yard_damaged.png"),
+            BuildingKind::Refinery => Some("buildings/refinery_damaged.png"),
+            BuildingKind::PowerPlant => Some("buildings/power_plant_damaged.png"),
+            BuildingKind::Barracks => Some("buildings/barracks_damaged.png"),
+            BuildingKind::WarFactory => Some("buildings/war_factory_damaged.png"),
+            BuildingKind::AntiInfantryTurret => Some("buildings/flak_turret_damaged.png"),
+            BuildingKind::AntiTankTurret => Some("buildings/cannon_turret_damaged.png"),
+        }
+    }
+
     pub fn cost(self) -> i64 {
         match self {
             BuildingKind::ConstructionYard => 2500,
