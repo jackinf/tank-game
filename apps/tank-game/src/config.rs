@@ -12,7 +12,9 @@ pub const TILE: f32 = 32.0;
 /// Z layers, so we get a consistent painter's-order draw.
 pub mod z {
     pub const TERRAIN: f32 = 0.0;
+    pub const DECAL: f32 = 0.25;
     pub const ORE: f32 = 0.5;
+    pub const TREE: f32 = 0.85;
     pub const BUILDING: f32 = 1.0;
     pub const RALLY: f32 = 1.5;
     pub const UNIT: f32 = 2.0;
@@ -44,6 +46,10 @@ pub const NEUTRAL_COLOR: Color = Color::srgb(0.7, 0.7, 0.7);
 pub const PLAYER_TINT: Color = Color::srgb(0.78, 0.86, 1.0);
 pub const ENEMY_TINT: Color = Color::srgb(1.0, 0.82, 0.78);
 pub const NEUTRAL_TINT: Color = Color::WHITE;
+
+/// Multiplied over the (bright, saturated) grass texture to calm it down so
+/// units read clearly against the ground.
+pub const GRASS_MUTE: Color = Color::srgb(0.72, 0.78, 0.66);
 
 /// Selection / UI accent.
 pub const SELECT_COLOR: Color = Color::srgb(0.2, 1.0, 0.3);

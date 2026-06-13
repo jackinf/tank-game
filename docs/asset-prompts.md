@@ -90,3 +90,51 @@ reinforced plating, military, bold readable silhouette
 
 Generated from the healthy render (img2img / "make a destroyed, smoking,
 debris-strewn version"), keeping the same aspect ratio and isometric angle.
+
+## Ground / terrain
+
+The ground is built from seamless tiles plus scattered detail. The smart bit is
+in `terrain.rs`: every tile mirrors + brightness-jitters its texture from a hash
+of its coords (kills the visible repeat with no extra art), the grass is muted
+~30% (`GRASS_MUTE`) so units stay readable, and a sparse rock/dirt decal layer
+adds macro variation. Trees are a blocking `Terrain::Forest`.
+
+### Grass (seamless, `--tile`)
+```
+seamless tileable top-down grass terrain texture for an RTS game,
+muted desaturated olive green, subtle dirt patches, very low contrast,
+flat even lighting, no large features, no shadows, hand-painted game art
+--tile --ar 1:1 --style raw
+```
+Pick the flattest-lit, lowest-contrast variant (directional lighting fights the
+per-tile mirroring). Copied to `assets/terrain/grass_0.png`, `grass_1.png`.
+
+### Ore field (seamless, `--tile`)
+```
+seamless tileable top-down ore mineral field texture, glittering crystalline
+gold and amber crystals clustered on rock, muted, RTS game art
+--tile --ar 1:1 --style raw
+```
+Keep it vivid (you want to spot it). `assets/terrain/ore_0.png`.
+
+### Ground decals (sheet on plain bg)
+```
+top-down small scattered terrain details for an RTS, set of rocks pebbles
+dry grass tufts and dirt cracks, muted desaturated, soft shadow, isolated
+on plain flat off-white background --ar 1:1 --style raw
+```
+These come as contact sheets. Slice + recolour them to individual sprites with:
+```
+python tools/slice_decals.py apps/tank-game/assets/decals SHEET1.png SHEET2.png ...
+```
+which cuts the background, splits connected components, drops sparse/spiky tufts,
+and desaturates the arid rocks so they sit on green grass.
+
+### Trees (cluster on plain bg, `--ar 1:1`)
+```
+top-down view of stylized RTS trees, small cluster, dark muted green canopy
+with soft drop shadow, isolated on plain flat off-white background
+--ar 1:1 --style raw
+```
+Cut with `make cutbg`. The baked blue-grey drop shadow is knocked out afterwards
+(it reads as a puddle on grass). `assets/trees/tree_0..3.png`.

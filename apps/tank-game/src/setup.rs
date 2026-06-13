@@ -29,6 +29,7 @@ fn cleanup_match(mut commands: Commands, entities: Query<Entity, With<GameEntity
 
 fn setup_match(
     mut commands: Commands,
+    asset_server: Res<AssetServer>,
     mut next: ResMut<NextState<GameState>>,
     mut ai: ResMut<AiState>,
 ) {
@@ -39,7 +40,7 @@ fn setup_match(
         enemy_start,
     } = load_map(maps[0].1);
 
-    spawn_terrain(&mut commands, &map);
+    spawn_terrain(&mut commands, &asset_server, &map);
 
     build_base(&mut commands, &mut map, Faction::Player, player_start, false);
     build_base(&mut commands, &mut map, Faction::Enemy, enemy_start, true);
