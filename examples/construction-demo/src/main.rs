@@ -102,6 +102,7 @@ impl BuildingType {
 #[derive(Component)]
 struct Building {
     building_type: BuildingType,
+    #[allow(dead_code)] // footprint tiles tracked on the building; unused in this demo
     tiles: HashSet<(usize, usize)>,
     construction_progress: f32, // 0-100
     completed: bool,
@@ -115,6 +116,7 @@ struct PlacementPreview;
 
 #[derive(Component)]
 struct Tile {
+    #[allow(dead_code)] // tile coordinate kept on the component; unused in this demo
     coord: (usize, usize),
 }
 

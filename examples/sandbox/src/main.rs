@@ -10,7 +10,7 @@ use crate::features::animation::{
 
 fn main() {
     App::new()
-        .add_plugins((DefaultPlugins.set(ImagePlugin::default_nearest())))
+        .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
         .add_systems(
             PreStartup,
             (camera_setup, explosion_animation_setup).chain(),

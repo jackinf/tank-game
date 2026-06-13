@@ -2,12 +2,12 @@ use crate::features::animation::AnimationActive;
 use bevy::asset::AssetServer;
 use bevy::audio::AudioPlayer;
 use bevy::input::keyboard::KeyboardInput;
-use bevy::prelude::{default, Commands, EventReader, KeyCode, Query, Res, Sprite};
+use bevy::prelude::{Commands, KeyCode, MessageReader, Query, Res, Sprite};
 
 pub fn trigger_animation_on_key(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
-    mut key_button_events: EventReader<KeyboardInput>,
+    mut key_button_events: MessageReader<KeyboardInput>,
     mut query: Query<(&mut Sprite, &mut AnimationActive)>,
 ) {
     for key_button_event in key_button_events.read() {

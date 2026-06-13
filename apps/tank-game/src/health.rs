@@ -52,6 +52,7 @@ fn death_system(
     }
 }
 
+#[allow(clippy::type_complexity)]
 fn check_game_over(
     mut commands: Commands,
     mut next: ResMut<NextState<GameState>>,

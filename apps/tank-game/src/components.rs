@@ -71,18 +71,13 @@ impl Mover {
 }
 
 /// High-level order for a controllable unit.
-#[derive(Component, Clone, Copy, PartialEq)]
+#[derive(Component, Clone, Copy, PartialEq, Default)]
 pub enum Order {
+    #[default]
     Idle,
     Move(Vec2),
     AttackMove(Vec2),
     Attack(Entity),
-}
-
-impl Default for Order {
-    fn default() -> Self {
-        Order::Idle
-    }
 }
 
 /// Weapon state attached to an armed entity.

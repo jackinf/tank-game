@@ -85,7 +85,6 @@ struct Targetable;
 
 #[derive(Component)]
 struct AnimationIndices {
-    first: usize,
     last: usize,
 }
 
@@ -311,7 +310,7 @@ fn shoot_at_target(
     }
 
     // Check cooldown
-    if !player.cooldown_timer.finished() {
+    if !player.cooldown_timer.is_finished() {
         return;
     }
 
@@ -388,7 +387,7 @@ fn spawn_explosion(commands: &mut Commands, assets: &ExplosionAssets, pos: Vec2)
             ..default()
         },
         Transform::from_translation(pos.extend(25.0)).with_scale(Vec3::splat(2.0)),
-        AnimationIndices { first: 0, last: 4 },
+        AnimationIndices { last: 4 },
         AnimationTimer(Timer::new(Duration::from_millis(50), TimerMode::Repeating)),
         AnimationActive(true),
         Explosion,
@@ -406,7 +405,7 @@ fn play_explosion(
         &mut AnimationActive,
     )>,
 ) {
-    for (entity, indices, mut timer, mut sprite, mut active) in &mut query {
+    for (entity, indices, mut timer, mut sprite, active) in &mut query {
         if active.0 {
             if timer.tick(time.delta()).just_finished() {
                 if let Some(ref mut atlas) = sprite.texture_atlas {
@@ -513,7 +512,7 @@ fn update_info_text(
 
     let remaining_targets: Vec<String> = targets_query
         .iter()
-        .map(|(_, health, is_tank, is_building)| {
+        .map(|(_, health, is_tank, _is_building)| {
             let t = if is_tank.is_some() { "Tank" } else { "Building" };
             format!("{}: {}/{}", t, health.current, health.max)
         })

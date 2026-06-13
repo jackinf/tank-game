@@ -84,9 +84,7 @@ fn ai_build(
 
     // --- Structures ---
     if !queue_busy(&queues, BuildingKind::ConstructionYard) {
-        let next = if !set.contains(&BuildingKind::PowerPlant) {
-            Some(BuildingKind::PowerPlant)
-        } else if !eco.has_power() {
+        let next = if !set.contains(&BuildingKind::PowerPlant) || !eco.has_power() {
             Some(BuildingKind::PowerPlant)
         } else if !set.contains(&BuildingKind::Refinery) {
             Some(BuildingKind::Refinery)

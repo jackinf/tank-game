@@ -1,5 +1,5 @@
 use bevy::{
-    asset::{io::Reader, AssetLoader, AsyncReadExt, LoadContext},
+    asset::{io::Reader, AssetLoader, LoadContext},
     prelude::*,
     reflect::TypePath,
 };
@@ -41,7 +41,7 @@ impl AssetLoader for CustomAssetLoader {
         let mut bytes = Vec::new();
         reader.read_to_end(&mut bytes).await?;
         // Simple parsing - assumes RON-like format
-        let content = String::from_utf8(bytes)?;
+        let _content = String::from_utf8(bytes)?;
         // For demo purposes, just return a default value
         Ok(CustomAsset { value: 42 })
     }
@@ -101,7 +101,6 @@ fn main() {
         .init_asset_loader::<CustomAssetLoader>()
         .init_asset_loader::<TsjAssetLoader>()
         .add_systems(Startup, setup)
-        // .add_systems(Update, print_on_load)
         .run();
 }
 
@@ -109,10 +108,6 @@ fn main() {
 struct State {
     handle: Handle<CustomAsset>,
     other_handle: Handle<CustomAsset>,
-    main_assets: Handle<Tileset>,
-    // text_handle: Handle<String>,
-    // blob: Handle<Blob>,
-    printed: bool,
 }
 
 fn setup(
@@ -134,37 +129,6 @@ fn setup(
         return;
     }
     info!("Main assets loaded: {:?}", main_assets.unwrap());
-}
-
-fn print_on_load(
-    mut state: ResMut<State>,
-    custom_assets: Res<Assets<CustomAsset>>,
-    main_assets: Res<Assets<Tileset>>,
-) {
-    let custom_asset = custom_assets.get(&state.handle);
-    let other_custom_asset = custom_assets.get(&state.other_handle);
-    // let main_assets = main_assets.get(&state.main_assets);
-
-    // Can't print results if the assets aren't ready
-    if state.printed {
-        return;
-    }
-
-    if custom_asset.is_none() {
-        info!("Custom Asset Not Ready");
-        return;
-    }
-
-    if other_custom_asset.is_none() {
-        info!("Other Custom Asset Not Ready");
-        return;
-    }
-
-    info!("Custom asset loaded: {:?}", custom_asset.unwrap());
-    info!("Custom asset loaded: {:?}", other_custom_asset.unwrap());
-
-    // Once printed, we won't print again
-    state.printed = true;
 }
 
 #[derive(serde::Deserialize, bevy::asset::Asset, bevy::reflect::TypePath, Debug)]

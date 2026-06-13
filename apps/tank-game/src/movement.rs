@@ -6,6 +6,7 @@ use crate::grid::{GameMap, Tile};
 use crate::harvester::Harvester;
 use crate::state::GameState;
 use bevy::prelude::*;
+use std::collections::hash_map::Entry;
 use std::collections::HashMap;
 
 pub struct MovementPlugin;
@@ -29,6 +30,7 @@ const OVERLAP_INTERVAL: f32 = 0.25;
 /// naturally via formation offsets. Each over-stacked unit is nudged to the
 /// nearest free tile, which is cheap because we only touch resting units a few
 /// times a second.
+#[allow(clippy::type_complexity)]
 fn resolve_overlap(
     time: Res<Time>,
     mut timer: Local<f32>,
@@ -56,8 +58,8 @@ fn resolve_overlap(
 
     let mut relocate: Vec<(Entity, Vec2)> = Vec::new();
     for (entity, tile) in resting {
-        if !claimed.contains_key(&tile) {
-            claimed.insert(tile, entity);
+        if let Entry::Vacant(slot) = claimed.entry(tile) {
+            slot.insert(entity);
             continue;
         }
         // Tile taken: search outward rings for the nearest free, passable tile.

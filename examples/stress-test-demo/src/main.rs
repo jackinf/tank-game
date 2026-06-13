@@ -219,21 +219,21 @@ fn spawn_tanks(mut commands: Commands, time: Res<Time>, mut spawn_state: ResMut<
     spawn_state.timer.tick(time.delta());
 
     if spawn_state.timer.just_finished() {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
 
         // Random position along the edge of the arena
-        let side = rng.gen_range(0..4);
+        let side = rng.random_range(0..4);
         let (x, y) = match side {
-            0 => (rng.gen_range(SPAWN_MARGIN..ARENA_WIDTH - SPAWN_MARGIN), SPAWN_MARGIN), // Bottom
-            1 => (rng.gen_range(SPAWN_MARGIN..ARENA_WIDTH - SPAWN_MARGIN), ARENA_HEIGHT - SPAWN_MARGIN), // Top
-            2 => (SPAWN_MARGIN, rng.gen_range(SPAWN_MARGIN..ARENA_HEIGHT - SPAWN_MARGIN)), // Left
-            _ => (ARENA_WIDTH - SPAWN_MARGIN, rng.gen_range(SPAWN_MARGIN..ARENA_HEIGHT - SPAWN_MARGIN)), // Right
+            0 => (rng.random_range(SPAWN_MARGIN..ARENA_WIDTH - SPAWN_MARGIN), SPAWN_MARGIN), // Bottom
+            1 => (rng.random_range(SPAWN_MARGIN..ARENA_WIDTH - SPAWN_MARGIN), ARENA_HEIGHT - SPAWN_MARGIN), // Top
+            2 => (SPAWN_MARGIN, rng.random_range(SPAWN_MARGIN..ARENA_HEIGHT - SPAWN_MARGIN)), // Left
+            _ => (ARENA_WIDTH - SPAWN_MARGIN, rng.random_range(SPAWN_MARGIN..ARENA_HEIGHT - SPAWN_MARGIN)), // Right
         };
 
         // Random color (blue-ish variants)
-        let r = rng.gen_range(0.1..0.4);
-        let g = rng.gen_range(0.2..0.5);
-        let b = rng.gen_range(0.5..0.9);
+        let r = rng.random_range(0.1..0.4);
+        let g = rng.random_range(0.2..0.5);
+        let b = rng.random_range(0.5..0.9);
 
         commands.spawn((
             Sprite {
@@ -244,7 +244,7 @@ fn spawn_tanks(mut commands: Commands, time: Res<Time>, mut spawn_state: ResMut<
             Transform::from_translation(Vec3::new(x, y, 10.0)),
             Tank {
                 shoot_timer: Timer::new(
-                    Duration::from_secs_f32(SHOOT_COOLDOWN + rng.gen_range(-0.5..0.5)),
+                    Duration::from_secs_f32(SHOOT_COOLDOWN + rng.random_range(-0.5..0.5)),
                     TimerMode::Repeating,
                 ),
             },

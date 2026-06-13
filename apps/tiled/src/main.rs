@@ -4,7 +4,7 @@ use crate::models::{TiledMainAssets, TiledMission};
 use crate::AppState::{LoadingLevel, Playing};
 use bevy::app::App;
 use bevy::asset::io::Reader;
-use bevy::asset::{AssetLoader, AssetServer, Assets, AsyncReadExt, Handle, LoadContext};
+use bevy::asset::{AssetLoader, AssetServer, Assets, Handle, LoadContext};
 use bevy::prelude::*;
 use bevy::math::Vec2;
 use bevy::window::WindowResolution;
@@ -122,7 +122,7 @@ impl AssetLoader for TiledMissionAssetLoader {
     }
 }
 
-pub fn setup_load_tile(mut state: ResMut<TiledState>, asset_server: Res<AssetServer>) {
+fn setup_load_tile(mut state: ResMut<TiledState>, asset_server: Res<AssetServer>) {
     state.main_assets = asset_server.load("main_assets.tsj");
     state.mission_01 = asset_server.load("mission01.tmj");
     state.ready = true;
@@ -137,7 +137,7 @@ pub fn calculate_tile_to_world_position(xx: i32, yy: i32) -> Vec2 {
     Vec2::new(x, y)
 }
 
-pub fn sys_draw_level(
+fn sys_draw_level(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     tiled_state: Res<TiledState>,

@@ -119,6 +119,7 @@ struct Harvester {
 #[derive(Component)]
 struct Tile {
     coord: TileCoord,
+    #[allow(dead_code)] // kept for parity with the tile data model; unused in this demo
     tile_type: TileType,
 }
 

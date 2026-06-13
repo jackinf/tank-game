@@ -81,7 +81,7 @@ fn nearest_ore(map: &GameMap, from: Vec2) -> Option<Tile> {
         for col in 0..map.width as i32 {
             if map.ore_at(col, row) > 0 {
                 let d = (col - origin.0).pow(2) + (row - origin.1).pow(2);
-                if best.map_or(true, |(_, bd)| d < bd) {
+                if best.is_none_or(|(_, bd)| d < bd) {
                     best = Some(((col, row), d));
                 }
             }
@@ -117,7 +117,7 @@ fn nearest_refinery(
         if *bf == faction && building.kind == crate::defs::BuildingKind::Refinery {
             let dock = refinery_unload_pos(map, building);
             let d = dock.distance_squared(from);
-            if best.map_or(true, |(_, bd)| d < bd) {
+            if best.is_none_or(|(_, bd)| d < bd) {
                 best = Some((dock, d));
             }
         }

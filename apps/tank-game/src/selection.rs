@@ -72,7 +72,7 @@ fn left_click_select(
                     continue;
                 }
                 let d = tf.translation.truncate().distance(cursor.pos);
-                if d <= sel.radius && best.map_or(true, |(_, bd)| d < bd) {
+                if d <= sel.radius && best.is_none_or(|(_, bd)| d < bd) {
                     best = Some((entity, d));
                 }
             }
@@ -96,7 +96,7 @@ fn left_click_select(
     }
 }
 
-#[allow(clippy::too_many_arguments)]
+#[allow(clippy::too_many_arguments, clippy::type_complexity)]
 fn right_click_command(
     mouse: Res<ButtonInput<MouseButton>>,
     keys: Res<ButtonInput<KeyCode>>,

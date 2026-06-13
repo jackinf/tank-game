@@ -252,7 +252,7 @@ struct ScrollingList {
 }
 
 fn mouse_scroll(
-    mut mouse_wheel_events: EventReader<MouseWheel>,
+    mut mouse_wheel_events: MessageReader<MouseWheel>,
     mut query_list: Query<(&mut ScrollingList, &mut Node, &ChildOf, &ComputedNode)>,
     query_node: Query<&ComputedNode>,
 ) {

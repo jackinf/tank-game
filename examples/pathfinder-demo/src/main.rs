@@ -52,6 +52,7 @@ struct Tank {
 }
 
 #[derive(Component)]
+#[allow(dead_code)] // kept for parity with the tile data model; unused in this demo
 struct Tile {
     coord: TileCoord,
     tile_type: TileType,
